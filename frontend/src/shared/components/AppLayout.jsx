@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { ThemeToggle } from '../../context/ThemeContext.jsx';
 import { ROLE_LABELS, ROLE_HOME_ROUTES } from '../../lib/constants.js';
 
 export function AppLayout() {
@@ -26,6 +27,7 @@ export function AppLayout() {
           </div>
 
           <div className="app-user-group">
+            <ThemeToggle />
             {role && (
               <span className="badge badge-role">
                 {ROLE_LABELS[role] || role}

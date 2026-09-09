@@ -59,6 +59,23 @@ button, input, select, textarea {
   box-sizing: border-box;
 }
 
+input, select, textarea {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.75;
+}
+
 button {
   cursor: pointer;
   border: none;
@@ -173,10 +190,10 @@ button {
   border: 1px solid var(--color-sky-blue);
 }
 
-.badge-burgundy {
+.badge-burgundy, .badge-caramel {
   background-color: var(--color-burgundy-light);
   color: var(--color-burgundy-red);
-  border: 1px solid rgba(114, 16, 16, 0.2);
+  border: 1px solid rgba(181, 136, 99, 0.25);
 }
 
 .status-pill {
@@ -208,21 +225,21 @@ button {
 }
 
 .status-pending, .status-review {
-  background-color: rgba(148, 96, 0, 0.08);
-  color: #8c5900;
-  border: 1px solid rgba(148, 96, 0, 0.22);
+  background-color: rgba(181, 136, 99, 0.12);
+  color: #8f633e;
+  border: 1px solid rgba(181, 136, 99, 0.28);
 }
 .status-pending .status-pill-dot, .status-review .status-pill-dot {
-  background-color: #946000;
+  background-color: var(--color-caramel);
 }
 
 .status-rejected, .status-suspended, .status-closed {
-  background-color: var(--color-burgundy-light);
-  color: var(--color-burgundy-red);
-  border: 1px solid rgba(114, 16, 16, 0.22);
+  background-color: rgba(143, 61, 61, 0.1);
+  color: #8f3d3d;
+  border: 1px solid rgba(143, 61, 61, 0.25);
 }
 .status-rejected .status-pill-dot, .status-suspended .status-pill-dot, .status-closed .status-pill-dot {
-  background-color: var(--color-burgundy-red);
+  background-color: #8f3d3d;
 }
 
 .status-unverified, .status-draft, .status-paused {
@@ -280,7 +297,7 @@ button {
 }
 
 .data-table tbody tr:hover {
-  background-color: rgba(224, 228, 222, 0.45);
+  background-color: rgba(211, 195, 185, 0.28);
 }
 
 /* ---------------- Responsive Table Wrapper ---------------- */
@@ -551,4 +568,48 @@ button {
   .login-card {
     padding: var(--space-4);
   }
+}
+
+/* ---------------- Theme Toggle Button Styles ---------------- */
+.btn-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.btn-theme-toggle:hover {
+  border-color: var(--color-border-hover);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-primary);
+}
+
+/* ---------------- Dark Theme Table & State Refinements ---------------- */
+[data-theme="dark"] .data-table tbody tr:hover {
+  background-color: rgba(181, 136, 99, 0.09);
+}
+
+[data-theme="dark"] .b2b-tab.active {
+  background-color: var(--color-bg-subtle);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+[data-theme="dark"] .b2b-tab:hover:not(.active) {
+  background-color: rgba(255, 255, 255, 0.03);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] select option {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
 }

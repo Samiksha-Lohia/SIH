@@ -179,7 +179,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
             borderRadius: '12px',
             backgroundColor: 'rgba(114, 16, 16, 0.08)',
             border: '1px solid rgba(114, 16, 16, 0.25)',
-            color: 'var(--color-burgundy-red, #721010)',
+            color: 'var(--color-primary, #B58863)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -195,7 +195,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
             className="btn-ghost"
             style={{
               padding: '0.2rem 0.5rem',
-              color: 'var(--color-burgundy-red, #721010)',
+              color: 'var(--color-primary, #B58863)',
               cursor: 'pointer',
               fontWeight: 'bold',
             }}
@@ -330,9 +330,9 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
             style={{
               padding: '2.5rem',
               textAlign: 'center',
-              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+              backgroundColor: 'var(--color-mist-green, #D3C3B9)',
               borderRadius: '6px',
-              border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
+              border: '1px dashed var(--color-pebble-grey, #A79E9C)',
             }}
           >
             <h4 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600 }}>No mentorship records found</h4>
@@ -368,10 +368,10 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                 <div
                   key={item.id}
                   style={{
-                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    border: '1px solid var(--color-pebble-grey, #A79E9C)',
                     borderRadius: '6px',
                     padding: '1.25rem',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--color-bg-surface)',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '0.875rem',
@@ -400,7 +400,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                             fontSize: '0.7rem',
                             fontFamily: 'monospace',
                             color: 'var(--text-muted)',
-                            backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                            backgroundColor: 'var(--color-mist-green, #D3C3B9)',
                             padding: '0.15rem 0.45rem',
                             borderRadius: '4px',
                           }}
@@ -464,7 +464,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                   {item.message && (
                     <div
                       style={{
-                        backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                        backgroundColor: 'var(--color-mist-green, #D3C3B9)',
                         padding: '0.625rem 0.875rem',
                         borderRadius: '4px',
                         fontSize: '0.8125rem',
@@ -479,11 +479,11 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                   {item.responseMessage && (
                     <div
                       style={{
-                        backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                        backgroundColor: 'var(--color-mist-green, #D3C3B9)',
                         padding: '0.625rem 0.875rem',
                         borderRadius: '4px',
                         fontSize: '0.8125rem',
-                        borderLeft: '3px solid var(--color-burgundy-red, #721010)',
+                        borderLeft: '3px solid var(--color-primary, #B58863)',
                       }}
                     >
                       <strong style={{ color: 'var(--text-main)' }}>Response Note: </strong>
@@ -498,7 +498,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                       gap: '1.5rem',
                       fontSize: '0.75rem',
                       color: 'var(--text-muted)',
-                      borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                      borderTop: '1px solid var(--color-pebble-grey, #A79E9C)',
                       paddingTop: '0.5rem',
                     }}
                   >
@@ -507,7 +507,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                       <span>Responded: {new Date(item.respondedAt).toLocaleDateString()}</span>
                     )}
                     {item.completedAt && (
-                      <span style={{ color: 'var(--color-burgundy-red, #721010)', fontWeight: 600 }}>
+                      <span style={{ color: 'var(--color-primary, #B58863)', fontWeight: 600 }}>
                         Completed: {new Date(item.completedAt).toLocaleDateString()}
                       </span>
                     )}
@@ -558,9 +558,9 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
             style={{
               padding: '2rem',
               textAlign: 'center',
-              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+              backgroundColor: 'var(--color-mist-green, #D3C3B9)',
               borderRadius: '6px',
-              border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
+              border: '1px dashed var(--color-pebble-grey, #A79E9C)',
             }}
           >
             <h4 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600 }}>No Active FDP Enrollments</h4>
@@ -594,10 +594,10 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                 <div
                   key={enrollment.id}
                   style={{
-                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    border: '1px solid var(--color-pebble-grey, #A79E9C)',
                     borderRadius: '6px',
                     padding: '1.25rem',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--color-bg-surface)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -611,8 +611,8 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                           fontSize: '0.7rem',
                           fontWeight: 600,
                           textTransform: 'uppercase',
-                          color: 'var(--color-burgundy-red, #721010)',
-                          backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                          color: 'var(--color-primary, #B58863)',
+                          backgroundColor: 'var(--color-mist-green, #D3C3B9)',
                           padding: '0.2rem 0.5rem',
                           borderRadius: '4px',
                         }}
@@ -654,7 +654,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                       <div
                         style={{
                           height: '6px',
-                          backgroundColor: 'var(--color-pebble-grey, #BCBDB8)',
+                          backgroundColor: 'var(--color-pebble-grey, #A79E9C)',
                           borderRadius: '3px',
                           overflow: 'hidden',
                         }}
@@ -663,7 +663,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                           style={{
                             height: '100%',
                             width: `${Math.min(progress, 100)}%`,
-                            backgroundColor: isCompleted ? '#10b981' : 'var(--color-burgundy-red, #721010)',
+                            backgroundColor: isCompleted ? '#10b981' : 'var(--color-primary, #B58863)',
                             transition: 'width 0.3s ease',
                           }}
                         />
@@ -713,7 +713,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
               display: 'flex',
               flexDirection: 'column',
               gap: '1.25rem',
-              backgroundColor: '#ffffff',
+              backgroundColor: 'var(--color-bg-surface)',
             }}
           >
             <div>
@@ -737,7 +737,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                   onChange={(e) => setRespondModal({ ...respondModal, message: e.target.value })}
                   style={{
                     width: '100%',
-                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    border: '1px solid var(--color-pebble-grey, #A79E9C)',
                     borderRadius: '6px',
                     padding: '0.75rem',
                     fontSize: '0.875rem',
@@ -793,7 +793,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
               display: 'flex',
               flexDirection: 'column',
               gap: '1.25rem',
-              backgroundColor: '#ffffff',
+              backgroundColor: 'var(--color-bg-surface)',
             }}
           >
             <div>
@@ -809,7 +809,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                   <label style={{ fontSize: '0.8125rem', fontWeight: 500 }}>Completion Percentage:</label>
-                  <span style={{ fontWeight: 700, color: 'var(--color-burgundy-red, #721010)' }}>{progressModal.progress}%</span>
+                  <span style={{ fontWeight: 700, color: 'var(--color-primary, #B58863)' }}>{progressModal.progress}%</span>
                 </div>
                 <input
                   type="range"

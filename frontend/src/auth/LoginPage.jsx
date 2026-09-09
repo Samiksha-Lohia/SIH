@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { ThemeToggle } from '../context/ThemeContext.jsx';
 import { ROLE_HOME_ROUTES } from '../lib/constants.js';
 
 export function LoginPage() {
@@ -38,7 +39,10 @@ export function LoginPage() {
 
   return (
     <div className="login-page-container">
-      <div className="card login-card">
+      <div className="card login-card" style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
+          <ThemeToggle />
+        </div>
         <div style={styles.header}>
           <h1 style={styles.title}>SUTRA</h1>
           <p style={styles.subtitle}>Smart Unified Talent & Recruitment Alignment Platform</p>

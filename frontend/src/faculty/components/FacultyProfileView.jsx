@@ -177,8 +177,8 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
               </h2>
               <span
                 style={{
-                  backgroundColor: 'var(--color-mist-green, #E0E4DE)',
-                  color: 'var(--color-burgundy-red, #721010)',
+                  backgroundColor: 'var(--color-sand-light, #D3C3B9)',
+                  color: 'var(--color-caramel, #B58863)',
                   padding: '0.2rem 0.5rem',
                   borderRadius: '4px',
                   fontSize: '0.75rem',
@@ -203,22 +203,22 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
           <div
             style={{
               minWidth: '220px',
-              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+              backgroundColor: 'var(--color-sand-light, #D3C3B9)',
               padding: '0.75rem 1rem',
               borderRadius: '6px',
-              border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+              border: '1px solid var(--color-taupe-grey, #A79E9C)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
               <span>Dossier Completeness</span>
-              <strong style={{ color: completeness >= 80 ? '#065f46' : 'var(--color-burgundy-red, #721010)' }}>{completeness}%</strong>
+              <strong style={{ color: completeness >= 80 ? '#065f46' : 'var(--color-caramel, #B58863)' }}>{completeness}%</strong>
             </div>
-            <div style={{ height: '6px', backgroundColor: 'var(--color-pebble-grey, #BCBDB8)', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ height: '6px', backgroundColor: 'var(--color-taupe-grey, #A79E9C)', borderRadius: '3px', overflow: 'hidden' }}>
               <div
                 style={{
                   height: '100%',
                   width: `${completeness}%`,
-                  backgroundColor: completeness >= 80 ? '#10b981' : 'var(--color-burgundy-red, #721010)',
+                  backgroundColor: completeness >= 80 ? '#10b981' : 'var(--color-caramel, #B58863)',
                   transition: 'width 0.3s ease',
                 }}
               />
@@ -242,10 +242,10 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
           <div
             style={{
               padding: '0.75rem 1rem',
-              backgroundColor: 'rgba(114, 16, 16, 0.08)',
-              border: '1px solid rgba(114, 16, 16, 0.25)',
+              backgroundColor: 'rgba(220, 38, 38, 0.08)',
+              border: '1px solid rgba(220, 38, 38, 0.25)',
               borderRadius: '6px',
-              color: 'var(--color-burgundy-red, #721010)',
+              color: '#dc2626',
               fontSize: '0.8125rem',
             }}
           >
@@ -282,7 +282,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
               style={{
                 width: '100%',
                 padding: '0.6rem 0.75rem',
-                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                border: '1px solid var(--color-taupe-grey, #A79E9C)',
                 borderRadius: '6px',
                 fontSize: '0.875rem',
                 boxSizing: 'border-box',
@@ -303,7 +303,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
               style={{
                 width: '100%',
                 padding: '0.6rem 0.75rem',
-                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                border: '1px solid var(--color-taupe-grey, #A79E9C)',
                 borderRadius: '6px',
                 fontSize: '0.875rem',
                 boxSizing: 'border-box',
@@ -324,7 +324,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
               style={{
                 width: '100%',
                 padding: '0.6rem 0.75rem',
-                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                border: '1px solid var(--color-taupe-grey, #A79E9C)',
                 borderRadius: '6px',
                 fontSize: '0.875rem',
                 boxSizing: 'border-box',
@@ -344,7 +344,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
               style={{
                 width: '100%',
                 padding: '0.6rem 0.75rem',
-                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                border: '1px solid var(--color-taupe-grey, #A79E9C)',
                 borderRadius: '6px',
                 fontSize: '0.875rem',
                 boxSizing: 'border-box',
@@ -367,7 +367,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
               style={{
                 width: '100%',
                 padding: '0.6rem 0.75rem',
-                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                border: '1px solid var(--color-taupe-grey, #A79E9C)',
                 borderRadius: '6px',
                 fontSize: '0.875rem',
                 boxSizing: 'border-box',
@@ -377,7 +377,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
         </div>
 
         {/* Mentorship & Consultancy Availability Section */}
-        <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '1.25rem' }}>
+        <div style={{ borderTop: '1px solid var(--color-taupe-grey, #A79E9C)', paddingTop: '1.25rem' }}>
           <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.05rem', fontWeight: 600 }}>
             Mentorship & Consultancy Availability
           </h3>
@@ -391,7 +391,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                 type="checkbox"
                 checked={formData.openToMentorship}
                 onChange={(e) => setFormData({ ...formData, openToMentorship: e.target.checked })}
-                style={{ width: '16px', height: '16px', accentColor: 'var(--color-burgundy-red, #721010)', cursor: 'pointer' }}
+                style={{ width: '16px', height: '16px', accentColor: 'var(--color-caramel, #B58863)', cursor: 'pointer' }}
               />
               Open to Student & Peer Mentorship
             </label>
@@ -401,7 +401,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                 type="checkbox"
                 checked={formData.openToConsultancy}
                 onChange={(e) => setFormData({ ...formData, openToConsultancy: e.target.checked })}
-                style={{ width: '16px', height: '16px', accentColor: 'var(--color-burgundy-red, #721010)', cursor: 'pointer' }}
+                style={{ width: '16px', height: '16px', accentColor: 'var(--color-caramel, #B58863)', cursor: 'pointer' }}
               />
               Open to Industrial Technical Consultancy
             </label>
@@ -410,10 +410,10 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
           {/* Availability Schedule Slots Builder */}
           <div
             style={{
-              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+              backgroundColor: 'var(--color-sand-light, #D3C3B9)',
               padding: '1.25rem',
               borderRadius: '6px',
-              border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+              border: '1px solid var(--color-taupe-grey, #A79E9C)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.875rem', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -442,10 +442,10 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                     gap: '0.75rem',
                     alignItems: 'center',
                     flexWrap: 'wrap',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--color-bg-surface)',
                     padding: '0.5rem 0.75rem',
                     borderRadius: '4px',
-                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    border: '1px solid var(--color-taupe-grey, #A79E9C)',
                   }}
                 >
                   <select
@@ -453,7 +453,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                     onChange={(e) => handleSlotChange(sIdx, 'day', e.target.value)}
                     style={{
                       padding: '0.35rem 0.5rem',
-                      border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                      border: '1px solid var(--color-taupe-grey, #A79E9C)',
                       borderRadius: '4px',
                       fontSize: '0.8125rem',
                     }}
@@ -471,7 +471,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                       onChange={(e) => handleSlotChange(sIdx, 'from', e.target.value)}
                       style={{
                         padding: '0.35rem 0.5rem',
-                        border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                        border: '1px solid var(--color-taupe-grey, #A79E9C)',
                         borderRadius: '4px',
                         fontSize: '0.8125rem',
                       }}
@@ -486,7 +486,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                       onChange={(e) => handleSlotChange(sIdx, 'to', e.target.value)}
                       style={{
                         padding: '0.35rem 0.5rem',
-                        border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                        border: '1px solid var(--color-taupe-grey, #A79E9C)',
                         borderRadius: '4px',
                         fontSize: '0.8125rem',
                       }}
@@ -498,7 +498,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                     onClick={() => removeSlot(sIdx)}
                     className="btn-ghost"
                     style={{
-                      color: 'var(--color-burgundy-red, #721010)',
+                      color: '#dc2626',
                       fontSize: '0.875rem',
                       marginLeft: 'auto',
                       padding: '0.2rem 0.5rem',
@@ -519,7 +519,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
         </div>
 
         {/* Collaboration Preferences */}
-        <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '1.25rem' }}>
+        <div style={{ borderTop: '1px solid var(--color-taupe-grey, #A79E9C)', paddingTop: '1.25rem' }}>
           <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.05rem', fontWeight: 600 }}>
             Industry & Institutional Collaboration Tracks
           </h3>
@@ -538,10 +538,10 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                     alignItems: 'center',
                     gap: '0.6rem',
                     padding: '0.75rem',
-                    backgroundColor: isChecked ? 'var(--color-mist-green, #E0E4DE)' : '#ffffff',
-                    border: `1px solid ${isChecked ? 'var(--color-burgundy-red, #721010)' : 'var(--color-pebble-grey, #BCBDB8)'}`,
+                    backgroundColor: isChecked ? 'var(--color-sand-light, #D3C3B9)' : 'var(--color-bg-surface)',
+                    border: `1px solid ${isChecked ? 'var(--color-caramel, #B58863)' : 'var(--color-taupe-grey, #A79E9C)'}`,
                     borderRadius: '6px',
-                    color: isChecked ? 'var(--color-burgundy-red, #721010)' : 'var(--text-main)',
+                    color: isChecked ? 'var(--color-caramel, #B58863)' : 'var(--text-main)',
                     fontSize: '0.8125rem',
                     fontWeight: isChecked ? 600 : 400,
                     cursor: 'pointer',
@@ -551,7 +551,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
                     type="checkbox"
                     checked={isChecked}
                     onChange={() => toggleCollab(opt.id)}
-                    style={{ width: '16px', height: '16px', accentColor: 'var(--color-burgundy-red, #721010)', cursor: 'pointer' }}
+                    style={{ width: '16px', height: '16px', accentColor: 'var(--color-caramel, #B58863)', cursor: 'pointer' }}
                   />
                   {opt.label}
                 </label>
@@ -560,7 +560,7 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--color-taupe-grey, #A79E9C)', paddingTop: '1.25rem' }}>
           <button
             type="submit"
             disabled={saving}

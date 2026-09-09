@@ -103,7 +103,7 @@ export const MentorDiscoveryView = () => {
               flex: 1,
               minWidth: '260px',
               padding: '0.55rem 0.85rem',
-              border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+              border: '1px solid var(--color-taupe-grey, #A79E9C)',
               borderRadius: '6px',
               fontSize: '0.875rem',
             }}
@@ -130,10 +130,10 @@ export const MentorDiscoveryView = () => {
         <div
           style={{
             padding: '1rem 1.25rem',
-            backgroundColor: 'rgba(114, 16, 16, 0.08)',
-            border: '1px solid rgba(114, 16, 16, 0.25)',
+            backgroundColor: 'rgba(220, 38, 38, 0.08)',
+            border: '1px solid rgba(220, 38, 38, 0.25)',
             borderRadius: '6px',
-            color: 'var(--color-burgundy-red, #721010)',
+            color: '#dc2626',
           }}
         >
           <h4 style={{ margin: '0 0 0.25rem', fontSize: '0.9rem', fontWeight: 600 }}>Error Discovering Mentors</h4>
@@ -149,9 +149,9 @@ export const MentorDiscoveryView = () => {
               style={{
                 padding: '3.5rem',
                 textAlign: 'center',
-                backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                backgroundColor: 'var(--color-sand-light, #D3C3B9)',
                 borderRadius: '6px',
-                border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
+                border: '1px dashed var(--color-taupe-grey, #A79E9C)',
                 color: 'var(--text-muted)',
               }}
             >
@@ -200,8 +200,8 @@ export const MentorDiscoveryView = () => {
                             <span
                               key={eIdx}
                               style={{
-                                backgroundColor: 'var(--color-mist-green, #E0E4DE)',
-                                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                                backgroundColor: 'var(--color-sand-light, #D3C3B9)',
+                                border: '1px solid var(--color-taupe-grey, #A79E9C)',
                                 color: 'var(--text-main)',
                                 fontSize: '0.75rem',
                                 padding: '0.15rem 0.45rem',
@@ -227,7 +227,7 @@ export const MentorDiscoveryView = () => {
                       )}
                     </div>
 
-                    <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ borderTop: '1px solid var(--color-taupe-grey, #A79E9C)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'flex-end' }}>
                       <button
                         onClick={() => handleOpenModal(m)}
                         className="btn-primary"
@@ -292,7 +292,7 @@ export const MentorDiscoveryView = () => {
               maxHeight: '90vh',
               overflowY: 'auto',
               padding: '1.5rem',
-              backgroundColor: '#ffffff',
+              backgroundColor: 'var(--color-bg-surface)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -316,10 +316,10 @@ export const MentorDiscoveryView = () => {
               <div
                 style={{
                   padding: '0.65rem 0.85rem',
-                  backgroundColor: 'rgba(114, 16, 16, 0.08)',
-                  border: '1px solid rgba(114, 16, 16, 0.25)',
+                  backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                  border: '1px solid rgba(220, 38, 38, 0.25)',
                   borderRadius: '6px',
-                  color: 'var(--color-burgundy-red, #721010)',
+                  color: '#dc2626',
                   marginBottom: '1rem',
                   fontSize: '0.8125rem',
                 }}
@@ -358,7 +358,7 @@ export const MentorDiscoveryView = () => {
                   style={{
                     width: '100%',
                     padding: '0.55rem',
-                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    border: '1px solid var(--color-taupe-grey, #A79E9C)',
                     borderRadius: '6px',
                     fontSize: '0.875rem',
                     boxSizing: 'border-box',
@@ -378,7 +378,7 @@ export const MentorDiscoveryView = () => {
                   style={{
                     width: '100%',
                     padding: '0.55rem',
-                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    border: '1px solid var(--color-taupe-grey, #A79E9C)',
                     borderRadius: '6px',
                     fontSize: '0.875rem',
                     boxSizing: 'border-box',

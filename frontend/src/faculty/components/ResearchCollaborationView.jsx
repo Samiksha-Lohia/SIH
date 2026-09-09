@@ -129,10 +129,10 @@ export const ResearchCollaborationView = () => {
         <div
           style={{
             padding: '1rem 1.25rem',
-            backgroundColor: 'rgba(114, 16, 16, 0.08)',
-            border: '1px solid rgba(114, 16, 16, 0.25)',
+            backgroundColor: 'rgba(220, 38, 38, 0.08)',
+            border: '1px solid rgba(220, 38, 38, 0.25)',
             borderRadius: '6px',
-            color: 'var(--color-burgundy-red, #721010)',
+            color: '#dc2626',
           }}
         >
           <h4 style={{ margin: '0 0 0.25rem', fontSize: '0.9rem', fontWeight: 600 }}>Error Loading Collaborations</h4>
@@ -150,9 +150,9 @@ export const ResearchCollaborationView = () => {
                   style={{
                     padding: '3.5rem',
                     textAlign: 'center',
-                    backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                    backgroundColor: 'var(--color-sand-light, #D3C3B9)',
                     borderRadius: '6px',
-                    border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
+                    border: '1px dashed var(--color-taupe-grey, #A79E9C)',
                     color: 'var(--text-muted)',
                   }}
                 >
@@ -181,8 +181,8 @@ export const ResearchCollaborationView = () => {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                               <span
                                 style={{
-                                  backgroundColor: 'var(--color-mist-green, #E0E4DE)',
-                                  color: 'var(--color-burgundy-red, #721010)',
+                                  backgroundColor: 'var(--color-sand-light, #D3C3B9)',
+                                  color: 'var(--color-caramel, #B58863)',
                                   fontSize: '0.7rem',
                                   padding: '0.15rem 0.45rem',
                                   borderRadius: '4px',
@@ -216,8 +216,8 @@ export const ResearchCollaborationView = () => {
                                 <span
                                   key={i}
                                   style={{
-                                    backgroundColor: 'var(--color-mist-green, #E0E4DE)',
-                                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                                    backgroundColor: 'var(--color-sand-light, #D3C3B9)',
+                                    border: '1px solid var(--color-taupe-grey, #A79E9C)',
                                     color: 'var(--text-main)',
                                     fontSize: '0.7rem',
                                     padding: '0.15rem 0.45rem',
@@ -231,7 +231,7 @@ export const ResearchCollaborationView = () => {
                           )}
                         </div>
 
-                        <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ borderTop: '1px solid var(--color-taupe-grey, #A79E9C)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <span style={{ fontSize: '0.8125rem', color: 'var(--text-main)', fontWeight: 600 }}>
                             {opp.honorarium ? `₹${opp.honorarium.toLocaleString()} Grant` : 'Grant Supported'}
                           </span>
@@ -272,9 +272,9 @@ export const ResearchCollaborationView = () => {
                   style={{
                     padding: '3.5rem',
                     textAlign: 'center',
-                    backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                    backgroundColor: 'var(--color-sand-light, #D3C3B9)',
                     borderRadius: '6px',
-                    border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
+                    border: '1px dashed var(--color-taupe-grey, #A79E9C)',
                     color: 'var(--text-muted)',
                   }}
                 >
@@ -301,8 +301,8 @@ export const ResearchCollaborationView = () => {
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.35rem' }}>
                             <span
                               style={{
-                                backgroundColor: 'var(--color-mist-green, #E0E4DE)',
-                                color: 'var(--color-burgundy-red, #721010)',
+                                backgroundColor: 'var(--color-sand-light, #D3C3B9)',
+                                color: 'var(--color-caramel, #B58863)',
                                 fontSize: '0.7rem',
                                 padding: '0.15rem 0.45rem',
                                 borderRadius: '4px',
@@ -329,8 +329,8 @@ export const ResearchCollaborationView = () => {
                                 <span
                                   key={i}
                                   style={{
-                                    backgroundColor: 'var(--color-mist-green, #E0E4DE)',
-                                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                                    backgroundColor: 'var(--color-sand-light, #D3C3B9)',
+                                    border: '1px solid var(--color-taupe-grey, #A79E9C)',
                                     color: 'var(--text-main)',
                                     fontSize: '0.7rem',
                                     padding: '0.15rem 0.45rem',
@@ -344,7 +344,7 @@ export const ResearchCollaborationView = () => {
                           )}
                         </div>
 
-                        <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ borderTop: '1px solid var(--color-taupe-grey, #A79E9C)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
                             {proj.openings || 1} Student Team Slots
                           </span>
@@ -382,11 +382,11 @@ export const ResearchCollaborationView = () => {
             className="card"
             style={{
               width: '100%',
-              maxWidth: 'min(95vw, 500px)',
+              maxWidth: 'min(95vw, 540px)',
               maxHeight: '90vh',
               overflowY: 'auto',
               padding: '1.5rem',
-              backgroundColor: '#ffffff',
+              backgroundColor: 'var(--color-bg-surface)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -403,7 +403,8 @@ export const ResearchCollaborationView = () => {
             </div>
 
             <p style={{ margin: '0 0 1rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-              Initiative: <strong style={{ color: 'var(--text-main)' }}>{selectedItem.title}</strong>
+              Target Opportunity: <strong style={{ color: 'var(--text-main)' }}>{selectedItem.title}</strong>
+              {selectedItem.providerName && ` (${selectedItem.providerName})`}
             </p>
 
             {(() => {
@@ -426,7 +427,7 @@ export const ResearchCollaborationView = () => {
                   }}
                 >
                   <span>✓</span>
-                  <span>You have already submitted a proposal / applied for this research initiative.</span>
+                  <span>You have already submitted a proposal for this collaboration project.</span>
                 </div>
               );
             })()}
@@ -435,10 +436,10 @@ export const ResearchCollaborationView = () => {
               <div
                 style={{
                   padding: '0.65rem 0.85rem',
-                  backgroundColor: 'rgba(114, 16, 16, 0.08)',
-                  border: '1px solid rgba(114, 16, 16, 0.25)',
+                  backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                  border: '1px solid rgba(220, 38, 38, 0.25)',
                   borderRadius: '6px',
-                  color: 'var(--color-burgundy-red, #721010)',
+                  color: '#dc2626',
                   marginBottom: '1rem',
                   fontSize: '0.8125rem',
                 }}
@@ -476,7 +477,7 @@ export const ResearchCollaborationView = () => {
                 style={{
                   width: '100%',
                   padding: '0.6rem',
-                  border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                  border: '1px solid var(--color-taupe-grey, #A79E9C)',
                   borderRadius: '6px',
                   fontSize: '0.875rem',
                   resize: 'vertical',

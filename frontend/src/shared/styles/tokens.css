@@ -1,61 +1,77 @@
 /**
  * SUTRA Design System Tokens
- * Curated Palette:
- * - Sky Blue: #B7CCE3
- * - Burgundy Red: #721010
- * - Mist Green: #E0E4DE
- * - Pebble Grey: #BCBDB8
- * - Steel Blue: #8DA1B9
+ * Curated Palette (Light Dominant):
+ * - Obsidian Slate: #10232A
+ * - Slate Steel: #3D4D55
+ * - Taupe Grey: #A79E9C
+ * - Almond Sand (Dominant Light): #D3C3B9
+ * - Warm Caramel: #B58863
+ * - Charcoal Black: #161616
  */
 
 :root {
-  /* ---------------- Core Palette Tokens ---------------- */
-  --color-sky-blue: #b7cce3;
-  --color-sky-blue-light: #e8eff7;
-  --color-sky-blue-hover: #9bb7d4;
+  /* ---------------- Core New Palette Tokens ---------------- */
+  --color-obsidian: #10232a;
+  --color-slate-steel: #3d4d55;
+  --color-taupe-grey: #a79e9c;
+  --color-sand-light: #d3c3b9;
+  --color-caramel: #b58863;
+  --color-charcoal: #161616;
 
-  --color-burgundy-red: #721010;
-  --color-burgundy-hover: #580d0d;
-  --color-burgundy-light: #faecec;
-  --color-burgundy-muted: #8d1c1c;
+  /* Variations of dominant light sand & warm caramel */
+  --color-sand-bg: #faf7f4;
+  --color-sand-subtle: #f3ece6;
+  --color-sand-hover: #c4b3a8;
+  --color-caramel-hover: #9e7350;
+  --color-caramel-light: rgba(181, 136, 99, 0.12);
 
-  --color-mist-green: #e0e4de;
-  --color-mist-light: #f3f6f2;
-  --color-mist-dark: #c4cdc0;
+  /* ---------------- Backward Compatible Aliases ---------------- */
+  --color-burgundy-red: var(--color-caramel);
+  --color-burgundy-hover: var(--color-caramel-hover);
+  --color-burgundy-light: var(--color-caramel-light);
+  --color-burgundy-muted: var(--color-caramel-hover);
 
-  --color-pebble-grey: #bcbdb8;
-  --color-pebble-light: #e6e7e4;
-  --color-pebble-dark: #8c8e87;
+  --color-mist-green: var(--color-sand-light);
+  --color-mist-light: var(--color-sand-subtle);
+  --color-mist-dark: var(--color-sand-hover);
 
-  --color-steel-blue: #8da1b9;
-  --color-steel-light: #dbe3ed;
-  --color-steel-dark: #5c6f87;
+  --color-pebble-grey: var(--color-taupe-grey);
+  --color-pebble-light: #e8e2de;
+  --color-pebble-dark: #78706d;
+
+  --color-steel-blue: var(--color-slate-steel);
+  --color-steel-light: rgba(61, 77, 85, 0.12);
+  --color-steel-dark: var(--color-obsidian);
+
+  --color-sky-blue: var(--color-sand-light);
+  --color-sky-blue-light: var(--color-sand-subtle);
+  --color-sky-blue-hover: var(--color-sand-hover);
 
   /* ---------------- Semantic Tokens ---------------- */
-  --color-primary: var(--color-burgundy-red);
-  --color-primary-hover: var(--color-burgundy-hover);
-  --color-primary-subtle: var(--color-burgundy-light);
+  --color-primary: var(--color-caramel);
+  --color-primary-hover: var(--color-caramel-hover);
+  --color-primary-subtle: var(--color-caramel-light);
   --color-primary-contrast: #ffffff;
 
-  --color-secondary: var(--color-steel-blue);
-  --color-secondary-hover: var(--color-steel-dark);
-  --color-secondary-subtle: var(--color-steel-light);
+  --color-secondary: var(--color-slate-steel);
+  --color-secondary-hover: var(--color-obsidian);
+  --color-secondary-subtle: rgba(61, 77, 85, 0.1);
 
-  --color-accent: var(--color-sky-blue);
-  --color-accent-subtle: var(--color-sky-blue-light);
+  --color-accent: var(--color-caramel);
+  --color-accent-subtle: var(--color-caramel-light);
 
-  --color-bg-app: #f7f9f7;
+  --color-bg-app: var(--color-sand-bg);
   --color-bg-surface: #ffffff;
-  --color-bg-subtle: var(--color-mist-light);
+  --color-bg-subtle: var(--color-sand-subtle);
   --color-bg-elevated: #ffffff;
 
-  --color-border: #dbe1d9;
-  --color-border-subtle: #eaeee8;
-  --color-border-focus: var(--color-steel-blue);
+  --color-border: var(--color-sand-light);
+  --color-border-subtle: #e8e1da;
+  --color-border-focus: var(--color-caramel);
 
-  --color-text-primary: #1e2420;
-  --color-text-secondary: #4d564f;
-  --color-text-muted: #747f76;
+  --color-text-primary: var(--color-charcoal);
+  --color-text-secondary: var(--color-slate-steel);
+  --color-text-muted: #78706d;
   --color-text-inverse: #ffffff;
 
   /* Status Colors */
@@ -63,10 +79,10 @@
   --color-success-bg: #eaf5ee;
   --color-warning: #946000;
   --color-warning-bg: #fef8eb;
-  --color-danger: var(--color-burgundy-red);
-  --color-danger-bg: var(--color-burgundy-light);
-  --color-info: var(--color-steel-dark);
-  --color-info-bg: var(--color-steel-light);
+  --color-danger: #c53030;
+  --color-danger-bg: #fdf2f2;
+  --color-info: var(--color-slate-steel);
+  --color-info-bg: rgba(61, 77, 85, 0.12);
 
   /* ---------------- Typography ---------------- */
   --font-family-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -129,4 +145,99 @@
   --bp-laptop: 1024px;
   --bp-desktop: 1280px;
   --touch-target-min: 44px;
+}
+
+/* ==========================================================================
+   Dark Theme Tokens
+   Curated 6-Color System (Dark Dominant):
+   - Obsidian Slate: #10232A (Dominant dark canvas & surfaces)
+   - Slate Steel: #3D4D55 (Structural borders & secondary elements)
+   - Taupe Grey: #A79E9C (Muted text & dividers)
+   - Almond Sand: #D3C3B9 (Secondary text & warm highlights)
+   - Warm Caramel: #B58863 (Vibrant primary CTA & active states)
+   - Charcoal Black: #161616 (Deep shadows & dark accents)
+   ========================================================================== */
+
+[data-theme="dark"] {
+  /* ---------------- Core Palette Tokens (Dark Mode) ---------------- */
+  --color-obsidian: #10232a;
+  --color-slate-steel: #3d4d55;
+  --color-taupe-grey: #a79e9c;
+  --color-sand-light: #20333c;
+  --color-caramel: #b58863;
+  --color-charcoal: #f3ece6;
+
+  /* Variations */
+  --color-sand-bg: #0d171c;
+  --color-sand-subtle: #15252d;
+  --color-sand-hover: #1f3540;
+  --color-caramel-hover: #c99a74;
+  --color-caramel-light: rgba(181, 136, 99, 0.2);
+
+  /* ---------------- Semantic Tokens (Dark Mode) ---------------- */
+  --color-primary: var(--color-caramel);
+  --color-primary-hover: #c99a74;
+  --color-primary-subtle: rgba(181, 136, 99, 0.22);
+  --color-primary-contrast: #ffffff;
+
+  --color-secondary: #3d4d55;
+  --color-secondary-hover: #4e626c;
+  --color-secondary-subtle: rgba(61, 77, 85, 0.35);
+
+  --color-accent: var(--color-caramel);
+  --color-accent-subtle: rgba(181, 136, 99, 0.2);
+
+  --color-bg-app: #0c161a;
+  --color-bg-surface: #122127;
+  --color-bg-subtle: #172a32;
+  --color-bg-elevated: #1c323c;
+
+  --color-border: #273b44;
+  --color-border-subtle: #1c2e36;
+  --color-border-hover: #4a616d;
+  --color-border-focus: var(--color-caramel);
+
+  --color-text-primary: #f5ede6;
+  --color-text-secondary: #d3c3b9;
+  --color-text-muted: #8c9fa9;
+  --color-text-inverse: #0c161a;
+
+  /* ---------------- Backward Compatible Aliases (Dark Mode) ---------------- */
+  --color-burgundy-red: var(--color-caramel);
+  --color-burgundy-hover: #c99a74;
+  --color-burgundy-light: rgba(181, 136, 99, 0.2);
+  --color-burgundy-muted: #c99a74;
+
+  --color-mist-green: #172a32;
+  --color-mist-light: #13242b;
+  --color-mist-dark: #1e353f;
+
+  --color-pebble-grey: #273b44;
+  --color-pebble-light: #1c2e36;
+  --color-pebble-dark: #8c9fa9;
+
+  --color-steel-blue: #4a616d;
+  --color-steel-light: rgba(74, 97, 109, 0.25);
+  --color-steel-dark: #d3c3b9;
+
+  --color-sky-blue: #20333c;
+  --color-sky-blue-light: #15252d;
+  --color-sky-blue-hover: #29414d;
+
+  /* Status Colors (Dark Mode) */
+  --color-success: #34d399;
+  --color-success-bg: rgba(52, 211, 153, 0.14);
+  --color-warning: #fbbf24;
+  --color-warning-bg: rgba(251, 191, 36, 0.14);
+  --color-danger: #f87171;
+  --color-danger-bg: rgba(248, 113, 113, 0.16);
+  --color-info: #60a5fa;
+  --color-info-bg: rgba(96, 165, 250, 0.14);
+
+  /* Shadows (Dark Mode) */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55);
+  --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.4);
 }

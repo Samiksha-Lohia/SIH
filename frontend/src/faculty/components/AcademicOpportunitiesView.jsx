@@ -129,7 +129,7 @@ export const AcademicOpportunitiesView = () => {
               flex: 1,
               minWidth: '240px',
               padding: '0.55rem 0.85rem',
-              border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+              border: '1px solid var(--color-taupe-grey, #A79E9C)',
               borderRadius: '6px',
               fontSize: '0.875rem',
             }}
@@ -148,7 +148,7 @@ export const AcademicOpportunitiesView = () => {
           <select
             value={selectedType}
             onChange={(e) => { setSelectedType(e.target.value); setCurrentPage(1); }}
-            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--color-pebble-grey, #BCBDB8)' }}
+            style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--color-taupe-grey, #A79E9C)' }}
           >
             {TYPE_TABS.map((tab) => (
               <option key={tab.id} value={tab.id}>{tab.label}</option>
@@ -185,10 +185,10 @@ export const AcademicOpportunitiesView = () => {
         <div
           style={{
             padding: '1rem 1.25rem',
-            backgroundColor: 'rgba(114, 16, 16, 0.08)',
-            border: '1px solid rgba(114, 16, 16, 0.25)',
+            backgroundColor: 'rgba(220, 38, 38, 0.08)',
+            border: '1px solid rgba(220, 38, 38, 0.25)',
             borderRadius: '6px',
-            color: 'var(--color-burgundy-red, #721010)',
+            color: '#dc2626',
           }}
         >
           <h4 style={{ margin: '0 0 0.25rem', fontSize: '0.9rem', fontWeight: 600 }}>Error Loading Postings</h4>
@@ -204,9 +204,9 @@ export const AcademicOpportunitiesView = () => {
               style={{
                 padding: '3.5rem',
                 textAlign: 'center',
-                backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                backgroundColor: 'var(--color-sand-light, #D3C3B9)',
                 borderRadius: '6px',
-                border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
+                border: '1px dashed var(--color-taupe-grey, #A79E9C)',
                 color: 'var(--text-muted)',
               }}
             >
@@ -238,8 +238,8 @@ export const AcademicOpportunitiesView = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                           <span
                             style={{
-                              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
-                              color: 'var(--color-burgundy-red, #721010)',
+                              backgroundColor: 'var(--color-sand-light, #D3C3B9)',
+                              color: 'var(--color-caramel, #B58863)',
                               fontSize: '0.7rem',
                               padding: '0.15rem 0.45rem',
                               borderRadius: '4px',
@@ -285,8 +285,8 @@ export const AcademicOpportunitiesView = () => {
                             <span
                               key={aIdx}
                               style={{
-                                backgroundColor: 'var(--color-mist-green, #E0E4DE)',
-                                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                                backgroundColor: 'var(--color-sand-light, #D3C3B9)',
+                                border: '1px solid var(--color-taupe-grey, #A79E9C)',
                                 color: 'var(--text-main)',
                                 fontSize: '0.7rem',
                                 padding: '0.15rem 0.45rem',
@@ -300,7 +300,7 @@ export const AcademicOpportunitiesView = () => {
                       )}
                     </div>
 
-                    <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ borderTop: '1px solid var(--color-taupe-grey, #A79E9C)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
                         <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Remuneration:</div>
                         <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-main)' }}>{honorarium}</div>
@@ -386,7 +386,7 @@ export const AcademicOpportunitiesView = () => {
               maxHeight: '90vh',
               overflowY: 'auto',
               padding: '1.5rem',
-              backgroundColor: '#ffffff',
+              backgroundColor: 'var(--color-bg-surface)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -435,10 +435,10 @@ export const AcademicOpportunitiesView = () => {
               <div
                 style={{
                   padding: '0.65rem 0.85rem',
-                  backgroundColor: 'rgba(114, 16, 16, 0.08)',
-                  border: '1px solid rgba(114, 16, 16, 0.25)',
+                  backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                  border: '1px solid rgba(220, 38, 38, 0.25)',
                   borderRadius: '6px',
-                  color: 'var(--color-burgundy-red, #721010)',
+                  color: '#dc2626',
                   marginBottom: '1rem',
                   fontSize: '0.8125rem',
                 }}
@@ -476,7 +476,7 @@ export const AcademicOpportunitiesView = () => {
                 style={{
                   width: '100%',
                   padding: '0.6rem',
-                  border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                  border: '1px solid var(--color-taupe-grey, #A79E9C)',
                   borderRadius: '6px',
                   fontSize: '0.875rem',
                   resize: 'vertical',
