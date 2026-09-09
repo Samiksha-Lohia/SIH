@@ -1,0 +1,1496 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { studentApi } from '../student.api.js';
+
+const PROFICIENCY_LEVELS = ['beginner', 'intermediate', 'advanced', 'expert'];
+const WORK_MODES = ['remote', 'onsite', 'hybrid'];
+
+function formatTimer(totalSeconds) {
+  const mins = Math.floor(totalSeconds / 60);
+  const secs = totalSeconds % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+export function StudentProfileView({ onProfileUpdated }) {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [feedback, setFeedback] = useState(null);
+
+  // Active sub-section
+  const [activeSection, setActiveSection] = useState('skills');
+
+  // Voice / Text AI assistant state
+  const [transcript, setTranscript] = useState('');
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [voiceResult, setVoiceResult] = useState(null);
+
+  // Audio Recording & Groq Whisper state
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const timerIntervalRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const streamRef = useRef(null);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    branch: '',
+    semester: '',
+    graduationYear: '',
+    skills: [],
+    softSkills: [],
+    projects: [],
+    certifications: [],
+    achievements: [],
+    careerGoals: { targetRoles: [], preferredIndustries: [], summary: '' },
+    preferences: { workMode: '', locations: [], stipendExpectation: '' },
+    portfolio: { resumeUrl: '', github: '', linkedin: '', website: '' },
+  });
+
+  // Temporary inputs for array additions
+  const [newSkill, setNewSkill] = useState({ name: '', level: 'intermediate' });
+  const [newSoftSkill, setNewSoftSkill] = useState({ name: '', level: 'intermediate' });
+  const [newTargetRole, setNewTargetRole] = useState('');
+  const [newLocation, setNewLocation] = useState('');
+  const [newProject, setNewProject] = useState({ title: '', description: '', techStack: '', link: '', role: '' });
+  const [newCert, setNewCert] = useState({ name: '', issuer: '', credentialId: '', url: '' });
+
+  const activeUserId = user?.id || user?._id || profile?.user;
+
+  const syncFormDataFromProfile = useCallback((p) => {
+    if (!p) return;
+    setFormData({
+      branch: p.branch || '',
+      semester: p.semester || '',
+      graduationYear: p.graduationYear || '',
+      skills: p.skills || [],
+      softSkills: p.softSkills || [],
+      projects: p.projects || [],
+      certifications: p.certifications || [],
+      achievements: p.achievements || [],
+      careerGoals: {
+        targetRoles: p.careerGoals?.targetRoles || [],
+        preferredIndustries: p.careerGoals?.preferredIndustries || [],
+        summary: p.careerGoals?.summary || '',
+      },
+      preferences: {
+        workMode: p.preferences?.workMode || '',
+        locations: p.preferences?.locations || [],
+        stipendExpectation: p.preferences?.stipendExpectation || '',
+      },
+      portfolio: {
+        resumeUrl: p.portfolio?.resumeUrl || '',
+        github: p.portfolio?.github || '',
+        linkedin: p.portfolio?.linkedin || '',
+        website: p.portfolio?.website || '',
+      },
+    });
+  }, []);
+
+  const loadProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await studentApi.getMyProfile();
+      if (res?.profile) {
+        setProfile(res.profile);
+        syncFormDataFromProfile(res.profile);
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to load profile');
+    } finally {
+      setLoading(false);
+    }
+  }, [syncFormDataFromProfile]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
+
+  // Cleanup media recording on unmount
+  useEffect(() => {
+    return () => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+      if (streamRef.current) streamRef.current.getTracks().forEach((t) => t.stop());
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch {}
+      }
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+    };
+  }, [audioUrl]);
+
+  const startRecording = async () => {
+    try {
+      setError(null);
+      setFeedback(null);
+      audioChunksRef.current = [];
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm')
+        ? 'audio/webm'
+        : MediaRecorder.isTypeSupported('audio/mp4')
+        ? 'audio/mp4'
+        : '';
+
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          audioChunksRef.current.push(e.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const type = recorder.mimeType || 'audio/webm';
+        const blob = new Blob(audioChunksRef.current, { type });
+        setAudioBlob(blob);
+        if (audioUrl) URL.revokeObjectURL(audioUrl);
+        const url = URL.createObjectURL(blob);
+        setAudioUrl(url);
+      };
+
+      recorder.start(250);
+      setIsRecording(true);
+      setRecordingTime(0);
+
+      timerIntervalRef.current = setInterval(() => {
+        setRecordingTime((prev) => prev + 1);
+      }, 1000);
+
+      // Start browser live speech preview in parallel
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        try {
+          const rec = new SpeechRec();
+          rec.continuous = true;
+          rec.interimResults = true;
+          rec.lang = 'en-US';
+          rec.onresult = (e) => {
+            let fullText = '';
+            for (let i = 0; i < e.results.length; i++) {
+              fullText += e.results[i][0].transcript + ' ';
+            }
+            if (fullText.trim()) {
+              setTranscript(fullText.trim());
+            }
+          };
+          rec.onerror = () => {};
+          rec.start();
+          recognitionRef.current = rec;
+        } catch {}
+      }
+    } catch (err) {
+      console.error('Microphone error:', err);
+      setFeedback({
+        type: 'error',
+        message: 'Could not access microphone. Please allow microphone permissions or type your narrative below.',
+      });
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch {}
+      recognitionRef.current = null;
+    }
+    setIsRecording(false);
+  };
+
+  const resetRecording = () => {
+    stopRecording();
+    setAudioBlob(null);
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    setAudioUrl(null);
+    setRecordingTime(0);
+  };
+
+  const handleSave = async () => {
+    const targetUserId = activeUserId;
+    if (!targetUserId) {
+      setFeedback({ type: 'error', message: 'User session not ready. Please refresh or re-login.' });
+      return;
+    }
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const payload = {
+        ...formData,
+        semester: formData.semester ? Number(formData.semester) : undefined,
+        graduationYear: formData.graduationYear ? Number(formData.graduationYear) : undefined,
+        preferences: {
+          ...formData.preferences,
+          stipendExpectation: formData.preferences.stipendExpectation
+            ? Number(formData.preferences.stipendExpectation)
+            : undefined,
+        },
+      };
+
+      const updated = await studentApi.updateStudentProfile(targetUserId, payload);
+      setProfile(updated);
+      setFeedback({ type: 'success', message: 'Profile updated successfully! Completeness recalculated.' });
+      if (onProfileUpdated) onProfileUpdated(updated);
+    } catch (err) {
+      setFeedback({ type: 'error', message: err.message || 'Failed to update profile' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleVoiceTranscribe = async (autoMerge = false) => {
+    const targetUserId = activeUserId;
+    if (!targetUserId) {
+      setFeedback({ type: 'error', message: 'User session not ready. Please refresh or re-login.' });
+      return;
+    }
+    if (!audioBlob && !transcript.trim()) {
+      setFeedback({
+        type: 'error',
+        message: 'Please record voice audio using the microphone or type narrative text before transcribing.',
+      });
+      return;
+    }
+
+    setIsTranscribing(true);
+    setFeedback(null);
+
+    try {
+      const res = await studentApi.transcribeVoice(targetUserId, {
+        audioBlob,
+        transcript: transcript.trim(),
+        autoMerge,
+      });
+
+      if (res.transcript && (!transcript || !transcript.trim())) {
+        setTranscript(res.transcript);
+      }
+
+      setVoiceResult(res.extracted);
+
+      if (autoMerge && res.profile) {
+        setProfile(res.profile);
+        syncFormDataFromProfile(res.profile);
+        setFeedback({
+          type: 'success',
+          message: `✨ Voice transcribed via Groq Whisper and automatically merged! Extracted ${res.extracted?.skills?.length || 0} skills and ${res.extracted?.softSkills?.length || 0} soft skills.`,
+        });
+        if (onProfileUpdated) onProfileUpdated(res.profile);
+      } else {
+        setFeedback({
+          type: 'success',
+          message: `🎙️ Voice transcribed successfully! Review extracted competencies below and click "Merge Extracted Skills" to commit.`,
+        });
+      }
+    } catch (err) {
+      // Fallback: If backend Groq Whisper key is absent but transcript exists, fallback to text extraction
+      if (transcript.trim()) {
+        try {
+          const fallbackRes = await studentApi.extractVoiceProfile(targetUserId, transcript.trim(), autoMerge);
+          setVoiceResult(fallbackRes.extracted);
+          if (autoMerge && fallbackRes.profile) {
+            setProfile(fallbackRes.profile);
+            syncFormDataFromProfile(fallbackRes.profile);
+            setFeedback({
+              type: 'success',
+              message: '✨ Extracted keywords and automatically merged into profile!',
+            });
+            if (onProfileUpdated) onProfileUpdated(fallbackRes.profile);
+          } else {
+            setFeedback({
+              type: 'success',
+              message: 'Narrative extracted! Review proposed skills below.',
+            });
+          }
+          return;
+        } catch (innerErr) {
+          console.error(innerErr);
+        }
+      }
+      setFeedback({ type: 'error', message: err.message || 'Voice transcription failed' });
+    } finally {
+      setIsTranscribing(false);
+    }
+  };
+
+  const handleVoiceExtract = async (autoMerge = false) => {
+    const targetUserId = activeUserId;
+    if (!targetUserId) {
+      setFeedback({ type: 'error', message: 'User session not ready. Please refresh or re-login.' });
+      return;
+    }
+    if (!transcript.trim()) {
+      setFeedback({ type: 'error', message: 'Please enter some narrative text first.' });
+      return;
+    }
+
+    setIsExtracting(true);
+    setFeedback(null);
+    try {
+      const res = await studentApi.extractVoiceProfile(targetUserId, transcript.trim(), autoMerge);
+      setVoiceResult(res.extracted);
+      if (autoMerge && res.profile) {
+        setProfile(res.profile);
+        syncFormDataFromProfile(res.profile);
+        setFeedback({
+          type: 'success',
+          message: `✨ AI narrative analyzed and automatically merged into profile! (${res.extracted?.skills?.length || 0} skills added/updated)`,
+        });
+        if (onProfileUpdated) onProfileUpdated(res.profile);
+      } else {
+        setFeedback({
+          type: 'success',
+          message: `✨ AI analyzed your text! Found ${res.extracted?.skills?.length || 0} skills and ${res.extracted?.softSkills?.length || 0} soft skills. Review proposal below.`,
+        });
+      }
+    } catch (err) {
+      setFeedback({ type: 'error', message: err.message || 'Voice/Text profile extraction failed' });
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
+  const applyVoiceProposal = async () => {
+    if (!voiceResult) return;
+    const targetUserId = activeUserId;
+
+    // Deduplicate technical skills by name
+    const existingSkills = [...formData.skills];
+    (voiceResult.skills || []).forEach((newS) => {
+      if (!newS?.name) return;
+      const idx = existingSkills.findIndex((s) => s.name?.toLowerCase() === newS.name?.toLowerCase());
+      if (idx >= 0) {
+        existingSkills[idx] = { ...existingSkills[idx], ...newS };
+      } else {
+        existingSkills.push(newS);
+      }
+    });
+
+    // Deduplicate soft skills by name
+    const existingSoftSkills = [...formData.softSkills];
+    (voiceResult.softSkills || []).forEach((newS) => {
+      if (!newS?.name) return;
+      const idx = existingSoftSkills.findIndex((s) => s.name?.toLowerCase() === newS.name?.toLowerCase());
+      if (idx >= 0) {
+        existingSoftSkills[idx] = { ...existingSoftSkills[idx], ...newS };
+      } else {
+        existingSoftSkills.push(newS);
+      }
+    });
+
+    // Merge target roles
+    const existingRoles = formData.careerGoals?.targetRoles || [];
+    const newRoles = voiceResult.careerGoals?.targetRoles || [];
+    const mergedTargetRoles = Array.from(new Set([...existingRoles, ...newRoles]));
+
+    // Merge projects
+    const existingProjects = [...formData.projects];
+    (voiceResult.projects || []).forEach((np) => {
+      if (np.title && !existingProjects.some((ep) => ep.title?.toLowerCase() === np.title?.toLowerCase())) {
+        existingProjects.push(np);
+      }
+    });
+
+    const updatedFormData = {
+      ...formData,
+      skills: existingSkills,
+      softSkills: existingSoftSkills,
+      projects: existingProjects,
+      certifications: voiceResult.certifications?.length
+        ? [...formData.certifications, ...voiceResult.certifications]
+        : formData.certifications,
+      careerGoals: {
+        ...formData.careerGoals,
+        targetRoles: mergedTargetRoles,
+        summary: voiceResult.careerGoals?.summary || formData.careerGoals?.summary || '',
+      },
+    };
+
+    setFormData(updatedFormData);
+    setVoiceResult(null);
+
+    // Save directly to backend database so changes persist immediately
+    if (targetUserId) {
+      setSaving(true);
+      try {
+        const payload = {
+          ...updatedFormData,
+          semester: updatedFormData.semester ? Number(updatedFormData.semester) : undefined,
+          graduationYear: updatedFormData.graduationYear ? Number(updatedFormData.graduationYear) : undefined,
+          preferences: {
+            ...updatedFormData.preferences,
+            stipendExpectation: updatedFormData.preferences.stipendExpectation
+              ? Number(updatedFormData.preferences.stipendExpectation)
+              : undefined,
+          },
+        };
+        const updated = await studentApi.updateStudentProfile(targetUserId, payload);
+        setProfile(updated);
+        setFeedback({
+          type: 'success',
+          message: '✨ Extracted competencies accepted and saved directly to your profile!',
+        });
+        if (onProfileUpdated) onProfileUpdated(updated);
+      } catch (err) {
+        setFeedback({
+          type: 'success',
+          message: 'Applied recommendations to form! Click "Save Profile Changes" below to commit.',
+        });
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      setFeedback({
+        type: 'success',
+        message: 'Applied recommendations to form! Click "Save Profile Changes" below to commit.',
+      });
+    }
+  };
+
+  // Helper additions
+  const addSkill = () => {
+    if (!newSkill.name.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      skills: [...prev.skills, { name: newSkill.name.trim(), level: newSkill.level }],
+    }));
+    setNewSkill({ name: '', level: 'intermediate' });
+  };
+
+  const removeSkill = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      skills: prev.skills.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addSoftSkill = () => {
+    if (!newSoftSkill.name.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      softSkills: [...prev.softSkills, { name: newSoftSkill.name.trim(), level: newSoftSkill.level }],
+    }));
+    setNewSoftSkill({ name: '', level: 'intermediate' });
+  };
+
+  const removeSoftSkill = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      softSkills: prev.softSkills.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addTargetRole = () => {
+    if (!newTargetRole.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      careerGoals: {
+        ...prev.careerGoals,
+        targetRoles: [...prev.careerGoals.targetRoles, newTargetRole.trim()],
+      },
+    }));
+    setNewTargetRole('');
+  };
+
+  const removeTargetRole = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      careerGoals: {
+        ...prev.careerGoals,
+        targetRoles: prev.careerGoals.targetRoles.filter((_, i) => i !== index),
+      },
+    }));
+  };
+
+  const addLocation = () => {
+    if (!newLocation.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      preferences: {
+        ...prev.preferences,
+        locations: [...prev.preferences.locations, newLocation.trim()],
+      },
+    }));
+    setNewLocation('');
+  };
+
+  const removeLocation = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      preferences: {
+        ...prev.preferences,
+        locations: prev.preferences.locations.filter((_, i) => i !== index),
+      },
+    }));
+  };
+
+  const addProject = () => {
+    if (!newProject.title.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      projects: [
+        ...prev.projects,
+        {
+          title: newProject.title.trim(),
+          description: newProject.description.trim(),
+          techStack: newProject.techStack ? newProject.techStack.split(',').map((s) => s.trim()).filter(Boolean) : [],
+          link: newProject.link.trim(),
+          role: newProject.role.trim(),
+        },
+      ],
+    }));
+    setNewProject({ title: '', description: '', techStack: '', link: '', role: '' });
+  };
+
+  const removeProject = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      projects: prev.projects.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addCertification = () => {
+    if (!newCert.name.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      certifications: [...prev.certifications, { ...newCert }],
+    }));
+    setNewCert({ name: '', issuer: '', credentialId: '', url: '' });
+  };
+
+  const removeCertification = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      certifications: prev.certifications.filter((_, i) => i !== index),
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div style={styles.stateBox}>
+        <div style={styles.spinner}></div>
+        <p>Loading student profile...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={styles.stateBox}>
+        <p style={{ color: 'var(--color-danger)', marginBottom: 'var(--space-2)' }}>{error}</p>
+        <button onClick={loadProfile} className="btn btn-primary">Try Again</button>
+      </div>
+    );
+  }
+
+  const renderAiVoiceAssistant = (isCompact = true) => (
+    <div
+      className="card"
+      style={{
+        marginBottom: 'var(--space-5)',
+        backgroundColor: 'var(--color-mist-light)',
+        border: '1px solid rgba(141, 161, 185, 0.35)',
+        borderRadius: 'var(--radius-lg)',
+        padding: 'var(--space-4)',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: 'var(--space-3)',
+        }}
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '20px' }}>🎙️</span>
+            <h4 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)' }}>
+              AI Voice & Narrative Skill Onboarding
+            </h4>
+            <span className="badge badge-sky" style={{ fontSize: '10px', textTransform: 'uppercase' }}>
+              Groq Whisper AI
+            </span>
+          </div>
+          <p
+            style={{
+              fontSize: 'var(--font-size-xs)',
+              color: 'var(--color-text-secondary)',
+              marginTop: '4px',
+              marginBottom: 0,
+            }}
+          >
+            Click the microphone to speak your skills, projects, and career story, or type a narrative below. SUTRA
+            transcribes your speech via Groq Whisper and extracts keywords automatically.
+          </p>
+        </div>
+
+        {/* Audio Recording Mic Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          {!isRecording ? (
+            <button
+              type="button"
+              onClick={startRecording}
+              className="btn btn-primary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: 'var(--font-size-xs)',
+                fontWeight: '600',
+                padding: '8px 16px',
+                boxShadow: '0 2px 8px rgba(128, 0, 32, 0.2)',
+              }}
+            >
+              <span>🎙️</span>
+              <span>Start Voice Recording</span>
+            </button>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '6px 14px',
+                  borderRadius: 'var(--radius-full)',
+                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  color: '#dc2626',
+                  fontWeight: '700',
+                  fontSize: 'var(--font-size-xs)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                }}
+              >
+                <span
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: '#dc2626',
+                    display: 'inline-block',
+                  }}
+                />
+                Recording live audio... {formatTimer(recordingTime)}
+              </div>
+              <button
+                type="button"
+                onClick={stopRecording}
+                className="btn btn-outline"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: 'var(--font-size-xs)',
+                  borderColor: '#dc2626',
+                  color: '#dc2626',
+                }}
+              >
+                ⏹️ Stop Recording
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Recorded Audio Preview & Transcribe Actions */}
+      {audioUrl && (
+        <div
+          style={{
+            marginTop: 'var(--space-3)',
+            padding: 'var(--space-3)',
+            backgroundColor: 'var(--color-bg-surface)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)' }}>
+              🎧 Audio Recording Preview ({formatTimer(recordingTime)}):
+            </span>
+            <button
+              type="button"
+              onClick={resetRecording}
+              className="btn btn-outline"
+              style={{ fontSize: '11px', padding: '2px 8px' }}
+            >
+              🔄 Re-record
+            </button>
+          </div>
+          <audio src={audioUrl} controls style={{ width: '100%', height: '36px' }} />
+          <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => handleVoiceTranscribe(false)}
+              disabled={isTranscribing}
+              className="btn btn-primary"
+              style={{ fontSize: 'var(--font-size-xs)' }}
+            >
+              {isTranscribing ? 'Transcribing with Groq Whisper...' : '⚡ Transcribe with Groq Whisper & Extract Words'}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleVoiceTranscribe(true)}
+              disabled={isTranscribing}
+              className="btn btn-outline"
+              style={{ fontSize: 'var(--font-size-xs)' }}
+            >
+              {isTranscribing ? 'Processing...' : '✨ Transcribe & Auto-Merge to Profile'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Narrative & Transcript Area */}
+      <div style={{ marginTop: 'var(--space-3)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+          <label style={{ ...styles.label, marginBottom: 0 }}>
+            {isRecording ? '🔴 Live Speech Transcript (Updating as you speak...)' : '📝 Spoken Transcript / Text Bio'}
+          </label>
+          {transcript && (
+            <button
+              type="button"
+              onClick={() => setTranscript('')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--color-text-muted)',
+                fontSize: '11px',
+                cursor: 'pointer',
+              }}
+            >
+              Clear text
+            </button>
+          )}
+        </div>
+        <textarea
+          value={transcript}
+          onChange={(e) => setTranscript(e.target.value)}
+          placeholder="Speak into the microphone or type/paste your narrative here (e.g. 'I am an engineering student skilled in React, Node.js, Python, MongoDB, and Docker with strong problem-solving skills, aiming for a Full Stack Developer role')..."
+          style={{
+            ...styles.input,
+            minHeight: isCompact ? '85px' : '120px',
+            backgroundColor: 'var(--color-bg-surface)',
+          }}
+        />
+        <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-2)', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => handleVoiceExtract(false)}
+            disabled={isExtracting || !transcript.trim()}
+            className="btn btn-primary"
+            style={{ fontSize: 'var(--font-size-xs)' }}
+          >
+            {isExtracting ? 'Analyzing Narrative...' : '⚡ Extract & Propose Skills'}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleVoiceExtract(true)}
+            disabled={isExtracting || !transcript.trim()}
+            className="btn btn-outline"
+            style={{ fontSize: 'var(--font-size-xs)' }}
+          >
+            {isExtracting ? 'Merging...' : '✨ Extract & Auto-Merge to Profile'}
+          </button>
+        </div>
+      </div>
+
+      {/* Extracted Words Proposal Card */}
+      {voiceResult && (
+        <div
+          className="card"
+          style={{
+            marginTop: 'var(--space-4)',
+            backgroundColor: 'var(--color-bg-surface)',
+            border: '1px solid var(--color-sky-light)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '8px',
+            }}
+          >
+            <h5 style={{ margin: 0, color: 'var(--color-primary)' }}>✨ Extracted Competencies & Important Words</h5>
+            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+              Source: {voiceResult._meta?.source || 'AI Whisper & NLP'}
+            </span>
+          </div>
+
+          {/* Technical Skills */}
+          <div style={{ margin: 'var(--space-2) 0' }}>
+            <strong style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+              Technical Skills ({voiceResult.skills?.length || 0}):
+            </strong>
+            <div style={styles.chipGrid}>
+              {voiceResult.skills?.map((s, i) => (
+                <span
+                  key={i}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '4px 10px',
+                    borderRadius: 'var(--radius-full)',
+                    backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                    border: '1px solid rgba(56, 189, 248, 0.35)',
+                    fontSize: '11px',
+                    color: 'var(--color-text-primary)',
+                  }}
+                >
+                  <strong>{s.name}</strong> <span style={{ opacity: 0.75 }}>({s.level})</span>
+                </span>
+              ))}
+              {(!voiceResult.skills || voiceResult.skills.length === 0) && (
+                <span style={styles.emptyPrompt}>None detected in this passage</span>
+              )}
+            </div>
+          </div>
+
+          {/* Soft Skills */}
+          <div style={{ margin: 'var(--space-2) 0' }}>
+            <strong style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+              Soft Skills ({voiceResult.softSkills?.length || 0}):
+            </strong>
+            <div style={styles.chipGrid}>
+              {voiceResult.softSkills?.map((s, i) => (
+                <span
+                  key={i}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '4px 10px',
+                    borderRadius: 'var(--radius-full)',
+                    backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                    border: '1px solid rgba(168, 85, 247, 0.35)',
+                    fontSize: '11px',
+                    color: 'var(--color-text-primary)',
+                  }}
+                >
+                  {s.name}
+                </span>
+              ))}
+              {(!voiceResult.softSkills || voiceResult.softSkills.length === 0) && (
+                <span style={styles.emptyPrompt}>None detected</span>
+              )}
+            </div>
+          </div>
+
+          {/* Target Roles */}
+          {voiceResult.careerGoals?.targetRoles?.length > 0 && (
+            <div style={{ margin: 'var(--space-2) 0' }}>
+              <strong style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+                Target Career Roles:
+              </strong>
+              <div style={styles.chipGrid}>
+                {voiceResult.careerGoals.targetRoles.map((r, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '4px 10px',
+                      borderRadius: 'var(--radius-full)',
+                      backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                      border: '1px solid rgba(34, 197, 94, 0.35)',
+                      fontSize: '11px',
+                      color: 'var(--color-text-primary)',
+                    }}
+                  >
+                    🎯 {r}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Summary */}
+          {voiceResult.careerGoals?.summary && (
+            <p
+              style={{
+                fontSize: 'var(--font-size-xs)',
+                fontStyle: 'italic',
+                color: 'var(--color-text-muted)',
+                margin: 'var(--space-2) 0',
+              }}
+            >
+              "{voiceResult.careerGoals.summary}"
+            </p>
+          )}
+
+          <div style={{ display: 'flex', gap: '8px', marginTop: 'var(--space-3)' }}>
+            <button
+              type="button"
+              onClick={applyVoiceProposal}
+              className="btn btn-primary"
+              style={{ fontSize: 'var(--font-size-xs)' }}
+            >
+              ✨ Merge Extracted Skills into Profile & Save
+            </button>
+            <button
+              type="button"
+              onClick={() => setVoiceResult(null)}
+              className="btn btn-outline"
+              style={{ fontSize: 'var(--font-size-xs)' }}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const completeness = profile?.completeness || 0;
+
+  return (
+    <div style={styles.container}>
+      {/* Feedback Banner */}
+      {feedback && (
+        <div
+          style={{
+            ...styles.feedbackBox,
+            backgroundColor: feedback.type === 'error' ? 'var(--color-danger-bg)' : 'var(--color-success-bg)',
+            color: feedback.type === 'error' ? 'var(--color-danger)' : 'var(--color-success)',
+          }}
+        >
+          <span>{feedback.message}</span>
+          <button onClick={() => setFeedback(null)} style={styles.closeFeedback}>×</button>
+        </div>
+      )}
+
+      {/* Section Navigation */}
+      <div className="card" style={{ padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-surface)' }}>
+        <div style={styles.subNavBar}>
+          {[
+            { id: 'academic', label: '🎓 Academic & Education' },
+            { id: 'skills', label: '⚡ Skills & Competencies' },
+            { id: 'projects', label: '🚀 Projects & Certs' },
+            { id: 'goals', label: '🎯 Career Goals & Preferences' },
+            { id: 'links', label: '🔗 Portfolio & Social' },
+            { id: 'ai-voice', label: '🎙️ AI Voice / Text Onboarding' },
+          ].map((sec) => (
+            <button
+              key={sec.id}
+              onClick={() => setActiveSection(sec.id)}
+              style={{
+                ...styles.subTabButton,
+                ...(activeSection === sec.id ? styles.activeSubTab : {}),
+              }}
+            >
+              {sec.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Edit Body */}
+      <div className="card" style={styles.bodyCard}>
+        {/* Section 1: Academic */}
+        {activeSection === 'academic' && (
+          <div style={styles.formSection}>
+            <h4 style={styles.sectionHeading}>Academic Information</h4>
+            <div style={styles.grid2}>
+              <div>
+                <label style={styles.label}>Branch / Major</label>
+                <input
+                  type="text"
+                  value={formData.branch}
+                  onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                  placeholder="e.g. Computer Science and Engineering"
+                  style={styles.input}
+                />
+              </div>
+
+              <div>
+                <label style={styles.label}>Current Semester</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="12"
+                  value={formData.semester}
+                  onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
+                  placeholder="e.g. 6"
+                  style={styles.input}
+                />
+              </div>
+
+              <div>
+                <label style={styles.label}>Expected Graduation Year</label>
+                <input
+                  type="number"
+                  min="2020"
+                  max="2035"
+                  value={formData.graduationYear}
+                  onChange={(e) => setFormData({ ...formData, graduationYear: e.target.value })}
+                  placeholder="e.g. 2026"
+                  style={styles.input}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Section 2: Skills */}
+        {activeSection === 'skills' && (
+          <div style={styles.formSection}>
+            {renderAiVoiceAssistant(true)}
+
+            <h4 style={styles.sectionHeading}>Technical Skills</h4>
+            <div style={styles.addInlineRow}>
+              <input
+                type="text"
+                value={newSkill.name}
+                onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
+                placeholder="Skill name (e.g. React, Python, Docker)"
+                style={{ ...styles.input, flex: 2 }}
+              />
+              <select
+                value={newSkill.level}
+                onChange={(e) => setNewSkill({ ...newSkill, level: e.target.value })}
+                style={{ ...styles.select, flex: 1 }}
+              >
+                {PROFICIENCY_LEVELS.map((lvl) => (
+                  <option key={lvl} value={lvl}>{lvl}</option>
+                ))}
+              </select>
+              <button onClick={addSkill} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                Add Skill
+              </button>
+            </div>
+
+            <div style={styles.chipGrid}>
+              {formData.skills.map((s, idx) => (
+                <div key={idx} style={styles.skillChip}>
+                  <span><strong>{s.name}</strong> ({s.level})</span>
+                  <button onClick={() => removeSkill(idx)} style={styles.chipRemove}>×</button>
+                </div>
+              ))}
+              {formData.skills.length === 0 && (
+                <p style={styles.emptyPrompt}>No technical skills added yet.</p>
+              )}
+            </div>
+
+            <h4 style={{ ...styles.sectionHeading, marginTop: 'var(--space-6)' }}>Soft Skills</h4>
+            <div style={styles.addInlineRow}>
+              <input
+                type="text"
+                value={newSoftSkill.name}
+                onChange={(e) => setNewSoftSkill({ ...newSoftSkill, name: e.target.value })}
+                placeholder="Soft skill (e.g. Leadership, Problem Solving)"
+                style={{ ...styles.input, flex: 2 }}
+              />
+              <select
+                value={newSoftSkill.level}
+                onChange={(e) => setNewSoftSkill({ ...newSoftSkill, level: e.target.value })}
+                style={{ ...styles.select, flex: 1 }}
+              >
+                {PROFICIENCY_LEVELS.map((lvl) => (
+                  <option key={lvl} value={lvl}>{lvl}</option>
+                ))}
+              </select>
+              <button onClick={addSoftSkill} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                Add Soft Skill
+              </button>
+            </div>
+
+            <div style={styles.chipGrid}>
+              {formData.softSkills.map((s, idx) => (
+                <div key={idx} style={{ ...styles.skillChip, backgroundColor: 'var(--color-mist-light)' }}>
+                  <span><strong>{s.name}</strong> ({s.level})</span>
+                  <button onClick={() => removeSoftSkill(idx)} style={styles.chipRemove}>×</button>
+                </div>
+              ))}
+              {formData.softSkills.length === 0 && (
+                <p style={styles.emptyPrompt}>No soft skills added yet.</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Section 3: Projects & Certifications */}
+        {activeSection === 'projects' && (
+          <div style={styles.formSection}>
+            <h4 style={styles.sectionHeading}>Projects</h4>
+            <div style={styles.subCard}>
+              <div style={styles.grid2}>
+                <input
+                  type="text"
+                  value={newProject.title}
+                  onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+                  placeholder="Project Title"
+                  style={styles.input}
+                />
+                <input
+                  type="text"
+                  value={newProject.role}
+                  onChange={(e) => setNewProject({ ...newProject, role: e.target.value })}
+                  placeholder="Your Role (e.g. Lead Developer)"
+                  style={styles.input}
+                />
+                <input
+                  type="text"
+                  value={newProject.techStack}
+                  onChange={(e) => setNewProject({ ...newProject, techStack: e.target.value })}
+                  placeholder="Tech Stack (comma-separated: Node, React, Mongo)"
+                  style={styles.input}
+                />
+                <input
+                  type="text"
+                  value={newProject.link}
+                  onChange={(e) => setNewProject({ ...newProject, link: e.target.value })}
+                  placeholder="Project / Demo Link URL"
+                  style={styles.input}
+                />
+              </div>
+              <textarea
+                value={newProject.description}
+                onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                placeholder="Brief project description & impact..."
+                style={{ ...styles.input, marginTop: 'var(--space-2)', minHeight: '60px' }}
+              />
+              <button onClick={addProject} className="btn btn-outline" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-xs)' }}>
+                Add Project to Profile
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginTop: 'var(--space-3)' }}>
+              {formData.projects.map((p, idx) => (
+                <div key={idx} style={styles.itemRow}>
+                  <div>
+                    <strong>{p.title}</strong> {p.role && <span style={styles.subText}>• {p.role}</span>}
+                    <p style={{ fontSize: 'var(--font-size-xs)', marginTop: '2px' }}>{p.description}</p>
+                    {p.techStack?.length > 0 && (
+                      <div style={{ display: 'flex', gap: '4px', marginTop: '4px', flexWrap: 'wrap' }}>
+                        {p.techStack.map((t, i) => (
+                          <span key={i} className="badge badge-mist" style={{ fontSize: '10px' }}>{t}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <button onClick={() => removeProject(idx)} className="btn btn-outline" style={{ fontSize: '11px', padding: '2px 8px' }}>
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <h4 style={{ ...styles.sectionHeading, marginTop: 'var(--space-6)' }}>Certifications</h4>
+            <div style={styles.subCard}>
+              <div style={styles.grid2}>
+                <input
+                  type="text"
+                  value={newCert.name}
+                  onChange={(e) => setNewCert({ ...newCert, name: e.target.value })}
+                  placeholder="Certification Name"
+                  style={styles.input}
+                />
+                <input
+                  type="text"
+                  value={newCert.issuer}
+                  onChange={(e) => setNewCert({ ...newCert, issuer: e.target.value })}
+                  placeholder="Issuing Authority (e.g. AWS, Coursera)"
+                  style={styles.input}
+                />
+                <input
+                  type="text"
+                  value={newCert.credentialId}
+                  onChange={(e) => setNewCert({ ...newCert, credentialId: e.target.value })}
+                  placeholder="Credential ID"
+                  style={styles.input}
+                />
+                <input
+                  type="text"
+                  value={newCert.url}
+                  onChange={(e) => setNewCert({ ...newCert, url: e.target.value })}
+                  placeholder="Verification URL"
+                  style={styles.input}
+                />
+              </div>
+              <button onClick={addCertification} className="btn btn-outline" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-xs)' }}>
+                Add Certification
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginTop: 'var(--space-3)' }}>
+              {formData.certifications.map((c, idx) => (
+                <div key={idx} style={styles.itemRow}>
+                  <div>
+                    <strong>{c.name}</strong> {c.issuer && <span style={styles.subText}>— {c.issuer}</span>}
+                    {c.credentialId && <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>ID: {c.credentialId}</div>}
+                  </div>
+                  <button onClick={() => removeCertification(idx)} className="btn btn-outline" style={{ fontSize: '11px', padding: '2px 8px' }}>
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Section 4: Goals & Preferences */}
+        {activeSection === 'goals' && (
+          <div style={styles.formSection}>
+            <h4 style={styles.sectionHeading}>Target Career Roles</h4>
+            <div style={styles.addInlineRow}>
+              <input
+                type="text"
+                value={newTargetRole}
+                onChange={(e) => setNewTargetRole(e.target.value)}
+                placeholder="Add Target Role (e.g. Full Stack Developer, Data Scientist)"
+                style={{ ...styles.input, flex: 3 }}
+              />
+              <button onClick={addTargetRole} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                Add Role
+              </button>
+            </div>
+
+            <div style={styles.chipGrid}>
+              {formData.careerGoals.targetRoles.map((r, idx) => (
+                <div key={idx} style={styles.skillChip}>
+                  <span>{r}</span>
+                  <button onClick={() => removeTargetRole(idx)} style={styles.chipRemove}>×</button>
+                </div>
+              ))}
+              {formData.careerGoals.targetRoles.length === 0 && (
+                <p style={styles.emptyPrompt}>No target career roles defined yet.</p>
+              )}
+            </div>
+
+            <h4 style={{ ...styles.sectionHeading, marginTop: 'var(--space-6)' }}>Career Aspiration Summary</h4>
+            <textarea
+              value={formData.careerGoals.summary}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  careerGoals: { ...formData.careerGoals, summary: e.target.value },
+                })
+              }
+              placeholder="Tell recruiters about your passions, learning goals, and ideal career pathway..."
+              style={{ ...styles.input, minHeight: '90px' }}
+            />
+
+            <h4 style={{ ...styles.sectionHeading, marginTop: 'var(--space-6)' }}>Work Mode & Location Preferences</h4>
+            <div style={styles.grid2}>
+              <div>
+                <label style={styles.label}>Preferred Work Mode</label>
+                <select
+                  value={formData.preferences.workMode}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      preferences: { ...formData.preferences, workMode: e.target.value },
+                    })
+                  }
+                  style={styles.select}
+                >
+                  <option value="">Any Work Mode</option>
+                  {WORK_MODES.map((m) => (
+                    <option key={m} value={m}>{m.toUpperCase()}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={styles.label}>Expected Monthly Stipend (₹)</label>
+                <input
+                  type="number"
+                  value={formData.preferences.stipendExpectation}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      preferences: { ...formData.preferences, stipendExpectation: e.target.value },
+                    })
+                  }
+                  placeholder="e.g. 25000"
+                  style={styles.input}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginTop: 'var(--space-4)' }}>
+              <label style={styles.label}>Preferred Job Locations</label>
+              <div style={styles.addInlineRow}>
+                <input
+                  type="text"
+                  value={newLocation}
+                  onChange={(e) => setNewLocation(e.target.value)}
+                  placeholder="e.g. Bangalore, Mumbai, Remote"
+                  style={{ ...styles.input, flex: 3 }}
+                />
+                <button onClick={addLocation} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                  Add Location
+                </button>
+              </div>
+              <div style={styles.chipGrid}>
+                {formData.preferences.locations.map((loc, idx) => (
+                  <div key={idx} style={{ ...styles.skillChip, backgroundColor: 'var(--color-sky-light)' }}>
+                    <span>{loc}</span>
+                    <button onClick={() => removeLocation(idx)} style={styles.chipRemove}>×</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Section 5: Portfolio Links */}
+        {activeSection === 'links' && (
+          <div style={styles.formSection}>
+            <h4 style={styles.sectionHeading}>Online Presence & Portfolio Links</h4>
+            <div style={styles.grid2}>
+              <div>
+                <label style={styles.label}>Resume / CV URL</label>
+                <input
+                  type="text"
+                  value={formData.portfolio.resumeUrl}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      portfolio: { ...formData.portfolio, resumeUrl: e.target.value },
+                    })
+                  }
+                  placeholder="https://drive.google.com/... or Cloudinary URL"
+                  style={styles.input}
+                />
+              </div>
+
+              <div>
+                <label style={styles.label}>GitHub Profile</label>
+                <input
+                  type="text"
+                  value={formData.portfolio.github}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      portfolio: { ...formData.portfolio, github: e.target.value },
+                    })
+                  }
+                  placeholder="https://github.com/username"
+                  style={styles.input}
+                />
+              </div>
+
+              <div>
+                <label style={styles.label}>LinkedIn Profile</label>
+                <input
+                  type="text"
+                  value={formData.portfolio.linkedin}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      portfolio: { ...formData.portfolio, linkedin: e.target.value },
+                    })
+                  }
+                  placeholder="https://linkedin.com/in/username"
+                  style={styles.input}
+                />
+              </div>
+
+              <div>
+                <label style={styles.label}>Personal Website / Portfolio</label>
+                <input
+                  type="text"
+                  value={formData.portfolio.website}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      portfolio: { ...formData.portfolio, website: e.target.value },
+                    })
+                  }
+                  placeholder="https://myportfolio.dev"
+                  style={styles.input}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Section 6: AI Voice Onboarding */}
+        {activeSection === 'ai-voice' && (
+          <div style={styles.formSection}>
+            {renderAiVoiceAssistant(false)}
+          </div>
+        )}
+
+        {/* Global Action Footer */}
+        <div style={styles.footerRow}>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="btn btn-primary"
+            style={{ minWidth: '160px' }}
+          >
+            {saving ? 'Saving...' : 'Save Profile Changes'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const styles = {
+  container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
+  headerCard: { backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' },
+  headerTop: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)' },
+  badgeRow: { display: 'flex', gap: 'var(--space-2)' },
+  subText: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' },
+  meterContainer: { minWidth: '220px', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' },
+  meterHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' },
+  meterTitle: { fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)', textTransform: 'uppercase' },
+  meterTrack: { height: '8px', borderRadius: '4px', backgroundColor: 'var(--color-border)', overflow: 'hidden' },
+  meterFill: { height: '100%', borderRadius: '4px', transition: 'width var(--transition-base)' },
+  meterHint: { fontSize: '10px', color: 'var(--color-text-muted)' },
+  feedbackBox: { padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)', marginTop: 'var(--space-3)' },
+  closeFeedback: { fontSize: '18px', cursor: 'pointer', color: 'inherit' },
+  subNavBar: { display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)', marginTop: 'var(--space-4)', borderTop: '1px solid var(--color-border-subtle)', paddingTop: 'var(--space-3)' },
+  subTabButton: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-xs)', fontWeight: '500', color: 'var(--color-text-secondary)', backgroundColor: 'transparent', border: '1px solid transparent', cursor: 'pointer', transition: 'all var(--transition-fast)' },
+  activeSubTab: { backgroundColor: 'var(--color-mist-light)', color: 'var(--color-burgundy-red)', borderColor: 'var(--color-border)', fontWeight: '600' },
+  bodyCard: { backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' },
+  formSection: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' },
+  sectionHeading: { fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border-subtle)', paddingBottom: 'var(--space-1)' },
+  grid2: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-3)' },
+  label: { display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)', marginBottom: '4px' },
+  input: { width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-app)' },
+  select: { width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-app)' },
+  addInlineRow: { display: 'flex', gap: 'var(--space-2)', alignItems: 'center' },
+  chipGrid: { display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: 'var(--space-2)' },
+  skillChip: { display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: 'var(--radius-full)', backgroundColor: 'var(--color-sky-light)', fontSize: 'var(--font-size-xs)', border: '1px solid rgba(141, 161, 185, 0.3)' },
+  chipRemove: { background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold', color: 'inherit', padding: 0, fontSize: '13px' },
+  emptyPrompt: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic' },
+  subCard: { padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-subtle)', backgroundColor: 'var(--color-mist-light)' },
+  itemRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-app)' },
+  footerRow: { marginTop: 'var(--space-6)', paddingTop: 'var(--space-4)', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end' },
+  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
+  spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
+};
+
+export default StudentProfileView;

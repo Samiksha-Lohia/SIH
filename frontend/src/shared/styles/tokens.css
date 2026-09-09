@@ -1,0 +1,124 @@
+/**
+ * SUTRA Design System Tokens
+ * Curated Palette:
+ * - Sky Blue: #B7CCE3
+ * - Burgundy Red: #721010
+ * - Mist Green: #E0E4DE
+ * - Pebble Grey: #BCBDB8
+ * - Steel Blue: #8DA1B9
+ */
+
+:root {
+  /* ---------------- Core Palette Tokens ---------------- */
+  --color-sky-blue: #b7cce3;
+  --color-sky-blue-light: #e8eff7;
+  --color-sky-blue-hover: #9bb7d4;
+
+  --color-burgundy-red: #721010;
+  --color-burgundy-hover: #580d0d;
+  --color-burgundy-light: #faecec;
+  --color-burgundy-muted: #8d1c1c;
+
+  --color-mist-green: #e0e4de;
+  --color-mist-light: #f3f6f2;
+  --color-mist-dark: #c4cdc0;
+
+  --color-pebble-grey: #bcbdb8;
+  --color-pebble-light: #e6e7e4;
+  --color-pebble-dark: #8c8e87;
+
+  --color-steel-blue: #8da1b9;
+  --color-steel-light: #dbe3ed;
+  --color-steel-dark: #5c6f87;
+
+  /* ---------------- Semantic Tokens ---------------- */
+  --color-primary: var(--color-burgundy-red);
+  --color-primary-hover: var(--color-burgundy-hover);
+  --color-primary-subtle: var(--color-burgundy-light);
+  --color-primary-contrast: #ffffff;
+
+  --color-secondary: var(--color-steel-blue);
+  --color-secondary-hover: var(--color-steel-dark);
+  --color-secondary-subtle: var(--color-steel-light);
+
+  --color-accent: var(--color-sky-blue);
+  --color-accent-subtle: var(--color-sky-blue-light);
+
+  --color-bg-app: #f7f9f7;
+  --color-bg-surface: #ffffff;
+  --color-bg-subtle: var(--color-mist-light);
+  --color-bg-elevated: #ffffff;
+
+  --color-border: #dbe1d9;
+  --color-border-subtle: #eaeee8;
+  --color-border-focus: var(--color-steel-blue);
+
+  --color-text-primary: #1e2420;
+  --color-text-secondary: #4d564f;
+  --color-text-muted: #747f76;
+  --color-text-inverse: #ffffff;
+
+  /* Status Colors */
+  --color-success: #207246;
+  --color-success-bg: #eaf5ee;
+  --color-warning: #946000;
+  --color-warning-bg: #fef8eb;
+  --color-danger: var(--color-burgundy-red);
+  --color-danger-bg: var(--color-burgundy-light);
+  --color-info: var(--color-steel-dark);
+  --color-info-bg: var(--color-steel-light);
+
+  /* ---------------- Typography ---------------- */
+  --font-family-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.65;
+
+  /* ---------------- Spacing ---------------- */
+  --space-0-5: 0.125rem; /* 2px */
+  --space-1: 0.25rem;    /* 4px */
+  --space-2: 0.5rem;     /* 8px */
+  --space-3: 0.75rem;    /* 12px */
+  --space-4: 1rem;       /* 16px */
+  --space-5: 1.25rem;    /* 20px */
+  --space-6: 1.5rem;     /* 24px */
+  --space-8: 2rem;       /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+  --space-16: 4rem;      /* 64px */
+
+  /* ---------------- Radii ---------------- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* ---------------- Shadows ---------------- */
+  --shadow-xs: 0 1px 2px rgba(18, 24, 20, 0.05);
+  --shadow-sm: 0 2px 4px rgba(18, 24, 20, 0.06), 0 1px 2px rgba(18, 24, 20, 0.04);
+  --shadow-md: 0 4px 12px rgba(18, 24, 20, 0.08), 0 2px 4px rgba(18, 24, 20, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(18, 24, 20, 0.1), 0 4px 8px -2px rgba(18, 24, 20, 0.05);
+  --shadow-inner: inset 0 2px 4px rgba(18, 24, 20, 0.05);
+
+  /* ---------------- Transitions ---------------- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
