@@ -2,6 +2,7 @@ import { asyncHandler } from '../../utils/asyncHandler.js';
 import { sendSuccess, paginationMeta } from '../../utils/apiResponse.js';
 import { ROLES } from '../../config/constants.js';
 import * as service from './assessment.service.js';
+import * as campaignService from './campaign.service.js';
 
 const isPrivileged = (role) => [ROLES.ADMIN, ROLES.INSTITUTION, ROLES.INDUSTRY].includes(role);
 
@@ -59,3 +60,30 @@ export const listMyAttempts = asyncHandler(async (req, res) => {
   const { items, page, limit, total } = await service.listMyAttempts(req.user._id, req.query);
   sendSuccess(res, { attempts: items.map((a) => a.toJSON()) }, { meta: paginationMeta({ page, limit, total }) });
 });
+
+// ---------- Campaigns & Assignments ----------
+export const createCampaign = asyncHandler(async (req, res) => {
+  const campaign = await campaignService.createCampaign(req.body, req.user._id);
+  sendSuccess(res, { campaign }, { status: 201 });
+});
+
+export const listCampaigns = asyncHandler(async (req, res) => {
+  const { items, page, limit, total } = await campaignService.listCampaigns(req.user._id, req.query, req.user.role);
+  sendSuccess(res, { campaigns: items }, { meta: paginationMeta({ page, limit, total }) });
+});
+
+export const getCampaign = asyncHandler(async (req, res) => {
+  const campaign = await campaignService.getCampaign(req.params.id, req.user);
+  sendSuccess(res, { campaign });
+});
+
+export const listStudentsForInstitution = asyncHandler(async (req, res) => {
+  const students = await campaignService.listInstitutionStudents(req.user._id);
+  sendSuccess(res, { students });
+});
+
+export const listMyAssignedAssessments = asyncHandler(async (req, res) => {
+  const assignments = await campaignService.listMyAssignedAssessments(req.user._id);
+  sendSuccess(res, { assignments });
+});
+

@@ -12,12 +12,15 @@ import {
   submitSchema,
   listAssessmentsQuery,
   listQuestionsQuery,
+  createCampaignSchema,
+  listCampaignsQuery,
   idParamSchema,
   attemptParamSchema,
 } from './assessment.validation.js';
 
 const router = Router();
 const CREATORS = [ROLES.ADMIN, ROLES.INSTITUTION, ROLES.INDUSTRY];
+const INSTITUTION_ROLES = [ROLES.ADMIN, ROLES.INSTITUTION];
 
 // All assessment routes require authentication.
 router.use(authenticate);
@@ -25,6 +28,15 @@ router.use(authenticate);
 // --- Question bank (privileged) --- declared before '/:id' to avoid capture.
 router.post('/questions', requireRole(CREATORS), validate({ body: createQuestionSchema }), ctrl.createQuestion);
 router.get('/questions', requireRole(CREATORS), validate({ query: listQuestionsQuery }), ctrl.listQuestions);
+
+// --- Campaigns & Cohort Assignments (Institution & Admin) ---
+router.get('/campaigns/students', requireRole(INSTITUTION_ROLES), ctrl.listStudentsForInstitution);
+router.post('/campaigns', requireRole(INSTITUTION_ROLES), validate({ body: createCampaignSchema }), ctrl.createCampaign);
+router.get('/campaigns', requireRole(INSTITUTION_ROLES), validate({ query: listCampaignsQuery }), ctrl.listCampaigns);
+router.get('/campaigns/:id', requireRole(INSTITUTION_ROLES), validate({ params: idParamSchema }), ctrl.getCampaign);
+
+// --- Student Assigned Assessments (Personalized for logged-in student) ---
+router.get('/my-assignments', ctrl.listMyAssignedAssessments);
 
 // --- Attempt results / history ---
 router.get('/results/:attemptId', validate({ params: attemptParamSchema }), ctrl.getResult);

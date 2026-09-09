@@ -72,20 +72,23 @@ export function fallbackExtractProfile(transcript = '') {
 
 export function fallbackGenerateResume(profile = {}) {
   const name = profile.name || 'Candidate';
-  const skills = (profile.skills || []).map((s) => (typeof s === 'string' ? s : s.name)).filter(Boolean);
-  const projects = (profile.projects || []).map((p) => `${p.title}${p.description ? ' - ' + p.description : ''}`);
-  const certs = (profile.certifications || []).map((c) => `${c.name}${c.issuer ? ' (' + c.issuer + ')' : ''}`);
-  const goals = profile.careerGoals?.summary || '';
+  const targetRole = profile.careerGoals?.targetRoles?.[0] || 'Software Professional';
+  const skillsList = (profile.skills || []).map((s) => (typeof s === 'string' ? s : s.name)).filter(Boolean);
 
-  const sections = [];
-  if (goals) sections.push({ heading: 'Summary', items: [goals] });
-  if (skills.length) sections.push({ heading: 'Skills', items: skills });
-  if (projects.length) sections.push({ heading: 'Projects', items: projects });
-  if (certs.length) sections.push({ heading: 'Certifications', items: certs });
+  const summary = profile.careerGoals?.summary
+    ? profile.careerGoals.summary
+    : `${name} is an aspiring ${targetRole} with proven competencies in ${skillsList.slice(0, 4).join(', ') || 'modern software technologies'}. Dedicated to engineering clean, reliable solutions with strong analytical thinking and proactive collaboration.`;
+
+  const projects = (profile.projects || []).map((p) => ({
+    title: p.title || 'Featured Project',
+    description: p.description
+      ? `Engineered ${p.title} leveraging ${(p.techStack || []).join(', ') || 'modern technologies'}. ${p.description}`
+      : `Architected and implemented ${p.title} utilizing ${(p.techStack || []).join(', ') || 'industry-standard tools'}, adhering to modern design principles and engineering standards.`,
+  }));
 
   return {
-    summary: goals || `${name} is building an industry-ready skill profile.`,
-    sections,
+    summary,
+    projects,
     _meta: { source: 'fallback' },
   };
 }

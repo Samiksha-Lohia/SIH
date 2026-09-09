@@ -56,6 +56,23 @@ export const submitSchema = z.object({
     .min(1, 'At least one answer is required'),
   startedAt: z.coerce.date().optional(),
   applyToProfile: z.boolean().optional().default(true),
+  campaignId: objectId.optional(),
+});
+
+export const createCampaignSchema = z.object({
+  title: z.string().min(1).max(200),
+  description: z.string().max(2000).optional(),
+  assessmentId: objectId,
+  cohort: z.string().max(100).optional(),
+  studentIds: z.array(objectId).optional(),
+  startDate: z.coerce.date().optional(),
+  deadline: z.coerce.date(),
+});
+
+export const listCampaignsQuery = z.object({
+  status: z.enum(['active', 'completed', 'archived']).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
 });
 
 export const listAssessmentsQuery = z.object({

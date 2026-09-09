@@ -74,6 +74,32 @@ export const institutionApi = {
     return res.data?.question;
   },
 
+  // ---------------- 3.1 Assessment Campaigns ----------------
+  async listCampaigns(params = {}) {
+    const query = new URLSearchParams();
+    if (params.status) query.set('status', params.status);
+    if (params.page) query.set('page', String(params.page));
+    if (params.limit) query.set('limit', String(params.limit || 50));
+    const qs = query.toString() ? `?${query.toString()}` : '';
+    const res = await api.get(`/assessments/campaigns${qs}`);
+    return { campaigns: res.data?.campaigns || [], meta: res.meta };
+  },
+
+  async getCampaign(id) {
+    const res = await api.get(`/assessments/campaigns/${id}`);
+    return res.data?.campaign;
+  },
+
+  async createCampaign(data) {
+    const res = await api.post('/assessments/campaigns', data);
+    return res.data?.campaign;
+  },
+
+  async listStudentsForCampaign() {
+    const res = await api.get('/assessments/campaigns/students');
+    return res.data?.students || [];
+  },
+
   // ---------------- 4. Opportunities & Internships ----------------
   async listInternships(params = {}) {
     const query = new URLSearchParams();

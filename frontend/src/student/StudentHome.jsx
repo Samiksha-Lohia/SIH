@@ -4,6 +4,7 @@ import { studentApi } from './student.api.js';
 
 import StudentProfileView from './components/StudentProfileView.jsx';
 import SkillGapDashboardView from './components/SkillGapDashboardView.jsx';
+import AssessmentFlowView from './components/AssessmentFlowView.jsx';
 import OpportunityMarketplaceView from './components/OpportunityMarketplaceView.jsx';
 import ApplicationTrackerView from './components/ApplicationTrackerView.jsx';
 import DigitalPortfolioView from './components/DigitalPortfolioView.jsx';
@@ -335,6 +336,7 @@ export function StudentHome() {
             { id: 'overview', label: '📊 Cockpit Overview' },
             { id: 'profile', label: '👤 Profile & Onboarding' },
             { id: 'readiness', label: '🎯 Skill-Gap & Readiness' },
+            { id: 'assessments', label: '📝 Skill Assessments' },
             { id: 'opportunities', label: '💼 Opportunity Marketplace' },
             { id: 'applications', label: '📄 My Applications' },
             { id: 'portfolio', label: '🏆 Digital Portfolio' },
@@ -433,7 +435,19 @@ export function StudentHome() {
 
               <div style={{ padding: 'var(--space-4)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-hover)' }}>
                 <h4 style={{ margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>2.</span> Discover Opportunities
+                  <span>2.</span> Validate with Assessments
+                </h4>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0 0 12px 0' }}>
+                  Complete assigned institutional campaigns to certify skills and boost target role readiness.
+                </p>
+                <button className="btn btn-outline" style={{ fontSize: '0.8rem' }} onClick={() => setActiveTab('assessments')}>
+                  Take Assessments
+                </button>
+              </div>
+
+              <div style={{ padding: 'var(--space-4)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-hover)' }}>
+                <h4 style={{ margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>3.</span> Discover Opportunities
                 </h4>
                 <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0 0 12px 0' }}>
                   Explore internships and jobs matched to your verified readiness and skill proficiencies.
@@ -445,7 +459,7 @@ export function StudentHome() {
 
               <div style={{ padding: 'var(--space-4)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-hover)' }}>
                 <h4 style={{ margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>3.</span> Showcase in Portfolio
+                  <span>4.</span> Showcase in Portfolio
                 </h4>
                 <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0 0 12px 0' }}>
                   Curate verified artifacts, generate AI resumes, and share your public credential card.
@@ -461,6 +475,7 @@ export function StudentHome() {
 
       {activeTab === 'profile' && <StudentProfileView onProfileUpdated={loadHeaderData} />}
       {activeTab === 'readiness' && <SkillGapDashboardView studentId={user?.id || user?._id} />}
+      {activeTab === 'assessments' && <AssessmentFlowView onNavigateTab={setActiveTab} />}
       {activeTab === 'opportunities' && <OpportunityMarketplaceView studentId={user?.id || user?._id} />}
       {activeTab === 'applications' && <ApplicationTrackerView />}
       {activeTab === 'portfolio' && <DigitalPortfolioView studentId={user?.id || user?._id} />}

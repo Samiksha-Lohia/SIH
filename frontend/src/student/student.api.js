@@ -48,13 +48,18 @@ export const studentApi = {
     return { assessments: res.data?.assessments || [], meta: res.meta };
   },
 
+  async listMyAssignedAssessments() {
+    const res = await api.get('/assessments/my-assignments');
+    return { assignments: res.data?.assignments || [] };
+  },
+
   async getAssessment(id) {
     const res = await api.get(`/assessments/${id}`);
     return res.data?.assessment;
   },
 
-  async submitAssessmentAttempt(id, { answers, applyToProfile = true }) {
-    const res = await api.post(`/assessments/${id}/submit`, { answers, applyToProfile });
+  async submitAssessmentAttempt(id, { answers, applyToProfile = true, campaignId, startedAt }) {
+    const res = await api.post(`/assessments/${id}/submit`, { answers, applyToProfile, campaignId, startedAt });
     return res.data?.attempt;
   },
 
@@ -206,6 +211,11 @@ export const studentApi = {
   async getUnreadCount() {
     const res = await api.get('/notifications/unread-count');
     return res.data?.count ?? 0;
+  },
+
+  async getUnreadNotificationCount() {
+    const res = await api.get('/notifications/unread-count');
+    return { count: res.data?.count ?? 0 };
   },
 
   async markNotificationRead(id) {

@@ -37,8 +37,11 @@ export function DigitalPortfolioView() {
 
   // Resume Generator Modal
   const [resumeData, setResumeData] = useState(null);
+  const [editableResume, setEditableResume] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [generatingResume, setGeneratingResume] = useState(false);
   const [copiedResume, setCopiedResume] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   // Public Share Modal
   const [shareData, setShareData] = useState(null);
@@ -114,14 +117,10 @@ export function DigitalPortfolioView() {
     setCopiedResume(false);
     try {
       const res = await studentApi.generateResume();
-      // Backend returns { source: '...', resume: { summary, sections, ... } }
       const resumePayload = res?.resume || res;
-      setResumeData({
-        ...resumePayload,
-        source: res?.source || resumePayload?._meta?.source || 'AI Engine',
-        name: resumePayload?.name || user?.name || 'Student Candidate',
-        email: resumePayload?.email || user?.email || '',
-      });
+      setResumeData(resumePayload);
+      setEditableResume(JSON.parse(JSON.stringify(resumePayload)));
+      setIsEditMode(false);
     } catch (err) {
       setFeedback({
         type: 'error',
@@ -161,26 +160,220 @@ export function DigitalPortfolioView() {
   };
 
   const handleCopyResumeText = () => {
-    if (!resumeData) return;
+    const data = editableResume || resumeData;
+    if (!data) return;
+
     const lines = [];
-    lines.push(`${resumeData.name || user?.name || 'Candidate'}`);
-    lines.push(`${resumeData.email || user?.email || ''}\n`);
-    if (resumeData.summary) {
-      lines.push(`PROFESSIONAL SUMMARY\n${resumeData.summary}\n`);
+    lines.push(data.name || user?.name || 'Candidate');
+    if (data.targetRole) lines.push(data.targetRole);
+    const contacts = [data.email, data.phone, data.location].filter(Boolean);
+    if (contacts.length) lines.push(contacts.join(' • '));
+    lines.push('----------------------------------------\n');
+
+    if (data.summary) {
+      lines.push('PROFESSIONAL SUMMARY');
+      lines.push(data.summary);
+      lines.push('');
     }
-    if (Array.isArray(resumeData.sections)) {
-      for (const sec of resumeData.sections) {
-        lines.push(`${(sec.heading || '').toUpperCase()}`);
-        for (const it of sec.items || []) {
-          lines.push(`• ${it}`);
-        }
-        lines.push('');
+
+    const techSkills = data.skills?.technical || [];
+    const softSkills = data.skills?.soft || [];
+    if (techSkills.length || softSkills.length) {
+      lines.push('TECHNICAL & PROFESSIONAL SKILLS');
+      if (techSkills.length) {
+        lines.push('• Technical: ' + techSkills.map((s) => `${s.name}${s.level ? ` (${s.level})` : ''}`).join(', '));
       }
+      if (softSkills.length) {
+        lines.push('• Professional: ' + softSkills.map((s) => s.name).join(', '));
+      }
+      lines.push('');
     }
+
+    if (Array.isArray(data.projects) && data.projects.length) {
+      lines.push('FEATURED PROJECTS');
+      for (const p of data.projects) {
+        lines.push(`• ${p.title}${p.techStack?.length ? ` [${p.techStack.join(', ')}]` : ''}`);
+        if (p.description) lines.push(`  ${p.description}`);
+        if (p.link) lines.push(`  Link: ${p.link}`);
+      }
+      lines.push('');
+    }
+
+    if (Array.isArray(data.education) && data.education.length) {
+      lines.push('EDUCATION');
+      for (const e of data.education) {
+        lines.push(`• ${e.degree}${e.branch ? ` in ${e.branch}` : ''} - ${e.institution}${e.graduationYear ? ` (${e.graduationYear})` : ''}`);
+        if (e.score) lines.push(`  Score: ${e.score}`);
+      }
+      lines.push('');
+    }
+
+    if (Array.isArray(data.certifications) && data.certifications.length) {
+      lines.push('CERTIFICATIONS');
+      for (const c of data.certifications) {
+        lines.push(`• ${c.name}${c.issuer ? ` - ${c.issuer}` : ''}`);
+      }
+      lines.push('');
+    }
+
     const fullText = lines.join('\n');
     navigator.clipboard.writeText(fullText);
     setCopiedResume(true);
     setTimeout(() => setCopiedResume(false), 3000);
+  };
+
+  const handleDownloadPdf = () => {
+    const data = editableResume || resumeData;
+    if (!data) return;
+
+    setDownloadingPdf(true);
+
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
+    document.body.appendChild(printFrame);
+
+    const doc = printFrame.contentWindow.document;
+
+    const techSkillsHtml = (data.skills?.technical || [])
+      .map(
+        (s) =>
+          `<span class="skill-pill ${s.verified ? 'verified' : ''}">${s.name}${s.verified ? ' ✓' : ''}</span>`
+      )
+      .join('');
+
+    const softSkillsHtml = (data.skills?.soft || [])
+      .map((s) => `<span class="skill-pill">${s.name}</span>`)
+      .join('');
+
+    const projectsHtml = (data.projects || [])
+      .map(
+        (p) => `
+        <div class="project-item">
+          <div class="item-header">
+            <span class="item-title">${p.title}</span>
+            ${p.link ? `<span class="item-link">${p.link}</span>` : ''}
+          </div>
+          ${
+            p.techStack && p.techStack.length
+              ? `<div class="tech-tags">Technologies: ${p.techStack.join(', ')}</div>`
+              : ''
+          }
+          <div class="project-desc">${p.description || ''}</div>
+        </div>
+      `
+      )
+      .join('');
+
+    const educationHtml = (data.education || [])
+      .map(
+        (e) => `
+        <div class="education-item">
+          <div class="item-header">
+            <span class="item-title">${e.degree}${e.branch ? ` in ${e.branch}` : ''}</span>
+            <span class="item-meta">${e.graduationYear ? `Class of ${e.graduationYear}` : ''}</span>
+          </div>
+          <div class="edu-sub">${e.institution}${e.score ? ` • Score: ${e.score}` : ''}</div>
+        </div>
+      `
+      )
+      .join('');
+
+    const certsHtml = (data.certifications || [])
+      .map(
+        (c) => `
+        <div class="cert-item">
+          <span class="item-title">${c.name}</span>
+          ${c.issuer ? `<span class="item-meta"> — ${c.issuer}</span>` : ''}
+        </div>
+      `
+      )
+      .join('');
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>${data.name || 'Candidate'} - Professional Resume</title>
+        <meta charset="utf-8" />
+        <style>
+          @page { size: A4; margin: 12mm 15mm; }
+          * { box-sizing: border-box; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #0f172a;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+            background: #ffffff;
+          }
+          .resume-sheet { width: 100%; max-width: 800px; margin: 0 auto; }
+          .header { border-bottom: 2pt solid #0284c7; padding-bottom: 8pt; margin-bottom: 10pt; }
+          .name { font-size: 22pt; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; margin: 0 0 2pt 0; }
+          .role { font-size: 11pt; color: #0284c7; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4pt; }
+          .contacts { font-size: 9pt; color: #475569; display: flex; flex-wrap: wrap; gap: 12pt; }
+          .section { margin-bottom: 10pt; }
+          .section-title { font-size: 10.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #1e293b; border-bottom: 1pt solid #e2e8f0; padding-bottom: 2pt; margin: 0 0 6pt 0; }
+          .summary-text { font-size: 9.5pt; color: #334155; line-height: 1.5; margin: 0; }
+          .skills-wrap { display: flex; flex-wrap: wrap; gap: 4pt; }
+          .skill-pill { display: inline-block; font-size: 8.5pt; background-color: #f1f5f9; border: 1pt solid #cbd5e1; padding: 1.5pt 5pt; border-radius: 3pt; color: #0f172a; }
+          .skill-pill.verified { background-color: #ecfdf5; border-color: #86efac; color: #166534; font-weight: 600; }
+          .project-item, .education-item { margin-bottom: 6pt; }
+          .item-header { display: flex; justify-content: space-between; align-items: baseline; }
+          .item-title { font-size: 10pt; font-weight: 700; color: #0f172a; }
+          .item-meta { font-size: 8.5pt; color: #64748b; }
+          .item-link { font-size: 8pt; color: #0284c7; }
+          .tech-tags { font-size: 8.5pt; color: #0284c7; font-weight: 600; margin: 1pt 0 2pt 0; }
+          .project-desc { font-size: 9pt; color: #334155; line-height: 1.45; }
+          .edu-sub { font-size: 9pt; color: #475569; }
+          .cert-item { font-size: 9pt; margin-bottom: 3pt; }
+          @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="resume-sheet">
+          <div class="header">
+            <h1 class="name">${data.name || 'Candidate'}</h1>
+            ${data.targetRole ? `<div class="role">${data.targetRole}</div>` : ''}
+            <div class="contacts">
+              ${data.email ? `<span>✉️ ${data.email}</span>` : ''}
+              ${data.phone ? `<span>📞 ${data.phone}</span>` : ''}
+              ${data.location ? `<span>📍 ${data.location}</span>` : ''}
+              ${data.links?.github ? `<span>GitHub: ${data.links.github}</span>` : ''}
+              ${data.links?.linkedin ? `<span>LinkedIn: ${data.links.linkedin}</span>` : ''}
+            </div>
+          </div>
+          ${data.summary ? `<div class="section"><div class="section-title">Professional Summary</div><p class="summary-text">${data.summary}</p></div>` : ''}
+          ${techSkillsHtml || softSkillsHtml ? `<div class="section"><div class="section-title">Technical & Professional Competencies</div><div class="skills-wrap">${techSkillsHtml}${softSkillsHtml}</div></div>` : ''}
+          ${projectsHtml ? `<div class="section"><div class="section-title">Featured Projects</div>${projectsHtml}</div>` : ''}
+          ${educationHtml ? `<div class="section"><div class="section-title">Education</div>${educationHtml}</div>` : ''}
+          ${certsHtml ? `<div class="section"><div class="section-title">Certifications & Honors</div>${certsHtml}</div>` : ''}
+        </div>
+      </body>
+      </html>
+    `;
+
+    doc.open();
+    doc.write(htmlContent);
+    doc.close();
+
+    setTimeout(() => {
+      setDownloadingPdf(false);
+      printFrame.contentWindow.focus();
+      printFrame.contentWindow.print();
+      setTimeout(() => {
+        if (document.body.contains(printFrame)) {
+          document.body.removeChild(printFrame);
+        }
+      }, 3000);
+    }, 400);
   };
 
   const handleCopyShareLink = () => {
@@ -510,76 +703,233 @@ export function DigitalPortfolioView() {
       {resumeData && (
         <div style={styles.modalOverlay}>
           <div className="card" style={styles.largeModalCard}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h4 style={{ margin: 0 }}>AI-Generated Resume Proposal</h4>
+            {/* Modal Top Bar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)', borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <h4 style={{ margin: 0 }}>Structured AI Resume</h4>
                 <span className="badge badge-sky" style={{ fontSize: '10px' }}>
-                  ⚡ {resumeData.source || 'AI Engine'}
+                  ⚡ {resumeData._meta?.source || resumeData.source || 'SUTRA AI'}
+                </span>
+                <span className="badge" style={{ backgroundColor: '#dcfce7', color: '#15803d', fontSize: '10px', fontWeight: 600 }}>
+                  ✓ Stored Facts Preserved
                 </span>
               </div>
-              <button onClick={() => setResumeData(null)} style={styles.closeIcon}>×</button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  onClick={() => setIsEditMode(!isEditMode)}
+                  className="btn btn-outline"
+                  style={{ fontSize: 'var(--font-size-xs)', padding: '4px 10px' }}
+                >
+                  {isEditMode ? '👁️ View Formatted' : '✏️ Edit Text'}
+                </button>
+
+                <button
+                  onClick={handleDownloadPdf}
+                  disabled={downloadingPdf}
+                  className="btn btn-primary"
+                  style={{ fontSize: 'var(--font-size-xs)', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  {downloadingPdf ? 'Preparing PDF...' : '📥 Download PDF'}
+                </button>
+
+                <button onClick={() => setResumeData(null)} style={styles.closeIcon}>×</button>
+              </div>
             </div>
 
+            {/* Scrollable Formatted Resume Sheet Area */}
             <div style={styles.resumeScrollArea}>
-              {/* Header Box */}
-              <div style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-3)', marginBottom: 'var(--space-3)' }}>
-                <h3 style={{ margin: '0 0 4px 0', color: 'var(--color-primary)' }}>{resumeData.name || user?.name}</h3>
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                  {resumeData.email || user?.email}
-                </span>
-                {resumeData.summary && (
-                  <p style={{ fontSize: 'var(--font-size-sm)', marginTop: 'var(--space-2)', fontStyle: 'italic', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                    "{resumeData.summary}"
-                  </p>
-                )}
-              </div>
-
-              {/* Structured Sections (from AI or Synthesis Engine) */}
-              {Array.isArray(resumeData.sections) && resumeData.sections.length > 0 ? (
-                resumeData.sections.map((sec, idx) => (
-                  <div key={idx} style={{ marginBottom: 'var(--space-4)' }}>
-                    <h5 style={{ textTransform: 'uppercase', fontSize: 'var(--font-size-xs)', color: 'var(--color-primary)', letterSpacing: '0.05em', borderBottom: '1px solid var(--color-border-subtle)', paddingBottom: '4px', marginBottom: '8px' }}>
-                      {sec.heading}
-                    </h5>
-                    <ul style={{ margin: 0, paddingLeft: '20px', fontSize: 'var(--font-size-xs)', color: 'var(--color-text)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      {sec.items?.map((item, itemIdx) => (
-                        <li key={itemIdx}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))
-              ) : (
-                <>
-                  {/* Fallback legacy field rendering if present */}
-                  {resumeData.skills?.length > 0 && (
-                    <div style={{ marginBottom: 'var(--space-3)' }}>
-                      <h5 style={{ textTransform: 'uppercase', fontSize: 'var(--font-size-xs)', color: 'var(--color-primary)' }}>Technical Competencies</h5>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
-                        {resumeData.skills.map((s, i) => (
-                          <span key={i} className="badge badge-sky" style={{ fontSize: '11px' }}>
-                            {typeof s === 'string' ? s : s.name}
-                          </span>
-                        ))}
-                      </div>
+              {/* White Physical Resume Paper Sheet */}
+              <div style={{
+                backgroundColor: '#ffffff',
+                color: '#0f172a',
+                padding: '36px 40px',
+                borderRadius: 'var(--radius-md)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)',
+                border: '1px solid #cbd5e1',
+                margin: '0 auto',
+                maxWidth: '740px',
+                width: '100%',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              }}>
+                {/* Header: Name, Target Role, Contact Row */}
+                <div style={{ borderBottom: '2px solid #0284c7', paddingBottom: '12px', marginBottom: '16px' }}>
+                  <h2 style={{ margin: '0 0 4px 0', fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                    {editableResume?.name || user?.name || 'Student Candidate'}
+                  </h2>
+                  {editableResume?.targetRole && (
+                    <div style={{ fontSize: '0.95rem', color: '#0284c7', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                      {editableResume.targetRole}
                     </div>
                   )}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', fontSize: '0.85rem', color: '#475569' }}>
+                    {editableResume?.email && <span>✉️ {editableResume.email}</span>}
+                    {editableResume?.phone && <span>📞 {editableResume.phone}</span>}
+                    {editableResume?.location && <span>📍 {editableResume.location}</span>}
+                    {editableResume?.links?.github && <span>🐙 {editableResume.links.github}</span>}
+                    {editableResume?.links?.linkedin && <span>💼 {editableResume.links.linkedin}</span>}
+                  </div>
+                </div>
 
-                  {resumeData.projects?.length > 0 && (
-                    <div style={{ marginBottom: 'var(--space-3)' }}>
-                      <h5 style={{ textTransform: 'uppercase', fontSize: 'var(--font-size-xs)', color: 'var(--color-primary)' }}>Featured Projects</h5>
-                      {resumeData.projects.map((p, i) => (
-                        <div key={i} style={{ marginTop: '6px' }}>
-                          <strong>{p.title}</strong>
-                          <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: '2px' }}>{p.description}</p>
+                {/* Section 1: Professional Summary */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                    Professional Summary
+                  </div>
+                  {isEditMode ? (
+                    <div>
+                      <span style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                        Inline Edit Summary:
+                      </span>
+                      <textarea
+                        rows={3}
+                        value={editableResume?.summary || ''}
+                        onChange={(e) => setEditableResume({ ...editableResume, summary: e.target.value })}
+                        style={{ width: '100%', padding: '8px', fontSize: '0.85rem', border: '1px solid #0284c7', borderRadius: '4px', color: '#0f172a', backgroundColor: '#f8fafc', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  ) : (
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#334155', lineHeight: 1.55 }}>
+                      {editableResume?.summary || 'Candidate is building verified technical competencies.'}
+                    </p>
+                  )}
+                </div>
+
+                {/* Section 2: Technical & Soft Competencies */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                    Technical & Professional Competencies
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {(editableResume?.skills?.technical || []).map((s, i) => (
+                      <span
+                        key={i}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          fontSize: '0.8rem',
+                          backgroundColor: s.verified ? '#ecfdf5' : '#f1f5f9',
+                          border: s.verified ? '1px solid #86efac' : '1px solid #cbd5e1',
+                          color: s.verified ? '#166534' : '#0f172a',
+                          fontWeight: s.verified ? 600 : 500,
+                        }}
+                      >
+                        {s.name}
+                        {s.verified && <span style={{ color: '#15803d' }}>✓</span>}
+                      </span>
+                    ))}
+                    {(editableResume?.skills?.soft || []).map((s, i) => (
+                      <span
+                        key={'soft-' + i}
+                        style={{
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          fontSize: '0.8rem',
+                          backgroundColor: '#f8fafc',
+                          border: '1px solid #e2e8f0',
+                          color: '#475569',
+                        }}
+                      >
+                        {s.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Section 3: Featured Projects */}
+                {editableResume?.projects && editableResume.projects.length > 0 && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                      Featured Projects & Applied Engineering
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {editableResume.projects.map((p, idx) => (
+                        <div key={idx}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap' }}>
+                            <strong style={{ fontSize: '0.95rem', color: '#0f172a' }}>{p.title}</strong>
+                            {p.link && (
+                              <span style={{ fontSize: '0.8rem', color: '#0284c7' }}>{p.link}</span>
+                            )}
+                          </div>
+                          {p.techStack && p.techStack.length > 0 && (
+                            <div style={{ fontSize: '0.8rem', color: '#0284c7', fontWeight: 600, margin: '2px 0 4px 0' }}>
+                              Technologies: {p.techStack.join(', ')}
+                            </div>
+                          )}
+                          {isEditMode ? (
+                            <textarea
+                              rows={2}
+                              value={p.description || ''}
+                              onChange={(e) => {
+                                const updated = [...editableResume.projects];
+                                updated[idx] = { ...updated[idx], description: e.target.value };
+                                setEditableResume({ ...editableResume, projects: updated });
+                              }}
+                              style={{ width: '100%', padding: '6px', fontSize: '0.85rem', border: '1px solid #0284c7', borderRadius: '4px', color: '#0f172a', backgroundColor: '#f8fafc', boxSizing: 'border-box' }}
+                            />
+                          ) : (
+                            <p style={{ margin: 0, fontSize: '0.88rem', color: '#334155', lineHeight: 1.5 }}>
+                              {p.description}
+                            </p>
+                          )}
                         </div>
                       ))}
                     </div>
-                  )}
-                </>
-              )}
+                  </div>
+                )}
+
+                {/* Section 4: Education */}
+                {editableResume?.education && editableResume.education.length > 0 && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                      Education
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {editableResume.education.map((e, idx) => (
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap' }}>
+                          <div>
+                            <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>
+                              {e.degree}{e.branch ? ` in ${e.branch}` : ''}
+                            </strong>
+                            <div style={{ fontSize: '0.85rem', color: '#475569' }}>
+                              {e.institution} {e.score ? `• Score: ${e.score}` : ''}
+                            </div>
+                          </div>
+                          {e.graduationYear && (
+                            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                              Graduation: {e.graduationYear}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Section 5: Certifications & Honors */}
+                {editableResume?.certifications && editableResume.certifications.length > 0 && (
+                  <div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                      Certifications & Credentials
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {editableResume.certifications.map((c, idx) => (
+                        <div key={idx} style={{ fontSize: '0.88rem', color: '#334155' }}>
+                          <strong style={{ color: '#0f172a' }}>{c.name}</strong>
+                          {c.issuer ? <span style={{ color: '#64748b' }}> — {c.issuer}</span> : ''}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-4)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)' }}>
+            {/* Bottom Modal Actions Bar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)' }}>
               <button
                 onClick={handleCopyResumeText}
                 className="btn btn-outline"
@@ -588,9 +938,20 @@ export function DigitalPortfolioView() {
                 {copiedResume ? '✓ Copied to Clipboard!' : '📋 Copy Resume Text'}
               </button>
 
-              <button onClick={() => setResumeData(null)} className="btn btn-primary">
-                Close Preview
-              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={handleDownloadPdf}
+                  disabled={downloadingPdf}
+                  className="btn btn-primary"
+                  style={{ fontSize: 'var(--font-size-xs)', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  {downloadingPdf ? 'Preparing PDF...' : '📥 Download Formatted PDF'}
+                </button>
+
+                <button onClick={() => setResumeData(null)} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -741,7 +1102,7 @@ const styles = {
   closeIcon: { background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: 'var(--color-text-muted)' },
   modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'var(--space-4)' },
   modalCard: { maxWidth: '460px', width: '100%' },
-  largeModalCard: { maxWidth: '680px', width: '100%', maxHeight: '85vh', display: 'flex', flexDirection: 'column' },
+  largeModalCard: { maxWidth: '840px', width: '100%', maxHeight: '88vh', display: 'flex', flexDirection: 'column' },
   resumeScrollArea: { overflowY: 'auto', flex: 1, paddingRight: '6px' },
   grid2: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-2)' },
   label: { display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)', marginBottom: '4px' },

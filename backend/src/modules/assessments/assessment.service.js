@@ -8,6 +8,7 @@ import { isDBConnected } from '../../config/db.js';
 import { parsePagination, parseSort } from '../../utils/query.js';
 import { PROFICIENCY_LEVEL } from '../../config/constants.js';
 import { scoreAttempt } from './scoring.js';
+import { recordCampaignAttempt } from './campaign.service.js';
 
 function ensureDB() {
   if (!isDBConnected()) {
@@ -133,7 +134,7 @@ async function applySkillScoresToProfile(userId, skillScores) {
 /**
  * Submit an attempt: score it, persist, and (for students) update profile skills.
  */
-export async function submitAttempt(assessmentId, userId, { answers, startedAt, applyToProfile = true }) {
+export async function submitAttempt(assessmentId, userId, { answers, startedAt, applyToProfile = true, campaignId }) {
   ensureDB();
   const assessment = await Assessment.findById(assessmentId).populate('questionIds');
   if (!assessment) throw ApiError.notFound('Assessment not found');
@@ -168,6 +169,14 @@ export async function submitAttempt(assessmentId, userId, { answers, startedAt, 
       await applySkillScoresToProfile(userId, result.skillScores);
     } catch {
       // Non-fatal: scoring still succeeds even if profile update fails.
+    }
+  }
+
+  if (campaignId) {
+    try {
+      await recordCampaignAttempt(campaignId, userId, attempt);
+    } catch {
+      // Non-fatal: scoring still succeeds
     }
   }
 

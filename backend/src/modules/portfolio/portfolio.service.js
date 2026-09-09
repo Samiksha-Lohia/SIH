@@ -132,7 +132,7 @@ export async function getShareView(userId) {
 export async function generateResume(userId) {
   ensureDB();
   const [user, profile, items] = await Promise.all([
-    User.findById(userId).select('name email'),
+    User.findById(userId).select('name email phone'),
     StudentProfile.findOne({ user: userId }),
     PortfolioItem.find({ user: userId }),
   ]);
@@ -141,9 +141,11 @@ export async function generateResume(userId) {
   const payload = {
     name: user?.name,
     email: user?.email,
+    phone: user?.phone,
     skills: profile.skills,
     softSkills: profile.softSkills,
     projects: profile.projects,
+    experience: profile.experience,
     certifications: profile.certifications,
     education: profile.education,
     careerGoals: profile.careerGoals,
@@ -151,6 +153,97 @@ export async function generateResume(userId) {
     portfolio: items.map((i) => ({ type: i.type, title: i.title, verified: i.verificationStatus })),
   };
 
-  const resume = await aiService.generateResume(payload);
-  return { source: resume._meta?.source || aiService.mode, resume };
+  const aiResult = await aiService.generateResume(payload);
+
+  // Map AI-polished descriptions back to real stored projects (matching by title or index)
+  const aiProjectsMap = new Map();
+  if (Array.isArray(aiResult?.projects)) {
+    for (const p of aiResult.projects) {
+      if (p?.title) aiProjectsMap.set(p.title.trim().toLowerCase(), p.description);
+    }
+  }
+
+  const structuredProjects = (profile.projects || []).map((p, idx) => {
+    const polishedDesc =
+      aiProjectsMap.get(p.title?.trim().toLowerCase()) ||
+      (Array.isArray(aiResult?.projects) && aiResult.projects[idx]?.description) ||
+      p.description ||
+      '';
+    return {
+      title: p.title,
+      description: polishedDesc,
+      techStack: Array.isArray(p.techStack) ? p.techStack : [],
+      link: p.link || '',
+    };
+  });
+
+  // Factual education
+  const structuredEducation = (profile.education || []).map((e) => ({
+    institution: e.institution || '',
+    degree: e.degree || '',
+    branch: e.branch || '',
+    startYear: e.startYear || null,
+    graduationYear: e.graduationYear || null,
+    score: e.score || '',
+  }));
+
+  // Factual certifications
+  const structuredCertifications = (profile.certifications || []).map((c) => ({
+    name: c.name || '',
+    issuer: c.issuer || '',
+    issueDate: c.issueDate || null,
+    credentialUrl: c.credentialUrl || '',
+  }));
+
+  // Factual technical & soft skills
+  const technicalSkills = (profile.skills || []).map((s) => ({
+    name: typeof s === 'string' ? s : s.name,
+    level: s.level || 'intermediate',
+    verified: Boolean(s.verified),
+  }));
+
+  const softSkills = (profile.softSkills || []).map((s) => ({
+    name: typeof s === 'string' ? s : s.name,
+    level: s.level || 'intermediate',
+  }));
+
+  // Canonical structured resume response
+  const structuredResume = {
+    name: user.name,
+    email: user.email,
+    phone: user.phone || '',
+    location: (profile.preferences?.locations && profile.preferences.locations[0]) || '',
+    targetRole: (profile.careerGoals?.targetRoles && profile.careerGoals.targetRoles[0]) || 'Software Engineer',
+    summary:
+      aiResult?.summary ||
+      profile.careerGoals?.summary ||
+      `${user.name} is a dedicated candidate with practical engineering experience and verified technical competencies.`,
+    skills: {
+      technical: technicalSkills,
+      soft: softSkills,
+    },
+    projects: structuredProjects,
+    experience: (profile.experience || []).map((exp) => ({
+      organization: exp.organization || '',
+      role: exp.role || '',
+      startDate: exp.startDate || null,
+      endDate: exp.endDate || null,
+      current: Boolean(exp.current),
+      description: exp.description || '',
+    })),
+    education: structuredEducation,
+    certifications: structuredCertifications,
+    achievements: profile.achievements || [],
+    links: {
+      github: profile.portfolio?.github || '',
+      linkedin: profile.portfolio?.linkedin || '',
+      website: profile.portfolio?.website || '',
+    },
+    _meta: {
+      source: aiResult?._meta?.source || aiService.mode,
+      generatedAt: new Date().toISOString(),
+    },
+  };
+
+  return { source: structuredResume._meta.source, resume: structuredResume };
 }

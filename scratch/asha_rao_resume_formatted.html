@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Asha Rao - Professional Resume</title>
+  <meta charset="utf-8" />
+  <style>
+    @page { size: A4; margin: 12mm 15mm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #0f172a;
+      line-height: 1.4;
+      margin: 0;
+      padding: 24px;
+      font-size: 10pt;
+      background: #f8fafc;
+    }
+    .resume-sheet {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 36px 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+    }
+    .header { border-bottom: 2pt solid #0284c7; padding-bottom: 8pt; margin-bottom: 10pt; }
+    .name { font-size: 22pt; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; margin: 0 0 2pt 0; }
+    .role { font-size: 11pt; color: #0284c7; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4pt; }
+    .contacts { font-size: 9pt; color: #475569; display: flex; flex-wrap: wrap; gap: 12pt; }
+    .section { margin-bottom: 11pt; }
+    .section-title { font-size: 10.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #1e293b; border-bottom: 1pt solid #e2e8f0; padding-bottom: 2pt; margin: 0 0 6pt 0; }
+    .summary-text { font-size: 9.5pt; color: #334155; line-height: 1.5; margin: 0; }
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: 4pt; }
+    .skill-pill { display: inline-block; font-size: 8.5pt; background-color: #f1f5f9; border: 1pt solid #cbd5e1; padding: 1.5pt 5pt; border-radius: 3pt; color: #0f172a; }
+    .skill-pill.verified { background-color: #ecfdf5; border-color: #86efac; color: #166534; font-weight: 600; }
+    .project-item, .education-item { margin-bottom: 6pt; }
+    .item-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .item-title { font-size: 10pt; font-weight: 700; color: #0f172a; }
+    .item-meta { font-size: 8.5pt; color: #64748b; }
+    .item-link { font-size: 8pt; color: #0284c7; }
+    .tech-tags { font-size: 8.5pt; color: #0284c7; font-weight: 600; margin: 1pt 0 2pt 0; }
+    .project-desc { font-size: 9pt; color: #334155; line-height: 1.45; }
+    .edu-sub { font-size: 9pt; color: #475569; }
+    @media print {
+      body { padding: 0; background: #ffffff; }
+      .resume-sheet { box-shadow: none; border: none; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="resume-sheet">
+    <div class="header">
+      <h1 class="name">Asha Rao</h1>
+      <div class="role">Frontend Developer</div>
+      <div class="contacts">
+        <span>✉️ student@sutra.dev</span>
+        
+        <span>📍 Bangalore</span>
+      </div>
+    </div>
+    <div class="section"><div class="section-title">Professional Summary</div><p class="summary-text">Aspiring frontend developer.</p></div>
+    <div class="section"><div class="section-title">Technical & Professional Competencies</div><div class="skills-wrap"><span class="skill-pill ">JavaScript</span><span class="skill-pill ">React</span><span class="skill-pill ">Node.js</span><span class="skill-pill ">Git</span><span class="skill-pill ">Data Structures</span><span class="skill-pill ">SQL</span><span class="skill-pill">Communication</span></div></div>
+    <div class="section"><div class="section-title">Featured Projects</div>
+      <div class="project-item">
+        <div class="item-header">
+          <span class="item-title">Portfolio Website</span>
+          
+        </div>
+        <div class="tech-tags">Technologies: React, JavaScript</div>
+        <div class="project-desc">Engineered Portfolio Website leveraging React, JavaScript. Built with React</div>
+      </div>
+    </div>
+    <div class="section"><div class="section-title">Education</div>
+      <div class="education-item">
+        <div class="item-header">
+          <span class="item-title">B.Tech in CSE</span>
+          <span class="item-meta"></span>
+        </div>
+        <div class="edu-sub">Demo Institute</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

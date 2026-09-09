@@ -7,13 +7,15 @@ import { DepartmentAnalyticsView } from './components/DepartmentAnalyticsView.js
 import { IndustryDemandComparisonView } from './components/IndustryDemandComparisonView.jsx';
 import { PlacementFunnelView } from './components/PlacementFunnelView.jsx';
 import { StudentCohortView } from './components/StudentCohortView.jsx';
+import { AssessmentCampaignView } from './components/AssessmentCampaignView.jsx';
 import { InstitutionProfileSettingsView } from './components/InstitutionProfileSettingsView.jsx';
 
 const INSTITUTION_TABS = [
   { id: 'readiness', label: '📊 Readiness Cockpit', desc: 'Institutional KPIs & live export reports' },
+  { id: 'campaigns', label: '🎯 Assessment Campaigns', desc: 'Create assessments & assign campaigns to students' },
   { id: 'departments', label: '🏛️ Department Analytics', desc: 'Branch distribution & gap simulator' },
   { id: 'demand', label: '⚖️ Industry Demand', desc: 'Supply vs industry demand score alignment' },
-  { id: 'placement', label: '🎯 Placements & Internships', desc: 'Hiring funnel & live opportunities' },
+  { id: 'placement', label: '💼 Placements & Internships', desc: 'Hiring funnel & live opportunities' },
   { id: 'cohort', label: '🎓 Student Cohort', desc: 'Student dossier & verified records lookup' },
   { id: 'profile', label: '⚙️ Profile Settings', desc: 'Institutional profile & verification details' }
 ];
@@ -150,6 +152,7 @@ export function InstitutionHome() {
       {/* Main Tab Screen Content */}
       <div style={{ minHeight: '500px' }}>
         {activeTab === 'readiness' && <InstitutionReadinessView />}
+        {activeTab === 'campaigns' && <AssessmentCampaignView />}
         {activeTab === 'departments' && <DepartmentAnalyticsView />}
         {activeTab === 'demand' && <IndustryDemandComparisonView />}
         {activeTab === 'placement' && <PlacementFunnelView />}
