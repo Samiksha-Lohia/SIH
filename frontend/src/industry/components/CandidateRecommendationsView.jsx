@@ -18,7 +18,6 @@ export const CandidateRecommendationsView = () => {
       const opps = res.opportunities || [];
       setOpportunities(opps);
       if (opps.length > 0) {
-        // Pick the first published or any opportunity by default
         const active = opps.find((o) => o.status === 'published') || opps[0];
         const id = active.id || active._id;
         setSelectedOppId(id);
@@ -59,9 +58,8 @@ export const CandidateRecommendationsView = () => {
 
   if (loadingOpps) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-        <div style={{ margin: '0 auto 1rem', width: '32px', height: '32px', border: '3px solid #334155', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <p>Loading enterprise opportunities for candidate alignment...</p>
+      <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+        <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Loading enterprise opportunities for candidate alignment...</p>
       </div>
     );
   }
@@ -69,34 +67,34 @@ export const CandidateRecommendationsView = () => {
   const selectedOpp = opportunities.find((o) => (o.id || o._id) === selectedOppId);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
       {/* Top Opportunity Selector Bar */}
-      <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="card" style={{ padding: 'var(--space-6)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#f8fafc' }}>
-              🎯 AI Candidate Recommendation Feed
+            <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>
+              AI Candidate Recommendation Feed
             </h3>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
               Explainable multi-dimensional candidate matching powered by SUTRA's deterministic matching engine.
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <label style={{ fontSize: '0.85rem', color: '#cbd5e1', fontWeight: 600 }}>Target Posting:</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+            <label style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Target Posting:</label>
             {opportunities.length === 0 ? (
-              <span style={{ color: '#ef4444', fontSize: '0.85rem' }}>No opportunities posted yet</span>
+              <span style={{ color: 'var(--color-burgundy-red)', fontSize: 'var(--font-size-xs)' }}>No opportunities posted yet</span>
             ) : (
               <select
                 value={selectedOppId}
                 onChange={(e) => setSelectedOppId(e.target.value)}
                 style={{
-                  padding: '0.55rem 1rem',
-                  background: '#0f172a',
-                  border: '1px solid #334155',
-                  borderRadius: '6px',
-                  color: '#fff',
-                  fontSize: '0.85rem',
+                  padding: 'var(--space-2) var(--space-3)',
+                  background: 'var(--color-bg-app)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  color: 'var(--color-text)',
+                  fontSize: 'var(--font-size-xs)',
                   maxWidth: '320px',
                 }}
               >
@@ -113,17 +111,8 @@ export const CandidateRecommendationsView = () => {
             <button
               onClick={() => fetchRecommendations(selectedOppId)}
               disabled={loadingCandidates || !selectedOppId}
-              style={{
-                padding: '0.55rem 1rem',
-                background: '#38bdf8',
-                color: '#0f172a',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                cursor: loadingCandidates || !selectedOppId ? 'not-allowed' : 'pointer',
-                opacity: loadingCandidates || !selectedOppId ? 0.6 : 1,
-              }}
+              className="btn btn-primary"
+              style={{ fontSize: 'var(--font-size-xs)' }}
             >
               {loadingCandidates ? 'Matching...' : 'Re-run Matching'}
             </button>
@@ -131,41 +120,40 @@ export const CandidateRecommendationsView = () => {
         </div>
 
         {selectedOpp && (
-          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #334155', display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.8rem', color: '#94a3b8' }}>
-            <span>Type: <strong style={{ color: '#cbd5e1', textTransform: 'capitalize' }}>{selectedOpp.type}</strong></span>
-            <span>Work Mode: <strong style={{ color: '#cbd5e1', textTransform: 'uppercase' }}>{selectedOpp.workMode}</strong></span>
-            <span>Openings: <strong style={{ color: '#38bdf8' }}>{selectedOpp.openings || 1}</strong></span>
-            <span>Skills Configured: <strong style={{ color: '#34d399' }}>{(selectedOpp.requiredSkills || []).length} required</strong>, {(selectedOpp.preferredSkills || []).length} preferred</span>
+          <div style={{ marginTop: 'var(--space-4)', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)', display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+            <span>Type: <strong style={{ color: 'var(--color-text)', textTransform: 'capitalize' }}>{selectedOpp.type}</strong></span>
+            <span>Work Mode: <strong style={{ color: 'var(--color-text)', textTransform: 'uppercase' }}>{selectedOpp.workMode || selectedOpp.workplaceType}</strong></span>
+            <span>Openings: <strong style={{ color: 'var(--color-steel-blue)' }}>{selectedOpp.openings || 1}</strong></span>
+            <span>Skills Configured: <strong style={{ color: 'var(--color-emerald)' }}>{(selectedOpp.requiredSkills || []).length} required</strong>, {(selectedOpp.preferredSkills || []).length} preferred</span>
           </div>
         )}
       </div>
 
       {/* Error state */}
       {error && (
-        <div style={{ padding: '1.25rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '8px', color: '#fca5a5' }}>
-          <h4 style={{ margin: '0 0 0.35rem', color: '#ef4444' }}>Matching Error</h4>
-          <p style={{ margin: 0, fontSize: '0.9rem' }}>{error}</p>
+        <div className="card" style={{ padding: 'var(--space-6)', borderLeft: '4px solid var(--color-burgundy-red)' }}>
+          <h4 style={{ margin: '0 0 var(--space-2)', color: 'var(--color-burgundy-red)', fontSize: 'var(--font-size-md)' }}>Matching Error</h4>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>{error}</p>
         </div>
       )}
 
       {/* Candidates Feed */}
       {loadingCandidates && (
-        <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-          <div style={{ margin: '0 auto 1rem', width: '32px', height: '32px', border: '3px solid #334155', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-          <p>Running multi-factor compatibility algorithms across student talent pool...</p>
+        <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Running multi-factor compatibility algorithms across student talent pool...</p>
         </div>
       )}
 
       {!loadingCandidates && !error && (
         <div>
           {candidates.length === 0 ? (
-            <div style={{ padding: '3rem', textAlign: 'center', background: '#1e293b', borderRadius: '12px', border: '1px solid #334155', color: '#64748b' }}>
-              <p style={{ margin: 0, fontSize: '1rem' }}>No matched candidates returned by backend engine for this opportunity.</p>
-              <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem' }}>Try refining required skills or lowering proficiency constraints in the posting.</p>
+            <div className="card" style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+              <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>No matched candidates returned by backend engine for this opportunity.</p>
+              <p style={{ margin: 'var(--space-2) 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>Try refining required skills or lowering proficiency constraints in the posting.</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
                 Showing <strong>{candidates.length}</strong> top-ranked candidate profiles evaluated by SUTRA engine:
               </div>
 
@@ -179,36 +167,34 @@ export const CandidateRecommendationsView = () => {
                 return (
                   <div
                     key={cand.userId || idx}
+                    className="card"
                     style={{
-                      background: '#1e293b',
-                      borderRadius: '12px',
-                      border: '1px solid #334155',
-                      padding: '1.5rem',
+                      padding: 'var(--space-6)',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '1.25rem',
+                      gap: 'var(--space-4)',
                     }}
                   >
                     {/* Candidate Header Row */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                       <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f8fafc' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: 'var(--font-size-md)', fontWeight: 700, color: 'var(--color-primary)' }}>
                             {cand.name || 'Anonymous Student'}
                           </span>
-                          <span style={{ background: '#0f172a', border: '1px solid #334155', color: '#cbd5e1', fontSize: '0.75rem', padding: '0.2rem 0.55rem', borderRadius: '4px' }}>
-                            ✉️ {cand.email || 'Confidential'}
+                          <span className="badge badge-subtle" style={{ fontSize: '11px' }}>
+                            {cand.email || 'Confidential'}
                           </span>
-                          <span style={{ background: '#065f46', color: '#34d399', fontSize: '0.75rem', padding: '0.2rem 0.55rem', borderRadius: '4px', fontWeight: 600 }}>
+                          <span className="badge badge-emerald" style={{ fontSize: '11px' }}>
                             {cand.completeness || 100}% Profile Complete
                           </span>
                           {item.eligibilityOk && (
-                            <span style={{ background: '#0284c7', color: '#fff', fontSize: '0.75rem', padding: '0.2rem 0.55rem', borderRadius: '4px', fontWeight: 600 }}>
-                              ✓ Eligibility Met
+                            <span className="badge badge-sky" style={{ fontSize: '11px' }}>
+                              Eligibility Met
                             </span>
                           )}
                         </div>
-                        <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.35rem' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' }}>
                           Candidate UID: <code>{cand.userId}</code>
                         </div>
                       </div>
@@ -216,22 +202,22 @@ export const CandidateRecommendationsView = () => {
                       {/* Overall Score Badge */}
                       <div
                         style={{
-                          background: '#0f172a',
-                          padding: '0.75rem 1.25rem',
-                          borderRadius: '10px',
-                          border: '1px solid #334155',
+                          background: 'var(--color-bg-app)',
+                          padding: 'var(--space-2) var(--space-4)',
+                          borderRadius: 'var(--radius-md)',
+                          border: '1px solid var(--color-border)',
                           textAlign: 'center',
-                          minWidth: '130px',
+                          minWidth: '110px',
                         }}
                       >
-                        <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}>
                           Match Score
                         </div>
                         <div
                           style={{
-                            fontSize: '1.85rem',
+                            fontSize: 'var(--font-size-xl)',
                             fontWeight: 800,
-                            color: score >= 75 ? '#34d399' : score >= 50 ? '#38bdf8' : '#facc15',
+                            color: score >= 75 ? 'var(--color-emerald)' : score >= 50 ? 'var(--color-steel-blue)' : 'var(--color-amber)',
                           }}
                         >
                           {score}%
@@ -241,37 +227,37 @@ export const CandidateRecommendationsView = () => {
 
                     {/* Deterministic Explanation from Backend */}
                     {item.explanation && (
-                      <div style={{ background: '#0f172a', padding: '0.85rem 1rem', borderRadius: '8px', border: '1px solid #334155', fontSize: '0.85rem', color: '#94a3b8', fontStyle: 'italic' }}>
-                        💡 <strong style={{ color: '#e2e8f0', fontStyle: 'normal' }}>Engine Explanation:</strong> {item.explanation}
+                      <div style={{ background: 'var(--color-bg-app)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+                        <strong style={{ color: 'var(--color-text)' }}>Engine Explanation:</strong> {item.explanation}
                       </div>
                     )}
 
-                    {/* Explainable Factor Breakdown (Live Backend Breakdown Fields) */}
+                    {/* Explainable Factor Breakdown */}
                     <div>
-                      <div style={{ fontSize: '0.8rem', color: '#cbd5e1', fontWeight: 600, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <div style={{ fontSize: '11px', color: 'var(--color-text-secondary)', fontWeight: 600, marginBottom: 'var(--space-2)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         Factor-Wise Compatibility Breakdown:
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: 'var(--space-2)' }}>
                         {[
-                          { label: 'Skill Compatibility (35%)', val: breakdown.skillCompatibility },
-                          { label: 'Skill Proficiency (20%)', val: breakdown.skillProficiency },
-                          { label: 'Education / CGPA (15%)', val: breakdown.education },
-                          { label: 'Career Alignment (10%)', val: breakdown.careerInterest },
-                          { label: 'Experience & Projects (10%)', val: breakdown.experience },
-                          { label: 'Location & Work Mode (5%)', val: breakdown.location },
-                          { label: 'Certifications (5%)', val: breakdown.certifications },
+                          { label: 'Skill Match (35%)', val: breakdown.skillCompatibility },
+                          { label: 'Proficiency (20%)', val: breakdown.skillProficiency },
+                          { label: 'Education (15%)', val: breakdown.education },
+                          { label: 'Career Focus (10%)', val: breakdown.careerInterest },
+                          { label: 'Projects (10%)', val: breakdown.experience },
+                          { label: 'Location (5%)', val: breakdown.location },
+                          { label: 'Certs (5%)', val: breakdown.certifications },
                         ].map((factor, fIdx) => (
-                          <div key={fIdx} style={{ background: '#0f172a', padding: '0.65rem 0.85rem', borderRadius: '6px', border: '1px solid #334155' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.3rem', color: '#94a3b8' }}>
+                          <div key={fIdx} style={{ background: 'var(--color-bg-app)', padding: 'var(--space-2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>
                               <span>{factor.label}</span>
-                              <strong style={{ color: (factor.val || 0) >= 70 ? '#34d399' : '#38bdf8' }}>{factor.val ?? 0}%</strong>
+                              <strong style={{ color: (factor.val || 0) >= 70 ? 'var(--color-emerald)' : 'var(--color-steel-blue)' }}>{factor.val ?? 0}%</strong>
                             </div>
-                            <div style={{ height: '5px', background: '#1e293b', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div style={{ height: '4px', background: 'var(--color-border-subtle)', borderRadius: '2px', overflow: 'hidden' }}>
                               <div
                                 style={{
                                   height: '100%',
                                   width: `${factor.val || 0}%`,
-                                  background: (factor.val || 0) >= 70 ? '#34d399' : '#38bdf8',
+                                  background: (factor.val || 0) >= 70 ? 'var(--color-emerald)' : 'var(--color-steel-blue)',
                                   transition: 'width 0.4s ease',
                                 }}
                               />
@@ -282,32 +268,32 @@ export const CandidateRecommendationsView = () => {
                     </div>
 
                     {/* Matched vs Missing Skills */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', borderTop: '1px solid #334155', paddingTop: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 'var(--space-3)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)' }}>
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: '#34d399', fontWeight: 600, marginBottom: '0.4rem' }}>
-                          ✓ Matched Skills ({matched.length})
+                        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-emerald)', fontWeight: 600, marginBottom: 'var(--space-2)' }}>
+                          Matched Skills ({matched.length})
                         </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-1)' }}>
                           {matched.map((sk, sIdx) => (
-                            <span key={sIdx} style={{ background: '#064e3b', border: '1px solid #059669', color: '#a7f3d0', padding: '0.15rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem' }}>
+                            <span key={sIdx} className="badge badge-emerald" style={{ fontSize: '11px' }}>
                               {sk}
                             </span>
                           ))}
-                          {matched.length === 0 && <span style={{ color: '#64748b', fontSize: '0.75rem', fontStyle: 'italic' }}>None matched</span>}
+                          {matched.length === 0 && <span style={{ color: 'var(--color-text-muted)', fontSize: '11px', fontStyle: 'italic' }}>None matched</span>}
                         </div>
                       </div>
 
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: '#ef4444', fontWeight: 600, marginBottom: '0.4rem' }}>
-                          ⚠️ Missing / Unmet Skills ({missing.length})
+                        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-burgundy-red)', fontWeight: 600, marginBottom: 'var(--space-2)' }}>
+                          Missing / Unmet Skills ({missing.length})
                         </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-1)' }}>
                           {missing.map((sk, sIdx) => (
-                            <span key={sIdx} style={{ background: '#450a0a', border: '1px solid #dc2626', color: '#fca5a5', padding: '0.15rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem' }}>
+                            <span key={sIdx} className="badge badge-danger" style={{ fontSize: '11px' }}>
                               {sk}
                             </span>
                           ))}
-                          {missing.length === 0 && <span style={{ color: '#34d399', fontSize: '0.75rem', fontWeight: 500 }}>Full competency coverage</span>}
+                          {missing.length === 0 && <span style={{ color: 'var(--color-emerald)', fontSize: '11px', fontWeight: 500 }}>Full competency coverage</span>}
                         </div>
                       </div>
                     </div>

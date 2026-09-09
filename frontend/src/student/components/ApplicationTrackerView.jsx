@@ -167,26 +167,36 @@ export function ApplicationTrackerView() {
             const isTerminal = ['selected', 'rejected', 'withdrawn'].includes(app.status);
             const currentStageIndex = LIFECYCLE_STAGES.indexOf(app.status);
 
+            const getStatusClass = (st) => {
+              if (st === 'selected') return 'status-verified';
+              if (st === 'rejected' || st === 'withdrawn') return 'status-rejected';
+              if (st === 'interview' || st === 'shortlisted') return 'status-active';
+              return 'status-pending';
+            };
+
             return (
               <div key={app.id} className="card" style={styles.appCard}>
                 <div style={styles.appCardHeader}>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <h4 style={{ color: 'var(--color-primary)', margin: 0 }}>{opp.title || 'Corporate Opportunity'}</h4>
-                      <span className="badge" style={{ ...getStatusBadgeStyle(app.status), fontSize: '11px', textTransform: 'capitalize' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+                      <h4 style={{ color: 'var(--color-text-main)', margin: 0, fontSize: 'var(--font-size-base)', fontWeight: '600' }}>
+                        {opp.title || 'Corporate Opportunity'}
+                      </h4>
+                      <span className={`status-pill ${getStatusClass(app.status)}`} style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                        <span className="status-pill-dot" />
                         {app.status.replace('_', ' ')}
                       </span>
                     </div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
-                      🏢 {opp.companyName || 'Corporate Partner'} • Applied on: {formatDate(app.createdAt)}
+                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                      <strong style={{ color: 'var(--color-text-main)' }}>{opp.companyName || 'Corporate Partner'}</strong> • Applied on: <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatDate(app.createdAt)}</span>
                     </div>
                   </div>
 
                   {!isTerminal && (
                     <button
                       onClick={() => setWithdrawTarget(app)}
-                      className="btn btn-outline"
-                      style={{ fontSize: '11px', padding: '2px 8px', color: '#b91c1c', borderColor: 'rgba(239, 68, 68, 0.4)' }}
+                      className="btn btn-ghost"
+                      style={{ fontSize: '11px', padding: '4px 8px', color: 'var(--color-primary)' }}
                     >
                       Withdraw Application
                     </button>
@@ -206,14 +216,15 @@ export function ApplicationTrackerView() {
                             style={{
                               ...styles.stageDot,
                               backgroundColor: isReached ? 'var(--color-primary)' : 'var(--color-border)',
-                              border: isCurrent ? '3px solid var(--color-burgundy-red)' : 'none',
+                              outline: isCurrent ? '2px solid var(--color-primary)' : 'none',
+                              outlineOffset: '2px',
                             }}
                           />
                           <span
                             style={{
                               ...styles.stageLabel,
-                              color: isReached ? 'var(--color-primary)' : 'var(--color-text-muted)',
-                              fontWeight: isCurrent ? 'bold' : 'normal',
+                              color: isReached ? 'var(--color-text-main)' : 'var(--color-text-muted)',
+                              fontWeight: isCurrent ? '600' : 'normal',
                             }}
                           >
                             {stg.replace('_', ' ')}
@@ -227,9 +238,9 @@ export function ApplicationTrackerView() {
                 {/* Interview Stage Detail if scheduled */}
                 {app.interviews?.length > 0 && (
                   <div style={styles.interviewBox}>
-                    <strong style={{ fontSize: 'var(--font-size-xs)' }}>📅 Interview Scheduled:</strong>
+                    <strong style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-main)' }}>Interview Scheduled:</strong>
                     {app.interviews.map((iv, idx) => (
-                      <div key={idx} style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                      <div key={idx} style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginTop: '2px' }}>
                         Round: <strong>{iv.roundName || 'Technical Round'}</strong> • Date: {formatDate(iv.scheduledAt)} • Mode: {iv.mode || 'Online Video'}
                       </div>
                     ))}
@@ -247,21 +258,21 @@ export function ApplicationTrackerView() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={!meta.hasPrevPage || loading}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            Previous
+            ← Previous
           </button>
-          <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
             Page {meta.page} of {meta.totalPages} ({meta.total} applications)
           </span>
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={!meta.hasNextPage || loading}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            Next
+            Next →
           </button>
         </div>
       )}
@@ -270,24 +281,24 @@ export function ApplicationTrackerView() {
       {withdrawTarget && (
         <div style={styles.modalOverlay}>
           <div className="card" style={styles.modalCard}>
-            <h4 style={{ marginBottom: 'var(--space-2)' }}>Confirm Application Withdrawal</h4>
-            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)' }}>
+            <h4 style={{ margin: '0 0 var(--space-2) 0', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>Confirm Application Withdrawal</h4>
+            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-2)' }}>
               Are you sure you want to withdraw your application for{' '}
               <strong>{withdrawTarget.opportunity?.title || 'this opportunity'}</strong>?
             </p>
-            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-4)' }}>
+            <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: 'var(--space-3)' }}>
               This action will alert the recruiting team that you are no longer in consideration. This cannot be undone.
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)' }}>
-              <button onClick={() => setWithdrawTarget(null)} disabled={withdrawing} className="btn btn-outline">
-                Keep Application
+              <button onClick={() => setWithdrawTarget(null)} disabled={withdrawing} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
+                Cancel
               </button>
               <button
                 onClick={handleWithdraw}
                 disabled={withdrawing}
                 className="btn btn-primary"
-                style={{ backgroundColor: '#b91c1c', borderColor: '#b91c1c' }}
+                style={{ fontSize: 'var(--font-size-xs)' }}
               >
                 {withdrawing ? 'Withdrawing...' : 'Confirm Withdrawal'}
               </button>
@@ -303,22 +314,22 @@ const styles = {
   container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
   headerRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' },
   description: { fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' },
-  toolbar: { display: 'flex', gap: 'var(--space-2)' },
-  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)', minWidth: '200px' },
-  appCard: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' },
+  toolbar: { display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' },
+  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)', minWidth: '180px' },
+  appCard: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' },
   appCardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--space-2)' },
-  pipelineContainer: { backgroundColor: 'var(--color-bg-app)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-subtle)' },
-  pipelineTrack: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' },
+  pipelineContainer: { backgroundColor: 'var(--color-mist-light)', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', overflowX: 'auto' },
+  pipelineTrack: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', minWidth: '320px' },
   stageStep: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', zIndex: 1 },
-  stageDot: { width: '12px', height: '12px', borderRadius: '50%' },
+  stageDot: { width: '8px', height: '8px', borderRadius: '50%' },
   stageLabel: { fontSize: '10px', textTransform: 'capitalize' },
-  interviewBox: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', backgroundColor: 'rgba(147, 51, 234, 0.08)', border: '1px solid rgba(147, 51, 234, 0.2)' },
-  feedbackBox: { padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)' },
-  closeFeedback: { fontSize: '18px', cursor: 'pointer', color: 'inherit' },
-  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'var(--space-4)' },
-  modalCard: { maxWidth: '440px', width: '100%' },
+  interviewBox: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' },
+  feedbackBox: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-xs)' },
+  closeFeedback: { fontSize: '16px', cursor: 'pointer', color: 'inherit', background: 'none', border: 'none' },
+  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'clamp(8px, 2vw, 16px)' },
+  modalCard: { maxWidth: '420px', width: '100%', maxHeight: '90vh', overflowY: 'auto' },
   paginationRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'var(--space-2)' },
-  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
+  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
   spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
 };
 

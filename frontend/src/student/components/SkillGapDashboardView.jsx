@@ -151,41 +151,38 @@ export function SkillGapDashboardView({ studentId }) {
       ) : readinessData ? (
         <>
           {/* Top KPI Metrics Grid */}
-          <div style={styles.kpiGrid}>
-            {/* Gauge Card */}
-            <div className="card" style={{ ...styles.kpiCard, alignItems: 'center', textAlign: 'center' }}>
+          <div className="b2b-kpi-grid">
+            {/* Overall Readiness Tile */}
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
               <span style={styles.kpiLabel}>Overall Readiness Index</span>
-              <div
-                style={{
-                  ...styles.scoreWheel,
-                  borderColor: getReadinessColor(readinessData.readiness || 0),
-                  color: getReadinessColor(readinessData.readiness || 0),
-                }}
-              >
-                <span style={{ fontSize: '32px', fontWeight: 'bold', fontFamily: 'var(--font-family-display)' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <span style={{ fontSize: 'var(--font-size-3xl)', fontWeight: '700', fontFamily: 'var(--font-family-display)', fontVariantNumeric: 'tabular-nums', color: 'var(--color-text-main)' }}>
                   {Math.round(readinessData.readiness || 0)}%
                 </span>
+                <span className="status-pill status-active" style={{ fontSize: '11px' }}>
+                  <span className="status-pill-dot" />
+                  {getReadinessLabel(readinessData.readiness || 0)}
+                </span>
               </div>
-              <span
-                className="badge"
-                style={{
-                  fontSize: '11px',
-                  marginTop: 'var(--space-2)',
-                  backgroundColor: `${getReadinessColor(readinessData.readiness || 0)}20`,
-                  color: getReadinessColor(readinessData.readiness || 0),
-                }}
-              >
-                {getReadinessLabel(readinessData.readiness || 0)}
-              </span>
+              <div style={{ height: '4px', backgroundColor: 'var(--color-mist-light)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
+                <div style={{ height: '100%', width: `${Math.round(readinessData.readiness || 0)}%`, backgroundColor: 'var(--color-primary)', transition: 'width 0.3s ease' }} />
+              </div>
             </div>
 
-            {/* Evaluation Summary Card */}
-            <div className="card" style={{ ...styles.kpiCard, flex: 2 }}>
-              <span style={styles.kpiLabel}>Archetype Target Summary</span>
-              <h4 style={{ color: 'var(--color-primary)', marginTop: 'var(--space-1)' }}>
-                {readinessData.role?.title || 'Target Role'}
-              </h4>
-              <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: 'var(--space-1)', lineHeight: 1.5 }}>
+            {/* Evaluation Summary Tile */}
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', gridColumn: 'span 2' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '4px' }}>
+                <div>
+                  <span style={styles.kpiLabel}>Archetype Target Summary</span>
+                  <h4 style={{ margin: '2px 0 0 0', fontSize: 'var(--font-size-base)', fontWeight: '600', color: 'var(--color-text-main)' }}>
+                    {readinessData.role?.title || 'Target Role'}
+                  </h4>
+                </div>
+                <span className="badge badge-role" style={{ fontSize: '11px' }}>
+                  Completeness: {readinessData.profileCompleteness || 0}%
+                </span>
+              </div>
+              <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.4 }}>
                 {formatSummaryText(readinessData.summary)}
               </p>
 
@@ -195,7 +192,7 @@ export function SkillGapDashboardView({ studentId }) {
                   <span style={styles.miniStatLabel}>Strong Competencies</span>
                 </div>
                 <div style={styles.miniStat}>
-                  <span style={{ ...styles.miniStatVal, color: '#b91c1c' }}>
+                  <span style={{ ...styles.miniStatVal, color: 'var(--color-primary)' }}>
                     {readinessData.criticalGaps?.length || 0}
                   </span>
                   <span style={styles.miniStatLabel}>Critical Gaps</span>
@@ -212,13 +209,13 @@ export function SkillGapDashboardView({ studentId }) {
           <div style={styles.columnsGrid}>
             {/* Strengths Column */}
             <div className="card" style={styles.sectionCard}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
-                <span style={{ fontSize: '18px' }}>💪</span>
-                <h4 style={{ margin: 0 }}>Validated Strengths</h4>
+              <div style={{ marginBottom: 'var(--space-3)' }}>
+                <h4 style={{ margin: 0, fontSize: 'var(--font-size-sm)', fontWeight: '600' }}>Validated Strengths</h4>
+                <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>Competencies meeting or exceeding target benchmarks</p>
               </div>
 
               {readinessData.topStrengths?.length === 0 ? (
-                <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
+                <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontStyle: 'italic', margin: 0 }}>
                   No target role competencies fully matched yet. Update skills in your profile to improve alignment.
                 </p>
               ) : (
@@ -226,11 +223,12 @@ export function SkillGapDashboardView({ studentId }) {
                   {readinessData.topStrengths?.map((item, idx) => (
                     <div key={idx} style={styles.strengthItem}>
                       <div>
-                        <strong>{typeof item === 'string' ? item : item.skill}</strong>
+                        <strong style={{ color: 'var(--color-text-main)' }}>{typeof item === 'string' ? item : item.skill}</strong>
                         {item.level && <span style={styles.levelTag}>• Level: {item.level}</span>}
                       </div>
-                      <span className="badge" style={{ backgroundColor: 'rgba(34, 197, 94, 0.15)', color: '#15803d', fontSize: '10px' }}>
-                        ✓ Requirement Met
+                      <span className="status-pill status-verified" style={{ fontSize: '10px' }}>
+                        <span className="status-pill-dot" />
+                        Met
                       </span>
                     </div>
                   ))}
@@ -240,15 +238,15 @@ export function SkillGapDashboardView({ studentId }) {
 
             {/* Critical Gaps Column */}
             <div className="card" style={styles.sectionCard}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
-                <span style={{ fontSize: '18px' }}>⚠️</span>
-                <h4 style={{ margin: 0 }}>Critical Skill Gaps</h4>
+              <div style={{ marginBottom: 'var(--space-3)' }}>
+                <h4 style={{ margin: 0, fontSize: 'var(--font-size-sm)', fontWeight: '600' }}>Competency Gaps</h4>
+                <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>Missing or below required threshold</p>
               </div>
 
               {readinessData.criticalGaps?.length === 0 ? (
-                <div style={{ padding: 'var(--space-4)', backgroundColor: 'rgba(34, 197, 94, 0.1)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                  <span style={{ color: '#15803d', fontWeight: 'bold' }}>All Required Competencies Met!</span>
-                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                <div style={{ padding: 'var(--space-3)', backgroundColor: 'var(--color-mist-light)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }}>
+                  <span style={{ color: 'var(--color-text-main)', fontWeight: '600', fontSize: 'var(--font-size-xs)' }}>All Required Competencies Met</span>
+                  <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>
                     You fulfill the primary skill requirements for this position.
                   </p>
                 </div>
@@ -257,12 +255,13 @@ export function SkillGapDashboardView({ studentId }) {
                   {readinessData.criticalGaps?.map((gap, idx) => (
                     <div key={idx} style={styles.gapItem}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <strong>{gap.skill}</strong>
-                        <span className="badge" style={{ ...getSeverityStyle(gap.severity), fontSize: '10px', textTransform: 'capitalize' }}>
+                        <strong style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-main)' }}>{gap.skill}</strong>
+                        <span className="status-pill status-rejected" style={{ fontSize: '10px' }}>
+                          <span className="status-pill-dot" />
                           {gap.severity || 'Gap'}
                         </span>
                       </div>
-                      <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                      <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: '4px 0 0 0', lineHeight: 1.4 }}>
                         {gap.reason || 'Skill missing from profile or below required threshold.'}
                       </p>
                     </div>
@@ -274,39 +273,43 @@ export function SkillGapDashboardView({ studentId }) {
 
           {/* Full Gap Engine Table if present */}
           {gapReport?.gaps?.length > 0 && (
-            <div className="card" style={{ marginTop: 'var(--space-4)' }}>
-              <h5 style={{ marginBottom: 'var(--space-3)' }}>Full Role Competency Alignment Matrix</h5>
-              <div style={styles.tableWrapper}>
-                <table style={styles.table}>
+            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div style={{ padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-border)' }}>
+                <h5 style={{ margin: 0, fontSize: 'var(--font-size-sm)', fontWeight: '600' }}>Full Role Competency Alignment Matrix</h5>
+                <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>Weighted algorithmic comparison between profile assets and role taxonomy.</p>
+              </div>
+              <div className="data-table-container" style={{ border: 'none', borderRadius: 0 }}>
+                <table className="data-table">
                   <thead>
                     <tr>
-                      <th style={styles.th}>Required Skill</th>
-                      <th style={styles.th}>Weight</th>
-                      <th style={styles.th}>Expected Level</th>
-                      <th style={styles.th}>Your Level</th>
-                      <th style={styles.th}>Gap Severity</th>
-                      <th style={styles.th}>Engine Rationale</th>
+                      <th>Required Skill</th>
+                      <th style={{ width: '80px' }}>Weight</th>
+                      <th>Expected Level</th>
+                      <th>Your Level</th>
+                      <th>Gap Status</th>
+                      <th>Engine Rationale</th>
                     </tr>
                   </thead>
                   <tbody>
                     {gapReport.gaps.map((g, idx) => (
-                      <tr key={idx} style={styles.tr}>
-                        <td style={styles.td}><strong>{g.skill}</strong></td>
-                        <td style={styles.td}>{g.weight || 1}x</td>
-                        <td style={styles.td}><span className="badge badge-mist">{g.requiredLevel || 'intermediate'}</span></td>
-                        <td style={styles.td}>
+                      <tr key={idx}>
+                        <td><strong style={{ color: 'var(--color-text-main)' }}>{g.skill}</strong></td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--color-text-muted)' }}>{g.weight || 1}x</td>
+                        <td><span className="badge" style={{ fontSize: '10px', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' }}>{g.requiredLevel || 'intermediate'}</span></td>
+                        <td>
                           {g.studentLevel ? (
-                            <span className="badge badge-sky">{g.studentLevel}</span>
+                            <span className="badge badge-role" style={{ fontSize: '10px' }}>{g.studentLevel}</span>
                           ) : (
-                            <span style={{ color: 'var(--color-text-muted)', fontSize: '11px' }}>Not possessed</span>
+                            <span style={{ color: 'var(--color-text-muted)', fontSize: '11px' }}>Not recorded</span>
                           )}
                         </td>
-                        <td style={styles.td}>
-                          <span className="badge" style={{ ...getSeverityStyle(g.severity), fontSize: '10px', textTransform: 'capitalize' }}>
+                        <td>
+                          <span className={`status-pill ${g.severity === 'critical' ? 'status-rejected' : g.severity === 'moderate' ? 'status-pending' : 'status-active'}`} style={{ fontSize: '10px' }}>
+                            <span className="status-pill-dot" />
                             {g.severity}
                           </span>
                         </td>
-                        <td style={{ ...styles.td, fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+                        <td style={{ fontSize: '11px', color: 'var(--color-text-muted)', maxWidth: '280px' }}>
                           {g.reason}
                         </td>
                       </tr>
@@ -326,27 +329,19 @@ const styles = {
   container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
   headerRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-3)' },
   description: { fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' },
-  rolePicker: { display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '240px' },
-  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)' },
-  kpiGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-3)' },
-  kpiCard: { display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' },
-  kpiLabel: { fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontWeight: '600', letterSpacing: '0.04em' },
-  scoreWheel: { width: '100px', height: '100px', borderRadius: '50%', border: '4px solid', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 'var(--space-2) 0' },
-  statsRow: { display: 'flex', gap: 'var(--space-4)', marginTop: 'var(--space-4)', borderTop: '1px solid var(--color-border-subtle)', paddingTop: 'var(--space-3)' },
+  rolePicker: { display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' },
+  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)' },
+  kpiLabel: { fontSize: '11px', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontWeight: '600', letterSpacing: '0.04em' },
+  statsRow: { display: 'flex', gap: 'var(--space-4)', marginTop: 'var(--space-2)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-2)', flexWrap: 'wrap' },
   miniStat: { display: 'flex', flexDirection: 'column' },
-  miniStatVal: { fontSize: 'var(--font-size-xl)', fontWeight: 'bold', color: 'var(--color-primary)' },
+  miniStatVal: { fontSize: 'var(--font-size-lg)', fontWeight: 'bold', color: 'var(--color-text-main)', fontVariantNumeric: 'tabular-nums' },
   miniStatLabel: { fontSize: '10px', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' },
-  columnsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-3)' },
-  sectionCard: { backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' },
-  strengthItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(34, 197, 94, 0.2)', backgroundColor: 'rgba(34, 197, 94, 0.04)', fontSize: 'var(--font-size-xs)' },
+  columnsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 'var(--space-3)' },
+  sectionCard: { display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' },
+  strengthItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-xs)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-surface)', fontSize: 'var(--font-size-xs)' },
   levelTag: { fontSize: '11px', color: 'var(--color-text-muted)', marginLeft: '6px' },
-  gapItem: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-subtle)', backgroundColor: 'var(--color-bg-app)' },
-  tableWrapper: { overflowX: 'auto', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-surface)' },
-  table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--font-size-sm)' },
-  th: { padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-mist-light)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.04em' },
-  tr: { borderBottom: '1px solid var(--color-border-subtle)' },
-  td: { padding: 'var(--space-3) var(--space-4)', verticalAlign: 'middle' },
-  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
+  gapItem: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-xs)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-mist-light)' },
+  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
   spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
 };
 

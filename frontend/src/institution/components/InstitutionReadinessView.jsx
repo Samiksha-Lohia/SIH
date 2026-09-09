@@ -125,11 +125,11 @@ export function InstitutionReadinessView() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
-          <button onClick={exportCSV} className="btn btn-outline" style={styles.actionBtn}>
-            📥 Export CSV Report
+          <button onClick={exportCSV} className="btn btn-ghost" style={styles.actionBtn}>
+            Export CSV Report
           </button>
           <button onClick={exportJSON} className="btn btn-primary" style={styles.actionBtn}>
-            📥 Export Full JSON
+            Export Full JSON
           </button>
         </div>
       </div>
@@ -148,34 +148,30 @@ export function InstitutionReadinessView() {
         </div>
       )}
 
-      {/* KPI Cards */}
-      <div style={styles.kpiGrid}>
-        <div className="card" style={styles.kpiCard}>
-          <span style={styles.kpiIcon}>👥</span>
-          <div style={styles.kpiLabel}>Total Enrolled Students</div>
-          <div style={styles.kpiValue}>{analytics?.totalStudents || 0}</div>
-          <div style={styles.kpiMeta}>Platform-verified student profiles</div>
+      {/* KPI Cards using B2B Design System */}
+      <div className="b2b-kpi-grid">
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Total Enrolled Students</div>
+          <div className="b2b-kpi-value">{analytics?.totalStudents || 0}</div>
+          <div className="b2b-kpi-subtext">Platform-verified student profiles</div>
         </div>
 
-        <div className="card" style={styles.kpiCard}>
-          <span style={styles.kpiIcon}>🎯</span>
-          <div style={styles.kpiLabel}>Assessed Students</div>
-          <div style={styles.kpiValue}>{analytics?.assessedStudents || 0}</div>
-          <div style={styles.kpiMeta}>{assessedPercent}% of student body tested</div>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Assessed Students</div>
+          <div className="b2b-kpi-value">{analytics?.assessedStudents || 0}</div>
+          <div className="b2b-kpi-subtext">{assessedPercent}% of student body tested</div>
         </div>
 
-        <div className="card" style={styles.kpiCard}>
-          <span style={styles.kpiIcon}>📈</span>
-          <div style={styles.kpiLabel}>Average Assessment Score</div>
-          <div style={styles.kpiValue}>{analytics?.averageAssessmentScore || 0}%</div>
-          <div style={styles.kpiMeta}>Across technical and role evaluations</div>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Average Assessment Score</div>
+          <div className="b2b-kpi-value">{analytics?.averageAssessmentScore || 0}%</div>
+          <div className="b2b-kpi-subtext">Across technical and role evaluations</div>
         </div>
 
-        <div className="card" style={styles.kpiCard}>
-          <span style={styles.kpiIcon}>🎓</span>
-          <div style={styles.kpiLabel}>Upskilling Completion Rate</div>
-          <div style={styles.kpiValue}>{trainingRate}%</div>
-          <div style={styles.kpiMeta}>{training.completed} of {training.enrollments} completed</div>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Upskilling Completion Rate</div>
+          <div className="b2b-kpi-value">{trainingRate}%</div>
+          <div className="b2b-kpi-subtext">{training.completed} of {training.enrollments} completed</div>
         </div>
       </div>
 
@@ -251,28 +247,22 @@ export function InstitutionReadinessView() {
 }
 
 const styles = {
-  container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
+  container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' },
   headerRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--space-3)' },
-  heading: { margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--color-primary)' },
+  heading: { margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--color-primary)', fontWeight: 700 },
   subHeading: { margin: '4px 0 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' },
   actionBtn: { fontSize: 'var(--font-size-xs)', padding: '6px 14px' },
   feedbackBox: { padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 'var(--font-size-xs)' },
   closeBtn: { background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '16px' },
-  kpiGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-3)' },
-  kpiCard: { padding: 'var(--space-4)', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '4px' },
-  kpiIcon: { fontSize: '24px', marginBottom: '2px' },
-  kpiLabel: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: '600' },
-  kpiValue: { fontSize: 'var(--font-size-xl)', fontWeight: '800', color: 'var(--color-primary)' },
-  kpiMeta: { fontSize: '11px', color: 'var(--color-text-muted)' },
-  card: { padding: 'var(--space-4)', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)' },
+  card: { padding: 'var(--space-5)', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)' },
   cardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' },
-  cardTitle: { margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)' },
+  cardTitle: { margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 600 },
   cardSub: { margin: '4px 0 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' },
   bucketGrid: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', marginTop: 'var(--space-2)' },
   bucketCard: { display: 'flex', flexDirection: 'column', gap: '6px', padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-app)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-subtle)' },
-  barTrack: { height: '8px', borderRadius: '4px', backgroundColor: 'var(--color-border)', overflow: 'hidden' },
-  barFill: { height: '100%', borderRadius: '4px', transition: 'width 0.4s ease' },
-  trainingMetricsRow: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 'var(--space-3)', marginTop: 'var(--space-3)' },
+  barTrack: { height: '6px', borderRadius: '3px', backgroundColor: 'var(--color-border)', overflow: 'hidden' },
+  barFill: { height: '100%', borderRadius: '3px', transition: 'width 0.4s ease' },
+  trainingMetricsRow: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap: 'var(--space-3)', marginTop: 'var(--space-3)' },
   metricItem: { padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-app)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-subtle)', display: 'flex', flexDirection: 'column', gap: '4px' },
   metricItemLabel: { fontSize: '11px', color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontWeight: '600' },
   metricItemValue: { fontSize: 'var(--font-size-lg)', fontWeight: '700', color: 'var(--color-primary)' },

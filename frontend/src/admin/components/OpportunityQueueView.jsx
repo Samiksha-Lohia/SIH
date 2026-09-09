@@ -113,58 +113,59 @@ export function OpportunityQueueView() {
         </div>
       ) : opportunities.length === 0 ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-text-muted)' }}>No opportunities found matching your filters.</p>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}>No opportunities found matching your filters.</p>
         </div>
       ) : (
-        <div style={styles.tableWrapper}>
-          <table style={styles.table}>
+        <div className="data-table-container">
+          <table className="data-table">
             <thead>
               <tr>
-                <th style={styles.th}>Title & Company</th>
-                <th style={styles.th}>Type</th>
-                <th style={styles.th}>Location / Mode</th>
-                <th style={styles.th}>Status</th>
-                <th style={styles.th}>Trust Badge</th>
-                <th style={styles.th}>Actions</th>
+                <th>Title & Company</th>
+                <th>Type</th>
+                <th>Location / Mode</th>
+                <th>Status</th>
+                <th>Trust Badge</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {opportunities.map((opp) => (
-                <tr key={opp.id} style={styles.tr}>
-                  <td style={styles.td}>
-                    <strong>{opp.title}</strong>
+                <tr key={opp.id}>
+                  <td>
+                    <strong style={styles.titleText}>{opp.title}</strong>
                     <div style={styles.subtext}>{opp.companyName || 'Anonymous Company'}</div>
                   </td>
-                  <td style={styles.td}>
+                  <td>
                     <span style={styles.typeText}>{opp.type}</span>
                   </td>
-                  <td style={styles.td}>
-                    <div>{opp.location || 'Not specified'}</div>
+                  <td>
+                    <div style={{ fontSize: 'var(--font-size-xs)' }}>{opp.location || 'Not specified'}</div>
                     <span style={styles.subtext}>{opp.workMode}</span>
                   </td>
-                  <td style={styles.td}>
-                    <span className={`badge ${opp.status === 'published' ? 'badge-role' : 'badge-burgundy'}`}>
+                  <td>
+                    <span className={`status-pill status-${opp.status || 'draft'}`}>
+                      <span className="status-pill-dot" />
                       {opp.status}
                     </span>
                   </td>
-                  <td style={styles.td}>
+                  <td>
                     {opp.verificationBadge ? (
-                      <span style={{ color: 'var(--color-success)', fontWeight: '600', fontSize: 'var(--font-size-xs)' }}>
+                      <span style={styles.verifiedBadge}>
                         ✓ Verified
                       </span>
                     ) : (
-                      <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}>
+                      <span style={styles.unverifiedBadge}>
                         Unverified
                       </span>
                     )}
                   </td>
-                  <td style={styles.td}>
+                  <td>
                     <div style={styles.actionRow}>
                       {opp.status !== 'published' ? (
                         <button
                           onClick={() => setActionTarget({ opp, action: 'status', newStatus: 'published' })}
                           className="btn btn-outline"
-                          style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-success)' }}
+                          style={{ fontSize: '11px', padding: '3px 8px', color: '#1e6b3f' }}
                         >
                           Publish
                         </button>
@@ -172,15 +173,15 @@ export function OpportunityQueueView() {
                         <button
                           onClick={() => setActionTarget({ opp, action: 'status', newStatus: 'paused' })}
                           className="btn btn-outline"
-                          style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-warning)' }}
+                          style={{ fontSize: '11px', padding: '3px 8px', color: '#8c5900' }}
                         >
                           Pause
                         </button>
                       )}
                       <button
                         onClick={() => setActionTarget({ opp, action: 'delete' })}
-                        className="btn btn-outline"
-                        style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-danger)' }}
+                        className="btn btn-ghost"
+                        style={{ fontSize: '11px', padding: '3px 8px', color: 'var(--color-burgundy-red)' }}
                       >
                         Delete
                       </button>
@@ -258,7 +259,7 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 'var(--space-4)',
+    gap: 'var(--space-3)',
   },
   headerRow: {
     display: 'flex',
@@ -268,129 +269,137 @@ const styles = {
     gap: 'var(--space-2)',
   },
   description: {
-    fontSize: 'var(--font-size-sm)',
+    fontSize: 'var(--font-size-xs)',
     color: 'var(--color-text-muted)',
-    marginTop: 'var(--space-1)',
+    marginTop: '2px',
   },
   refreshBtn: {
     fontSize: 'var(--font-size-xs)',
   },
+  feedbackBox: {
+    padding: '8px 12px',
+    borderRadius: 'var(--radius-xs)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    fontSize: 'var(--font-size-xs)',
+    border: '1px solid currentColor',
+  },
+  closeFeedback: {
+    fontSize: '16px',
+    cursor: 'pointer',
+    color: 'inherit',
+    border: 'none',
+    background: 'none',
+  },
   toolbar: {
     display: 'flex',
-    gap: 'var(--space-3)',
     flexWrap: 'wrap',
+    gap: 'var(--space-2)',
+    alignItems: 'center',
+    padding: '8px 12px',
+    backgroundColor: 'var(--color-bg-surface)',
+    border: '1px solid var(--color-border)',
+    borderRadius: 'var(--radius-sm)',
   },
   searchInput: {
     flex: 1,
-    minWidth: '240px',
-    padding: 'var(--space-2) var(--space-3)',
-    borderRadius: 'var(--radius-md)',
+    minWidth: '220px',
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
     border: '1px solid var(--color-border)',
-    fontSize: 'var(--font-size-sm)',
-    backgroundColor: 'var(--color-bg-surface)',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-app)',
+    color: 'var(--color-text-primary)',
+    outline: 'none',
   },
   selectInput: {
-    padding: 'var(--space-2) var(--space-3)',
-    borderRadius: 'var(--radius-md)',
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
     border: '1px solid var(--color-border)',
-    fontSize: 'var(--font-size-sm)',
-    backgroundColor: 'var(--color-bg-surface)',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-app)',
+    color: 'var(--color-text-primary)',
+    minWidth: '150px',
+    outline: 'none',
   },
   stateBox: {
-    padding: 'var(--space-12)',
+    padding: 'var(--space-8)',
     textAlign: 'center',
     backgroundColor: 'var(--color-bg-surface)',
-    borderRadius: 'var(--radius-lg)',
+    borderRadius: 'var(--radius-md)',
     border: '1px solid var(--color-border)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 'var(--space-3)',
+    gap: 'var(--space-2)',
   },
   spinner: {
-    width: '32px',
-    height: '32px',
+    width: '24px',
+    height: '24px',
     borderRadius: '50%',
-    border: '3px solid var(--color-border)',
+    border: '2px solid var(--color-border)',
     borderTopColor: 'var(--color-primary)',
     animation: 'spin 0.8s linear infinite',
   },
-  tableWrapper: {
-    overflowX: 'auto',
-    borderRadius: 'var(--radius-lg)',
-    border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-bg-surface)',
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    textAlign: 'left',
-    fontSize: 'var(--font-size-sm)',
-  },
-  th: {
-    padding: 'var(--space-3) var(--space-4)',
-    borderBottom: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-mist-light)',
-    color: 'var(--color-text-secondary)',
-    fontWeight: 'var(--font-weight-semibold)',
-    fontSize: 'var(--font-size-xs)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.04em',
-  },
-  tr: {
-    borderBottom: '1px solid var(--color-border-subtle)',
-    transition: 'background-color var(--transition-fast)',
-  },
-  td: {
-    padding: 'var(--space-3) var(--space-4)',
-    verticalAlign: 'middle',
+  titleText: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: 'var(--color-text-primary)',
+    display: 'block',
   },
   subtext: {
-    fontSize: 'var(--font-size-xs)',
+    fontSize: '11px',
     color: 'var(--color-text-muted)',
+    marginTop: '1px',
   },
   typeText: {
     textTransform: 'capitalize',
-    fontSize: 'var(--font-size-xs)',
-    fontWeight: 'var(--font-weight-medium)',
+    fontSize: '11px',
+    fontWeight: '500',
+    color: 'var(--color-text-secondary)',
+  },
+  verifiedBadge: {
+    fontSize: '10px',
+    color: '#1e6b3f',
+    fontWeight: '600',
+  },
+  unverifiedBadge: {
+    fontSize: '10px',
+    color: 'var(--color-text-muted)',
   },
   actionRow: {
     display: 'flex',
-    gap: 'var(--space-2)',
+    gap: '4px',
+    alignItems: 'center',
   },
   paginationRow: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 'var(--space-2)',
+    marginTop: 'var(--space-1)',
+    paddingTop: 'var(--space-2)',
   },
   modalOverlay: {
     position: 'fixed',
-    inset: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(18, 24, 20, 0.45)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 100,
+    zIndex: 1000,
     padding: 'var(--space-4)',
   },
   modalCard: {
     maxWidth: '440px',
     width: '100%',
-  },
-  feedbackBox: {
-    padding: 'var(--space-3) var(--space-4)',
+    padding: 'var(--space-5)',
+    boxShadow: 'var(--shadow-md)',
     borderRadius: 'var(--radius-md)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    fontSize: 'var(--font-size-sm)',
-  },
-  closeFeedback: {
-    fontSize: '18px',
-    cursor: 'pointer',
-    color: 'inherit',
   },
 };
 

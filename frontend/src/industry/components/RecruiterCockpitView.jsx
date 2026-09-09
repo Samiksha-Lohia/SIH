@@ -31,19 +31,18 @@ export const RecruiterCockpitView = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-        <div style={{ margin: '0 auto 1rem', width: '32px', height: '32px', border: '3px solid #334155', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <p>Compiling recruitment pipeline metrics and applicant intelligence...</p>
+      <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+        <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Compiling recruitment pipeline metrics and applicant intelligence...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: '1.5rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '8px', color: '#fca5a5' }}>
-        <h4 style={{ margin: '0 0 0.5rem', color: '#ef4444' }}>Error Loading Analytics</h4>
-        <p style={{ margin: '0 0 0.75rem', fontSize: '0.9rem' }}>{error}</p>
-        <button onClick={loadAnalytics} style={{ padding: '0.4rem 0.8rem', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Retry</button>
+      <div className="card" style={{ padding: 'var(--space-6)', borderLeft: '4px solid var(--color-burgundy-red)' }}>
+        <h4 style={{ margin: '0 0 var(--space-2)', color: 'var(--color-burgundy-red)', fontSize: 'var(--font-size-md)' }}>Error Loading Analytics</h4>
+        <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>{error}</p>
+        <button onClick={loadAnalytics} className="btn btn-primary" style={{ fontSize: 'var(--font-size-xs)' }}>Retry</button>
       </div>
     );
   }
@@ -52,80 +51,80 @@ export const RecruiterCockpitView = () => {
   const totalApps = analytics?.applicationsReceived || 0;
 
   const funnelStages = [
-    { key: 'applied', label: 'Applied', color: '#38bdf8', icon: '📥' },
-    { key: 'under_review', label: 'Under Review', color: '#facc15', icon: '🔍' },
-    { key: 'shortlisted', label: 'Shortlisted', color: '#a855f7', icon: '⭐' },
-    { key: 'interview', label: 'Interview', color: '#ec4899', icon: '💬' },
-    { key: 'selected', label: 'Selected / Hired', color: '#22c55e', icon: '🎉' },
-    { key: 'rejected', label: 'Rejected', color: '#ef4444', icon: '❌' },
-    { key: 'withdrawn', label: 'Withdrawn', color: '#64748b', icon: '↩️' },
+    { key: 'applied', label: 'Applied', color: 'var(--color-steel-blue)' },
+    { key: 'under_review', label: 'Under Review', color: 'var(--color-amber)' },
+    { key: 'shortlisted', label: 'Shortlisted', color: 'var(--color-sky-blue)' },
+    { key: 'interview', label: 'Interview', color: 'var(--color-primary)' },
+    { key: 'selected', label: 'Selected / Hired', color: 'var(--color-emerald)' },
+    { key: 'rejected', label: 'Rejected', color: 'var(--color-burgundy-red)' },
+    { key: 'withdrawn', label: 'Withdrawn', color: 'var(--color-text-muted)' },
   ];
 
   const candidateSkills = analytics?.topCandidateSkills || [];
   const maxSkillCount = Math.max(...candidateSkills.map((s) => s.count || 0), 1);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* KPI Cards Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-        <div style={{ background: '#1e293b', padding: '1.25rem', borderRadius: '10px', border: '1px solid #334155' }}>
-          <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase' }}>Active Postings</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#38bdf8', margin: '0.25rem 0' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+      {/* B2B KPI Cards Row */}
+      <div className="b2b-kpi-grid">
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Active Postings</div>
+          <div className="b2b-kpi-value" style={{ color: 'var(--color-steel-blue)' }}>
             {analytics?.activeOpportunities || 0}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' }}>
             {analytics?.totalOpportunities || 0} total postings recorded
           </div>
         </div>
 
-        <div style={{ background: '#1e293b', padding: '1.25rem', borderRadius: '10px', border: '1px solid #334155' }}>
-          <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase' }}>Applications Received</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f8fafc', margin: '0.25rem 0' }}>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Applications Received</div>
+          <div className="b2b-kpi-value">
             {totalApps}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#34d399' }}>
+          <div style={{ fontSize: '11px', color: 'var(--color-emerald)', marginTop: 'var(--space-1)' }}>
             Live applicant pipeline volume
           </div>
         </div>
 
-        <div style={{ background: '#1e293b', padding: '1.25rem', borderRadius: '10px', border: '1px solid #334155' }}>
-          <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase' }}>Avg Compatibility</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#34d399', margin: '0.25rem 0' }}>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Avg Compatibility</div>
+          <div className="b2b-kpi-value" style={{ color: 'var(--color-emerald)' }}>
             {analytics?.averageCompatibility || 0}%
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' }}>
             Mean match score of applicants
           </div>
         </div>
 
-        <div style={{ background: '#1e293b', padding: '1.25rem', borderRadius: '10px', border: '1px solid #334155' }}>
-          <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase' }}>Shortlist Conversion</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#a855f7', margin: '0.25rem 0' }}>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Shortlist Conversion</div>
+          <div className="b2b-kpi-value" style={{ color: 'var(--color-primary)' }}>
             {analytics?.shortlistRate || 0}%
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+          <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' }}>
             Shortlisted + interviewed + hired
           </div>
         </div>
       </div>
 
       {/* Applicant Hiring Funnel Visualizer */}
-      <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+      <div className="card" style={{ padding: 'var(--space-6)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#f8fafc' }}>
-              🎯 Recruitment Funnel Conversion
+            <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>
+              Recruitment Funnel Conversion
             </h3>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
               Stage-wise progression of applicants across company opportunities.
             </p>
           </div>
-          <span style={{ fontSize: '0.8rem', color: '#38bdf8', background: '#0f172a', padding: '0.35rem 0.75rem', borderRadius: '6px', border: '1px solid #334155' }}>
+          <span className="badge badge-sky" style={{ fontSize: 'var(--font-size-xs)' }}>
             Pipeline Volume: <strong>{totalApps}</strong>
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 'var(--space-3)' }}>
           {funnelStages.map((st) => {
             const count = pipeline[st.key] || 0;
             const pct = totalApps > 0 ? Math.round((count / totalApps) * 100) : 0;
@@ -134,18 +133,17 @@ export const RecruiterCockpitView = () => {
               <div
                 key={st.key}
                 style={{
-                  background: '#0f172a',
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  border: '1px solid #334155',
-                  borderTop: `4px solid ${st.color}`,
+                  background: 'var(--color-bg-app)',
+                  padding: 'var(--space-4)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--color-border)',
+                  borderTop: `3px solid ${st.color}`,
                   textAlign: 'center',
                 }}
               >
-                <div style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{st.icon}</div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase' }}>{st.label}</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', margin: '0.25rem 0' }}>{count}</div>
-                <div style={{ fontSize: '0.75rem', color: st.color, fontWeight: 600 }}>{pct}% of pipeline</div>
+                <div style={{ fontSize: '11px', color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontWeight: 600 }}>{st.label}</div>
+                <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 800, color: 'var(--color-text)', margin: 'var(--space-2) 0' }}>{count}</div>
+                <div style={{ fontSize: '11px', color: st.color, fontWeight: 600 }}>{pct}% of pipeline</div>
               </div>
             );
           })}
@@ -153,8 +151,8 @@ export const RecruiterCockpitView = () => {
 
         {/* Funnel conversion bar */}
         {totalApps > 0 && (
-          <div style={{ marginTop: '1.5rem' }}>
-            <div style={{ display: 'flex', height: '12px', borderRadius: '6px', overflow: 'hidden', background: '#0f172a' }}>
+          <div style={{ marginTop: 'var(--space-6)' }}>
+            <div style={{ display: 'flex', height: '10px', borderRadius: '5px', overflow: 'hidden', background: 'var(--color-border-subtle)' }}>
               {funnelStages.map((st) => {
                 const count = pipeline[st.key] || 0;
                 if (count === 0) return null;
@@ -173,33 +171,33 @@ export const RecruiterCockpitView = () => {
       </div>
 
       {/* 2-Column Section: Top Candidate Skills & Platform Market Demand */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 'var(--space-6)' }}>
         {/* Left: Top Candidate Skills among Applicants */}
-        <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
-          <h3 style={{ margin: '0 0 0.35rem', fontSize: '1.1rem', color: '#f8fafc' }}>
-            🎓 Top Verified Skills in Candidate Pool
+        <div className="card" style={{ padding: 'var(--space-6)' }}>
+          <h3 style={{ margin: '0 0 var(--space-1)', fontSize: 'var(--font-size-sm)', color: 'var(--color-primary)', fontWeight: 600 }}>
+            Top Verified Skills in Candidate Pool
           </h3>
-          <p style={{ margin: '0 0 1.25rem', fontSize: '0.8rem', color: '#94a3b8' }}>
+          <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
             Most prevalent technical competencies verified across applicants who applied to your postings.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
             {candidateSkills.map((sk) => {
               const pct = Math.round((sk.count / maxSkillCount) * 100);
               return (
-                <div key={sk.skill} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                    <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{sk.skill}</span>
-                    <span style={{ color: '#38bdf8' }}>{sk.count} candidate{sk.count === 1 ? '' : 's'}</span>
+                <div key={sk.skill} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--font-size-xs)' }}>
+                    <span style={{ color: 'var(--color-text)', fontWeight: 600 }}>{sk.skill}</span>
+                    <span style={{ color: 'var(--color-steel-blue)' }}>{sk.count} candidate{sk.count === 1 ? '' : 's'}</span>
                   </div>
-                  <div style={{ height: '6px', background: '#0f172a', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${pct}%`, background: '#38bdf8', borderRadius: '3px' }} />
+                  <div style={{ height: '6px', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${pct}%`, background: 'var(--color-steel-blue)', borderRadius: '3px' }} />
                   </div>
                 </div>
               );
             })}
             {candidateSkills.length === 0 && (
-              <p style={{ color: '#64748b', fontSize: '0.85rem', fontStyle: 'italic', margin: 0 }}>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', fontStyle: 'italic', margin: 0 }}>
                 No applicant skill distributions recorded yet.
               </p>
             )}
@@ -207,28 +205,36 @@ export const RecruiterCockpitView = () => {
         </div>
 
         {/* Right: Platform-wide Skill Demand Insights */}
-        <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
-          <h3 style={{ margin: '0 0 0.35rem', fontSize: '1.1rem', color: '#f8fafc' }}>
-            📈 Platform Skill-Demand Benchmark
+        <div className="card" style={{ padding: 'var(--space-6)' }}>
+          <h3 style={{ margin: '0 0 var(--space-1)', fontSize: 'var(--font-size-sm)', color: 'var(--color-primary)', fontWeight: 600 }}>
+            Platform Skill-Demand Benchmark
           </h3>
-          <p style={{ margin: '0 0 1.25rem', fontSize: '0.8rem', color: '#94a3b8' }}>
+          <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
             Highest demand competencies aggregated across all employer postings in SUTRA.
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 'var(--space-3)' }}>
             {marketSkills.map((sk) => (
-              <div key={sk.slug || sk.name} style={{ background: '#0f172a', padding: '0.85rem', borderRadius: '8px', border: '1px solid #334155' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f8fafc' }}>{sk.name}</div>
-                <div style={{ fontSize: '0.75rem', color: '#34d399', marginTop: '0.25rem' }}>
+              <div
+                key={sk.slug || sk.name}
+                style={{
+                  background: 'var(--color-bg-app)',
+                  padding: 'var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--color-border)',
+                }}
+              >
+                <div style={{ fontSize: 'var(--font-size-xs)', fontWeight: 600, color: 'var(--color-text)' }}>{sk.name}</div>
+                <div style={{ fontSize: '11px', color: 'var(--color-emerald)', marginTop: 'var(--space-1)' }}>
                   Demand Score: <strong>{sk.weightedDemand || sk.demand}</strong>
                 </div>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
                   In {sk.demand} active postings
                 </div>
               </div>
             ))}
             {marketSkills.length === 0 && (
-              <p style={{ color: '#64748b', fontSize: '0.85rem', fontStyle: 'italic', margin: 0 }}>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', fontStyle: 'italic', margin: 0 }}>
                 No platform demand data available.
               </p>
             )}

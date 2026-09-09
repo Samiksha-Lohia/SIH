@@ -151,36 +151,36 @@ export function AssessmentFlowView({ onNavigateTab }) {
         {/* Header */}
         <div style={styles.headerRow}>
           <div>
-            <h3 style={{ margin: '0 0 6px 0', fontSize: '1.4rem' }}>Skill Assessments & Readiness Benchmarks</h3>
+            <h3 style={{ margin: '0 0 4px 0', fontSize: 'var(--font-size-lg)', fontWeight: '600' }}>Skill Assessments & Readiness Benchmarks</h3>
             <p style={styles.description}>
               Attempt assigned institutional evaluations and open skill tests. Real calculated scores feed directly into your verified skill profile and industry readiness score.
             </p>
           </div>
-          <button onClick={fetchCatalogData} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
-            ↻ Refresh
+          <button onClick={fetchCatalogData} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
+            Refresh
           </button>
         </div>
 
         {/* Tab switcher: Assigned vs Available vs History */}
         <div style={styles.toolbar}>
-          <div style={styles.tabPillGroup}>
+          <div className="b2b-tab-bar">
             <button
               onClick={() => { setCatalogTab('assigned'); setPage(1); }}
-              style={{ ...styles.pillBtn, ...(catalogTab === 'assigned' ? styles.activePill : {}) }}
+              className={`b2b-tab ${catalogTab === 'assigned' ? 'active' : ''}`}
             >
-              🏢 Institution Assignments {assignedAssessments.length > 0 && `(${assignedAssessments.length})`}
+              Institution Assignments {assignedAssessments.length > 0 && `(${assignedAssessments.length})`}
             </button>
             <button
               onClick={() => { setCatalogTab('available'); setPage(1); }}
-              style={{ ...styles.pillBtn, ...(catalogTab === 'available' ? styles.activePill : {}) }}
+              className={`b2b-tab ${catalogTab === 'available' ? 'active' : ''}`}
             >
-              📚 Self-Paced Catalog
+              Self-Paced Catalog
             </button>
             <button
               onClick={() => { setCatalogTab('history'); setPage(1); }}
-              style={{ ...styles.pillBtn, ...(catalogTab === 'history' ? styles.activePill : {}) }}
+              className={`b2b-tab ${catalogTab === 'history' ? 'active' : ''}`}
             >
-              📋 My Past Attempts
+              My Past Attempts
             </button>
           </div>
 
@@ -213,12 +213,11 @@ export function AssessmentFlowView({ onNavigateTab }) {
           /* Assigned Assessments Tab */
           assignedAssessments.length === 0 ? (
             <div style={styles.stateBox}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🎓</div>
-              <h4 style={{ margin: '0 0 6px 0' }}>No Pending Institutional Assignments</h4>
-              <p style={{ color: 'var(--color-text-muted)', maxWidth: '460px', margin: '0 0 16px 0', fontSize: '0.85rem' }}>
+              <h4 style={{ margin: '0 0 6px 0', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>No Pending Institutional Assignments</h4>
+              <p style={{ color: 'var(--color-text-muted)', maxWidth: '460px', margin: '0 0 16px 0', fontSize: 'var(--font-size-xs)' }}>
                 Your institution has not assigned any active assessment campaigns to your cohort right now. You can take self-paced tests from the catalog anytime to boost your readiness.
               </p>
-              <button onClick={() => setCatalogTab('available')} className="btn btn-primary" style={{ fontSize: '0.85rem' }}>
+              <button onClick={() => setCatalogTab('available')} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
                 Explore Self-Paced Catalog →
               </button>
             </div>
@@ -230,47 +229,40 @@ export function AssessmentFlowView({ onNavigateTab }) {
                 const assess = item.assessment || {};
 
                 return (
-                  <div key={item.campaignId} className="card" style={{ ...styles.assessmentCard, borderLeft: isCompleted ? '4px solid #22c55e' : isOverdue ? '4px solid #ef4444' : '4px solid #0284c7' }}>
+                  <div key={item.campaignId} className="card" style={styles.assessmentCard}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-2)' }}>
-                      <span
-                        className="badge"
-                        style={{
-                          fontSize: '11px',
-                          backgroundColor: isCompleted ? 'rgba(34, 197, 94, 0.15)' : isOverdue ? 'rgba(239, 68, 68, 0.15)' : 'rgba(2, 132, 199, 0.15)',
-                          color: isCompleted ? '#15803d' : isOverdue ? '#b91c1c' : '#0284c7',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {isCompleted ? '✓ Completed' : isOverdue ? '⚠️ Overdue' : '⏳ Pending Attempt'}
+                      <span className={`status-pill ${isCompleted ? 'status-verified' : isOverdue ? 'status-rejected' : 'status-pending'}`} style={{ fontSize: '10px' }}>
+                        <span className="status-pill-dot" />
+                        {isCompleted ? 'Completed' : isOverdue ? 'Overdue' : 'Pending Attempt'}
                       </span>
-                      <span className="badge badge-sky" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                      <span className="badge badge-role" style={{ fontSize: '10px', textTransform: 'capitalize' }}>
                         {assess.difficulty || 'General'}
                       </span>
                     </div>
 
-                    <h4 style={{ color: 'var(--color-primary)', margin: '0 0 4px 0', fontSize: '1.05rem' }}>
+                    <h4 style={{ color: 'var(--color-text-main)', margin: '0 0 2px 0', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>
                       {item.title}
                     </h4>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0 0 8px 0', fontWeight: 500 }}>
-                      🏢 {item.institution?.name || 'Assigned Institution'}
+                    <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', margin: '0 0 8px 0', fontWeight: '500' }}>
+                      {item.institution?.name || 'Assigned Institution'}
                       {item.cohort ? ` • Cohort: ${item.cohort}` : ''}
                     </p>
 
-                    <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-3)', flex: 1 }}>
+                    <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)', flex: 1, lineHeight: 1.4 }}>
                       {item.description || `Assessment: ${assess.title || 'Institutional Skill Benchmark'}`}
                     </p>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)', backgroundColor: 'var(--color-mist-light)', padding: '8px', borderRadius: 'var(--radius-sm)' }}>
-                      <div>⏱️ Duration: <strong>{assess.durationMinutes || 30} mins</strong> • Questions: <strong>{assess.questionsCount || 0}</strong></div>
-                      <div>🎯 Passing Criteria: <strong>{assess.passingScore || 60}%</strong></div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: 'var(--space-3)', backgroundColor: 'var(--color-mist-light)', padding: '8px', borderRadius: 'var(--radius-xs)', border: '1px solid var(--color-border)' }}>
+                      <div>Duration: <strong>{assess.durationMinutes || 30} mins</strong> • Questions: <strong>{assess.questionsCount || 0}</strong></div>
+                      <div>Passing Score: <strong>{assess.passingScore || 60}%</strong></div>
                       {item.deadline && (
-                        <div style={{ color: isOverdue ? '#ef4444' : 'inherit' }}>
-                          📅 Due Date: <strong>{formatDate(item.deadline)}</strong>
+                        <div style={{ color: isOverdue ? 'var(--color-primary)' : 'inherit' }}>
+                          Due Date: <strong>{formatDate(item.deadline)}</strong>
                         </div>
                       )}
                       {isCompleted && item.score !== undefined && (
-                        <div style={{ color: item.passed ? '#15803d' : '#b91c1c', fontWeight: 600, marginTop: '2px' }}>
-                          🏆 Score Achieved: {item.score}% ({item.passed ? 'PASSED' : 'NEEDS IMPROVEMENT'})
+                        <div style={{ color: item.passed ? 'var(--color-text-main)' : 'var(--color-primary)', fontWeight: '600', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
+                          Score: {item.score}% ({item.passed ? 'PASSED' : 'NEEDS IMPROVEMENT'})
                         </div>
                       )}
                     </div>
@@ -281,8 +273,8 @@ export function AssessmentFlowView({ onNavigateTab }) {
                       </span>
                       <button
                         onClick={() => startAssessment(assess.id, item)}
-                        className={`btn ${isCompleted ? 'btn-outline' : 'btn-primary'}`}
-                        style={{ fontSize: 'var(--font-size-xs)', padding: '6px 14px' }}
+                        className={`btn ${isCompleted ? 'btn-ghost' : 'btn-primary'}`}
+                        style={{ fontSize: 'var(--font-size-xs)', padding: '4px 12px' }}
                       >
                         {isCompleted ? 'Retake Test →' : 'Start Assessment →'}
                       </button>
@@ -303,35 +295,35 @@ export function AssessmentFlowView({ onNavigateTab }) {
               {availableAssessments.map((a) => (
                 <div key={a.id} className="card" style={styles.assessmentCard}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-2)' }}>
-                    <span className="badge badge-sky" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                    <span className="badge badge-role" style={{ fontSize: '10px', textTransform: 'capitalize' }}>
                       {a.difficulty}
                     </span>
-                    <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                      ⏱️ {a.durationMinutes || 30} mins
+                    <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+                      {a.durationMinutes || 30} mins
                     </span>
                   </div>
 
-                  <h4 style={{ color: 'var(--color-primary)', marginBottom: 'var(--space-1)', fontSize: '1.05rem' }}>{a.title}</h4>
-                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)', flex: 1 }}>
+                  <h4 style={{ color: 'var(--color-text-main)', margin: '0 0 4px 0', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>{a.title}</h4>
+                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)', flex: 1, lineHeight: 1.4 }}>
                     {a.description || 'Test your proficiency and earn verified competencies.'}
                   </p>
 
                   {a.skillSet?.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: 'var(--space-3)' }}>
                       {a.skillSet.map((s, idx) => (
-                        <span key={idx} className="badge badge-mist" style={{ fontSize: '10px' }}>{s}</span>
+                        <span key={idx} className="badge" style={{ fontSize: '10px', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' }}>{s}</span>
                       ))}
                     </div>
                   )}
 
                   <div style={styles.cardFooter}>
                     <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                      Passing score: <strong>{a.passingScore}%</strong>
+                      Passing: <strong>{a.passingScore}%</strong>
                     </span>
                     <button
                       onClick={() => startAssessment(a.id)}
                       className="btn btn-primary"
-                      style={{ fontSize: 'var(--font-size-xs)', padding: '6px 14px' }}
+                      style={{ fontSize: 'var(--font-size-xs)', padding: '4px 12px' }}
                     >
                       Take Test →
                     </button>
@@ -344,60 +336,54 @@ export function AssessmentFlowView({ onNavigateTab }) {
           /* Past Attempts Tab */
           myAttempts.length === 0 ? (
             <div style={styles.stateBox}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>📝</div>
-              <h4 style={{ margin: '0 0 6px 0' }}>No Assessment Attempts Recorded</h4>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+              <h4 style={{ margin: '0 0 6px 0', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>No Assessment Attempts Recorded</h4>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', margin: 0 }}>
                 You have not completed any skill evaluations yet. Take an assigned or open assessment to start building your verified profile.
               </p>
             </div>
           ) : (
-            <div style={styles.tableWrapper}>
-              <table style={styles.table}>
+            <div className="data-table-container">
+              <table className="data-table">
                 <thead>
                   <tr>
-                    <th style={styles.th}>Assessment</th>
-                    <th style={styles.th}>Score Achieved</th>
-                    <th style={styles.th}>Percentage</th>
-                    <th style={styles.th}>Outcome</th>
-                    <th style={styles.th}>Proficiency Level</th>
-                    <th style={styles.th}>Attempted Date</th>
-                    <th style={styles.th}>Actions</th>
+                    <th>Assessment</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                    <th>Outcome</th>
+                    <th>Proficiency Level</th>
+                    <th>Date</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {myAttempts.map((att) => (
-                    <tr key={att.id} style={styles.tr}>
-                      <td style={styles.td}>
-                        <strong>{att.assessmentTitle || 'Skill Assessment'}</strong>
+                    <tr key={att.id}>
+                      <td>
+                        <strong style={{ color: 'var(--color-text-main)' }}>{att.assessmentTitle || 'Skill Assessment'}</strong>
                       </td>
-                      <td style={styles.td}>{att.score} / {att.maxScore}</td>
-                      <td style={styles.td}><strong>{Math.round(att.percentage || 0)}%</strong></td>
-                      <td style={styles.td}>
-                        {att.passed ? (
-                          <span className="badge" style={{ backgroundColor: 'rgba(34, 197, 94, 0.15)', color: '#15803d', fontWeight: 600 }}>
-                            Passed
-                          </span>
-                        ) : (
-                          <span className="badge" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#b91c1c', fontWeight: 600 }}>
-                            Needs Review
-                          </span>
-                        )}
+                      <td style={{ fontVariantNumeric: 'tabular-nums' }}>{att.score} / {att.maxScore}</td>
+                      <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: '600' }}>{Math.round(att.percentage || 0)}%</td>
+                      <td>
+                        <span className={`status-pill ${att.passed ? 'status-verified' : 'status-rejected'}`} style={{ fontSize: '10px' }}>
+                          <span className="status-pill-dot" />
+                          {att.passed ? 'Passed' : 'Needs Review'}
+                        </span>
                       </td>
-                      <td style={styles.td}>
-                        <span className="badge badge-sky" style={{ textTransform: 'capitalize' }}>
+                      <td>
+                        <span className="badge badge-role" style={{ fontSize: '10px', textTransform: 'capitalize' }}>
                           {att.level || 'intermediate'}
                         </span>
                       </td>
-                      <td style={{ ...styles.td, fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                      <td style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
                         {formatDate(att.createdAt)}
                       </td>
-                      <td style={styles.td}>
+                      <td style={{ textAlign: 'right' }}>
                         <button
                           onClick={() => viewAttemptResult(att.id)}
-                          className="btn btn-outline"
-                          style={{ fontSize: '11px', padding: '4px 10px' }}
+                          className="btn btn-ghost"
+                          style={{ fontSize: '11px', padding: '2px 8px' }}
                         >
-                          View Breakdown
+                          Breakdown
                         </button>
                       </td>
                     </tr>
@@ -414,21 +400,21 @@ export function AssessmentFlowView({ onNavigateTab }) {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={!meta.hasPrevPage || loading}
-              className="btn btn-outline"
+              className="btn btn-ghost"
               style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              Previous
+              ← Previous
             </button>
-            <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
               Page {meta.page} of {meta.totalPages} ({meta.total} records)
             </span>
             <button
               onClick={() => setPage((p) => p + 1)}
               disabled={!meta.hasNextPage || loading}
-              className="btn btn-outline"
+              className="btn btn-ghost"
               style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              Next
+              Next →
             </button>
           </div>
         )}
@@ -448,27 +434,27 @@ export function AssessmentFlowView({ onNavigateTab }) {
     return (
       <div style={styles.container}>
         {/* Runner Header Bar */}
-        <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-2)', background: 'linear-gradient(135deg, #1e293b, #0f172a)', color: '#fff' }}>
+        <div className="card" style={styles.runnerHeader}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="badge" style={{ backgroundColor: '#0284c7', color: '#fff', fontSize: '11px' }}>
-                Active Evaluation Runner
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <span className="badge badge-role" style={{ fontSize: '11px' }}>
+                Evaluation Runner
               </span>
               {activeCampaignTitle && (
-                <span className="badge" style={{ backgroundColor: '#334155', color: '#94a3b8', fontSize: '11px' }}>
+                <span className="badge" style={{ backgroundColor: 'var(--color-mist-light)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)', fontSize: '11px' }}>
                   Campaign: {activeCampaignTitle}
                 </span>
               )}
             </div>
-            <h4 style={{ color: '#f8fafc', margin: '6px 0 0 0', fontSize: '1.2rem' }}>{activeAssessment.title}</h4>
+            <h4 style={{ margin: '4px 0 0 0', fontSize: 'var(--font-size-base)', fontWeight: '600', color: 'var(--color-text-main)' }}>{activeAssessment.title}</h4>
           </div>
 
           <div style={{ textAlign: 'right' }}>
-            <span style={{ fontSize: 'var(--font-size-sm)', color: '#94a3b8' }}>
-              Progress: <strong style={{ color: '#fff' }}>{answeredCount} / {totalQ} Answered</strong>
+            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+              Progress: <strong style={{ color: 'var(--color-text-main)' }}>{answeredCount} / {totalQ} Answered</strong>
             </span>
-            <div style={{ width: '140px', height: '6px', backgroundColor: '#334155', borderRadius: '3px', marginTop: '6px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${(answeredCount / totalQ) * 100}%`, backgroundColor: '#38bdf8', transition: 'width 0.3s ease' }} />
+            <div style={{ width: '140px', height: '4px', backgroundColor: 'var(--color-mist-light)', borderRadius: '2px', marginTop: '4px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${(answeredCount / totalQ) * 100}%`, backgroundColor: 'var(--color-primary)', transition: 'width 0.3s ease' }} />
             </div>
           </div>
         </div>
@@ -476,25 +462,25 @@ export function AssessmentFlowView({ onNavigateTab }) {
         {/* Question Card */}
         {currentQ ? (
           <div className="card" style={styles.questionCard}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)', borderBottom: '1px solid var(--color-border-subtle)', paddingBottom: 'var(--space-2)' }}>
-              <span className="badge badge-sky" style={{ fontSize: '11px', fontWeight: 600 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)', borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-2)', flexWrap: 'wrap', gap: '4px' }}>
+              <span className="badge badge-role" style={{ fontSize: '10px' }}>
                 Question {currentQIndex + 1} of {totalQ}
               </span>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                 {currentQ.skill && (
-                  <span className="badge badge-mist" style={{ fontSize: '11px' }}>
-                    Target Skill: <strong>{currentQ.skill}</strong>
+                  <span className="badge" style={{ backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)', fontSize: '10px' }}>
+                    Skill: <strong>{currentQ.skill}</strong>
                   </span>
                 )}
                 {currentQ.points && (
-                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
+                  <span style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>
                     Weight: {currentQ.points} pt{currentQ.points > 1 ? 's' : ''}
                   </span>
                 )}
               </div>
             </div>
 
-            <h5 style={{ fontSize: '1.1rem', lineHeight: 1.6, marginBottom: 'var(--space-5)', color: 'var(--color-text)' }}>
+            <h5 style={{ fontSize: 'var(--font-size-base)', fontWeight: '500', lineHeight: 1.5, marginBottom: 'var(--space-4)', color: 'var(--color-text-main)' }}>
               {currentQ.text}
             </h5>
 
@@ -507,18 +493,19 @@ export function AssessmentFlowView({ onNavigateTab }) {
                     onClick={() => handleSelectOption(currentQ.id, opt.key)}
                     style={{
                       ...styles.optionItem,
-                      ...(isSelected ? styles.optionSelected : {}),
+                      borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
+                      backgroundColor: isSelected ? 'var(--color-mist-light)' : 'var(--color-bg-surface)',
                     }}
                   >
                     <div style={{
                       ...styles.optionIndicator,
-                      backgroundColor: isSelected ? 'var(--color-primary)' : 'var(--color-bg-surface)',
+                      backgroundColor: isSelected ? 'var(--color-primary)' : 'var(--color-mist-light)',
                       borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
-                      color: isSelected ? '#ffffff' : 'var(--color-text)',
+                      color: isSelected ? '#ffffff' : 'var(--color-text-main)',
                     }}>
                       {opt.key}
                     </div>
-                    <span style={{ fontSize: '0.95rem', flex: 1, color: isSelected ? 'var(--color-primary)' : 'var(--color-text)' }}>
+                    <span style={{ fontSize: 'var(--font-size-sm)', flex: 1, color: isSelected ? 'var(--color-text-main)' : 'var(--color-text-secondary)', fontWeight: isSelected ? '500' : 'normal' }}>
                       {opt.text}
                     </span>
                   </div>
@@ -531,17 +518,17 @@ export function AssessmentFlowView({ onNavigateTab }) {
               <button
                 onClick={() => setCurrentQIndex((i) => Math.max(0, i - 1))}
                 disabled={currentQIndex === 0}
-                className="btn btn-outline"
+                className="btn btn-ghost"
                 style={{ fontSize: 'var(--font-size-xs)' }}
               >
-                ← Previous Question
+                ← Previous
               </button>
 
               <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                 {currentQIndex < totalQ - 1 ? (
                   <button
                     onClick={() => setCurrentQIndex((i) => Math.min(totalQ - 1, i + 1))}
-                    className="btn btn-outline"
+                    className="btn btn-ghost"
                     style={{ fontSize: 'var(--font-size-xs)' }}
                   >
                     Next Question →
@@ -551,7 +538,7 @@ export function AssessmentFlowView({ onNavigateTab }) {
                 <button
                   onClick={() => setShowSubmitModal(true)}
                   className="btn btn-primary"
-                  style={{ fontSize: 'var(--font-size-xs)', fontWeight: 600 }}
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   Finish & Submit Test
                 </button>
@@ -564,24 +551,25 @@ export function AssessmentFlowView({ onNavigateTab }) {
         {showSubmitModal && (
           <div style={styles.modalOverlay}>
             <div className="card" style={styles.modalCard}>
-              <h4 style={{ margin: '0 0 8px 0' }}>Ready to Submit Assessment?</h4>
-              <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-2)' }}>
+              <h4 style={{ margin: '0 0 var(--space-2) 0', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>Ready to Submit Assessment?</h4>
+              <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-2)' }}>
                 You have answered <strong>{answeredCount}</strong> out of <strong>{totalQ}</strong> questions.
               </p>
               {answeredCount < totalQ && (
-                <div style={{ padding: '8px 12px', backgroundColor: 'rgba(234, 179, 8, 0.15)', color: '#854d0e', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', marginBottom: 'var(--space-3)' }}>
-                  ⚠️ You have {totalQ - answeredCount} unanswered questions. Unanswered questions receive 0 points.
+                <div style={{ padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-xs)', fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: 'var(--space-3)' }}>
+                  Notice: You have {totalQ - answeredCount} unanswered questions. Unanswered questions receive 0 points.
                 </div>
               )}
-              <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-4)' }}>
-                Your responses will be graded by the deterministic scoring engine, and validated skill proficiencies will be written automatically to your verified skill profile and readiness analytics.
+              <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: 'var(--space-3)' }}>
+                Your responses will be graded deterministically, and validated skill proficiencies will be written automatically to your verified skill profile and readiness analytics.
               </p>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)' }}>
                 <button
                   onClick={() => setShowSubmitModal(false)}
                   disabled={submitting}
-                  className="btn btn-outline"
+                  className="btn btn-ghost"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   Continue Reviewing
                 </button>
@@ -589,9 +577,9 @@ export function AssessmentFlowView({ onNavigateTab }) {
                   onClick={handleSubmitAttempt}
                   disabled={submitting}
                   className="btn btn-primary"
-                  style={{ fontWeight: 600 }}
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
-                  {submitting ? 'Submitting & Evaluating...' : 'Confirm Submission'}
+                  {submitting ? 'Submitting...' : 'Confirm Submission'}
                 </button>
               </div>
             </div>
@@ -610,72 +598,67 @@ export function AssessmentFlowView({ onNavigateTab }) {
 
     return (
       <div style={styles.container}>
-        <div className="card" style={{ textAlign: 'center', padding: 'var(--space-8) var(--space-4)', maxWidth: '720px', margin: '0 auto', width: '100%' }}>
-          <div style={{ fontSize: '54px', marginBottom: 'var(--space-2)' }}>
-            {isPassed ? '🎉' : '📈'}
-          </div>
-          <h3 style={{ color: isPassed ? '#15803d' : 'var(--color-primary)', margin: '0 0 6px 0', fontSize: '1.6rem' }}>
-            {isPassed ? 'Assessment Passed Successfully!' : 'Assessment Attempt Completed'}
-          </h3>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)', margin: '0 0 var(--space-4) 0' }}>
-            {latestResult.assessmentTitle || 'Technical Competency Evaluation'}
-          </p>
+        <div className="card" style={{ maxWidth: '640px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
+              <span className={`status-pill ${isPassed ? 'status-verified' : 'status-rejected'}`} style={{ fontSize: '11px' }}>
+                <span className="status-pill-dot" />
+                {isPassed ? 'Passed Successfully' : 'Evaluation Completed'}
+              </span>
+              <span className="badge badge-role" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                Proficiency: {latestResult.level || 'intermediate'}
+              </span>
+            </div>
 
-          <div style={styles.scoreCircle}>
-            <span style={{ fontSize: '38px', fontWeight: 800, fontFamily: 'var(--font-family-display)', color: isPassed ? '#15803d' : 'var(--color-primary)' }}>
-              {percentage}%
-            </span>
-            <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Score: {latestResult.score} / {latestResult.maxScore}
-            </span>
+            <h3 style={{ margin: '0 0 2px 0', fontSize: 'var(--font-size-xl)', fontWeight: '600', color: 'var(--color-text-main)' }}>
+              {latestResult.assessmentTitle || 'Technical Competency Evaluation'}
+            </h3>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', margin: 0 }}>
+              Deterministic scoring completed against benchmark criteria.
+            </p>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-3)' }}>
-            <span
-              className="badge"
-              style={{
-                fontSize: '12px',
-                padding: '4px 12px',
-                backgroundColor: isPassed ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                color: isPassed ? '#15803d' : '#b91c1c',
-                fontWeight: 600,
-              }}
-            >
-              Outcome: {isPassed ? 'PASSED' : 'NEEDS IMPROVEMENT'}
-            </span>
-            <span className="badge badge-burgundy" style={{ fontSize: '12px', padding: '4px 12px', textTransform: 'capitalize' }}>
-              Proficiency: {latestResult.level || 'intermediate'}
-            </span>
+          <div style={styles.resultKpiGrid}>
+            <div className="b2b-kpi-tile">
+              <span className="b2b-kpi-label">Final Score</span>
+              <span className="b2b-kpi-value" style={{ color: isPassed ? 'var(--color-text-main)' : 'var(--color-primary)' }}>
+                {percentage}%
+              </span>
+              <span className="b2b-kpi-subtext">{latestResult.score} / {latestResult.maxScore} points</span>
+            </div>
+
+            <div className="b2b-kpi-tile">
+              <span className="b2b-kpi-label">Outcome</span>
+              <span className="b2b-kpi-value" style={{ fontSize: 'var(--font-size-lg)' }}>
+                {isPassed ? 'PASSED' : 'NEEDS IMPROVEMENT'}
+              </span>
+              <span className="b2b-kpi-subtext">Passing threshold: 60%</span>
+            </div>
           </div>
 
           {/* Skill Linkage Callout Banner */}
-          <div style={{ marginTop: 'var(--space-6)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', backgroundColor: 'rgba(2, 132, 199, 0.08)', border: '1px solid rgba(2, 132, 199, 0.25)', textAlign: 'left' }}>
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-              <span style={{ fontSize: '20px' }}>⚡</span>
-              <div>
-                <h5 style={{ margin: '0 0 4px 0', color: '#0284c7', fontSize: '0.95rem' }}>Profile & Readiness Synchronized</h5>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                  The deterministic scores from this assessment have been verified and applied directly to your <strong>verified skills profile</strong>. Your industry readiness score and skill-gap radar have updated to reflect this performance.
-                </p>
-              </div>
-            </div>
+          <div style={{ padding: 'var(--space-3)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' }}>
+            <h5 style={{ margin: '0 0 2px 0', fontSize: 'var(--font-size-xs)', fontWeight: '600' }}>Profile & Readiness Synchronized</h5>
+            <p style={{ margin: 0, fontSize: '11px', color: 'var(--color-text-muted)', lineHeight: 1.4 }}>
+              Deterministic scores from this assessment have been verified and applied directly to your verified skills profile. Your industry readiness score has updated.
+            </p>
           </div>
 
           {/* Per skill breakdown */}
           {latestResult.perSkillScore && Object.keys(latestResult.perSkillScore).length > 0 && (
-            <div style={{ maxWidth: '520px', margin: 'var(--space-6) auto 0', textAlign: 'left' }}>
-              <h5 style={{ marginBottom: 'var(--space-3)', fontSize: '0.95rem' }}>Competency Performance by Skill Area</h5>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            <div>
+              <h5 style={{ margin: '0 0 var(--space-2) 0', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.04em' }}>Competency Area Performance</h5>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                 {Object.entries(latestResult.perSkillScore).map(([skill, stat]) => {
                   const skillPct = stat.max > 0 ? Math.round((stat.score / stat.max) * 100) : 0;
                   return (
                     <div key={skill} style={styles.skillStatRow}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--font-size-xs)' }}>
-                        <strong style={{ color: 'var(--color-text)' }}>{skill}</strong>
-                        <span style={{ color: 'var(--color-text-secondary)' }}>{skillPct}% ({stat.score}/{stat.max} pts)</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                        <strong style={{ color: 'var(--color-text-main)' }}>{skill}</strong>
+                        <span style={{ color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>{skillPct}% ({stat.score}/{stat.max} pts)</span>
                       </div>
                       <div style={styles.statBar}>
-                        <div style={{ height: '100%', width: `${skillPct}%`, backgroundColor: skillPct >= 60 ? '#22c55e' : '#f59e0b', borderRadius: '3px', transition: 'width 0.4s ease' }} />
+                        <div style={{ height: '100%', width: `${skillPct}%`, backgroundColor: skillPct >= 60 ? 'var(--color-steel-blue)' : 'var(--color-primary)', borderRadius: '2px', transition: 'width 0.4s ease' }} />
                       </div>
                     </div>
                   );
@@ -685,19 +668,20 @@ export function AssessmentFlowView({ onNavigateTab }) {
           )}
 
           {/* Navigation Action Buttons */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--space-3)', marginTop: 'var(--space-8)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-2)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)' }}>
             <button
               onClick={() => { setViewMode('catalog'); setActiveAssessment(null); }}
-              className="btn btn-outline"
+              className="btn btn-ghost"
+              style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              ← Back to Assessments Hub
+              ← Back to Hub
             </button>
 
             {onNavigateTab && (
               <button
                 onClick={() => onNavigateTab('readiness')}
                 className="btn btn-primary"
-                style={{ fontWeight: 600 }}
+                style={{ fontSize: 'var(--font-size-xs)' }}
               >
                 Inspect Updated Skill-Gap Radar →
               </button>
@@ -716,31 +700,23 @@ const styles = {
   headerRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' },
   description: { fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' },
   toolbar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-3)' },
-  tabPillGroup: { display: 'flex', backgroundColor: 'var(--color-mist-light)', padding: '3px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' },
-  pillBtn: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: 'none', backgroundColor: 'transparent', fontSize: 'var(--font-size-xs)', fontWeight: '500', cursor: 'pointer', color: 'var(--color-text-secondary)', transition: 'all var(--transition-fast)' },
-  activePill: { backgroundColor: 'var(--color-bg-surface)', color: 'var(--color-primary)', fontWeight: '600', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' },
-  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)' },
-  cardGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 'var(--space-4)' },
-  assessmentCard: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)' },
-  cardFooter: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border-subtle)', paddingTop: 'var(--space-3)', marginTop: 'var(--space-2)' },
-  tableWrapper: { overflowX: 'auto', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-surface)' },
-  table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--font-size-sm)' },
-  th: { padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-mist-light)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.04em' },
-  tr: { borderBottom: '1px solid var(--color-border-subtle)' },
-  td: { padding: 'var(--space-3) var(--space-4)', verticalAlign: 'middle' },
-  questionCard: { backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)' },
-  optionsList: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' },
-  optionItem: { display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-app)', cursor: 'pointer', transition: 'all var(--transition-fast)' },
-  optionSelected: { borderColor: 'var(--color-primary)', backgroundColor: 'var(--color-sky-light)' },
-  optionIndicator: { width: '26px', height: '26px', borderRadius: '50%', border: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' },
-  navRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-4)' },
-  scoreCircle: { width: '130px', height: '130px', borderRadius: '50%', border: '4px solid var(--color-primary)', margin: 'var(--space-4) auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--color-mist-light)' },
-  skillStatRow: { display: 'flex', flexDirection: 'column', gap: '6px' },
-  statBar: { width: '100%', height: '8px', borderRadius: '4px', backgroundColor: 'var(--color-border)', overflow: 'hidden' },
-  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'var(--space-4)' },
-  modalCard: { maxWidth: '440px', width: '100%', borderRadius: 'var(--radius-lg)' },
+  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)' },
+  cardGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 'var(--space-3)' },
+  assessmentCard: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between' },
+  cardFooter: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-2)', marginTop: 'var(--space-2)' },
+  runnerHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-2)' },
+  questionCard: { display: 'flex', flexDirection: 'column' },
+  optionsList: { display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginBottom: 'var(--space-4)' },
+  optionItem: { display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-xs)', border: '1px solid var(--color-border)', cursor: 'pointer', transition: 'all var(--transition-fast)' },
+  optionIndicator: { width: '22px', height: '22px', borderRadius: 'var(--radius-xs)', border: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', fontFamily: 'monospace' },
+  navRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)', flexWrap: 'wrap', gap: 'var(--space-2)' },
+  resultKpiGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 'var(--space-2)' },
+  skillStatRow: { display: 'flex', flexDirection: 'column', gap: '4px' },
+  statBar: { width: '100%', height: '4px', borderRadius: '2px', backgroundColor: 'var(--color-mist-light)', overflow: 'hidden' },
+  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'clamp(8px, 2vw, 16px)' },
+  modalCard: { maxWidth: '440px', width: '100%', maxHeight: '90vh', overflowY: 'auto' },
   paginationRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'var(--space-2)' },
-  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
+  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
   spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
 };
 

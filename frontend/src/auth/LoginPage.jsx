@@ -37,8 +37,8 @@ export function LoginPage() {
   };
 
   return (
-    <div style={styles.pageContainer}>
-      <div className="card" style={styles.card}>
+    <div className="login-page-container">
+      <div className="card login-card">
         <div style={styles.header}>
           <h1 style={styles.title}>SUTRA</h1>
           <p style={styles.subtitle}>Smart Unified Talent & Recruitment Alignment Platform</p>

@@ -125,45 +125,68 @@ export function IndustryDemandComparisonView() {
   const alignedCount = comparisonData.filter((r) => r.alignmentStatus === 'Well Aligned').length;
 
   return (
-    <div style={styles.container}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
       {/* Header */}
-      <div>
-        <h3 style={styles.heading}>Industry Skill-Demand Comparison Matrix</h3>
-        <p style={styles.subHeading}>
+      <div className="card" style={{ padding: 'var(--space-5)' }}>
+        <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--color-primary)', fontWeight: 700 }}>
+          Industry Skill-Demand Comparison Matrix
+        </h3>
+        <p style={{ margin: '4px 0 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
           Comparative view analyzing live recruiter hiring requirements from active job/internship postings against your institution's verified student skills.
         </p>
       </div>
 
-      {/* Quick Summary Strip */}
-      <div style={styles.stripGrid}>
-        <div className="card" style={styles.stripCard}>
-          <span style={styles.stripLabel}>Industry Skills Evaluated</span>
-          <span style={styles.stripValue}>{skillDemandList.length}</span>
+      {/* Quick Summary Strip using B2B KPI Grid */}
+      <div className="b2b-kpi-grid">
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Industry Skills Evaluated</div>
+          <div className="b2b-kpi-value">{skillDemandList.length}</div>
+          <div className="b2b-kpi-subtext">Active market competencies</div>
         </div>
-        <div className="card" style={styles.stripCard}>
-          <span style={styles.stripLabel}>Well Aligned Competencies</span>
-          <span style={{ ...styles.stripValue, color: 'var(--color-emerald)' }}>{alignedCount}</span>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Well Aligned Competencies</div>
+          <div className="b2b-kpi-value" style={{ color: 'var(--color-emerald)' }}>{alignedCount}</div>
+          <div className="b2b-kpi-subtext">Sufficient student supply</div>
         </div>
-        <div className="card" style={styles.stripCard}>
-          <span style={styles.stripLabel}>Critical Market Gaps (Zero Supply)</span>
-          <span style={{ ...styles.stripValue, color: 'var(--color-danger)' }}>{criticalGapsCount}</span>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Critical Market Gaps</div>
+          <div className="b2b-kpi-value" style={{ color: 'var(--color-burgundy-red)' }}>{criticalGapsCount}</div>
+          <div className="b2b-kpi-subtext">High demand with zero supply</div>
         </div>
       </div>
 
       {/* Filter Row */}
-      <div className="card" style={{ padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-surface)' }}>
+      <div className="card" style={{ padding: 'var(--space-4)', backgroundColor: 'var(--color-bg-surface)' }}>
         <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap', alignItems: 'center' }}>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search skills (e.g. React, Python, Docker)..."
-            style={{ ...styles.input, flex: 2, minWidth: '200px' }}
+            style={{
+              padding: 'var(--space-2) var(--space-3)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--color-border)',
+              fontSize: 'var(--font-size-xs)',
+              backgroundColor: 'var(--color-bg-app)',
+              flex: 2,
+              minWidth: '200px',
+              color: 'var(--color-text)'
+            }}
           />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            style={{ ...styles.select, flex: 1, minWidth: '160px' }}
+            style={{
+              padding: 'var(--space-2) var(--space-3)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--color-border)',
+              fontSize: 'var(--font-size-xs)',
+              backgroundColor: 'var(--color-bg-app)',
+              flex: 1,
+              minWidth: '160px',
+              color: 'var(--color-text)'
+            }}
           >
             <option value="">All Categories</option>
             {categories.map((c) => (
@@ -173,7 +196,7 @@ export function IndustryDemandComparisonView() {
           {(search || categoryFilter) && (
             <button
               onClick={() => { setSearch(''); setCategoryFilter(''); }}
-              className="btn btn-outline"
+              className="btn btn-ghost"
               style={{ fontSize: 'var(--font-size-xs)' }}
             >
               Reset Filters
@@ -183,91 +206,82 @@ export function IndustryDemandComparisonView() {
       </div>
 
       {/* Comparison Table */}
-      <div className="card" style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--color-border)' }}>
-        <div className="table-wrapper">
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--font-size-xs)' }}>
-            <thead>
-              <tr style={{ backgroundColor: 'var(--color-mist-light)', borderBottom: '1px solid var(--color-border)' }}>
-                <th style={styles.th}>Skill Competency</th>
-                <th style={styles.th}>Category</th>
-                <th style={styles.th}>Industry Demand Weight</th>
-                <th style={styles.th}>Institution Student Supply</th>
-                <th style={styles.th}>Market Alignment</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRows.map((row, idx) => (
-                <tr
-                  key={row.id || idx}
-                  style={{
-                    borderBottom: '1px solid var(--color-border-subtle)',
-                    backgroundColor: idx % 2 === 0 ? 'var(--color-bg-surface)' : 'var(--color-bg-app)',
-                  }}
-                >
-                  <td style={styles.td}>
-                    <strong style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-primary)' }}>
+      <div className="data-table-container">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Skill Competency</th>
+              <th>Category</th>
+              <th>Industry Demand Weight</th>
+              <th>Institution Student Supply</th>
+              <th>Market Alignment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredRows.map((row, idx) => {
+              const statusPillClass =
+                row.alignmentStatus === 'Well Aligned'
+                  ? 'status-verified'
+                  : row.alignmentStatus === 'Supply Deficit'
+                  ? 'status-pending'
+                  : 'status-rejected';
+
+              return (
+                <tr key={row.id || idx}>
+                  <td>
+                    <strong style={{ color: 'var(--color-primary)' }}>
                       {row.name}
                     </strong>
                   </td>
-                  <td style={styles.td}>
-                    <span className="badge badge-sky" style={{ fontSize: '10px' }}>
+                  <td>
+                    <span className="badge badge-sky" style={{ fontSize: '11px' }}>
                       {row.category}
                     </span>
                   </td>
-                  <td style={styles.td}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontWeight: '700', fontSize: 'var(--font-size-sm)' }}>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                      <span style={{ fontWeight: '700' }}>
                         {row.demandScore}
                       </span>
                       <span style={{ color: 'var(--color-text-muted)', fontSize: '11px' }}>
-                        ({row.demandCount} active postings)
+                        ({row.demandCount} postings)
                       </span>
                     </div>
                   </td>
-                  <td style={styles.td}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ fontWeight: '700', fontSize: 'var(--font-size-sm)', color: row.studentCount > 0 ? 'var(--color-primary)' : 'var(--color-danger)' }}>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                      <span style={{ fontWeight: '700', color: row.studentCount > 0 ? 'var(--color-primary)' : 'var(--color-burgundy-red)' }}>
                         {row.studentCount}
                       </span>
                       <span style={{ color: 'var(--color-text-muted)', fontSize: '11px' }}>
-                        verified student{row.studentCount === 1 ? '' : 's'}
+                        student{row.studentCount === 1 ? '' : 's'}
                       </span>
                     </div>
                   </td>
-                  <td style={styles.td}>
-                    <span className={`badge ${row.badgeClass}`} style={{ fontSize: '11px' }}>
+                  <td>
+                    <span className={`status-pill ${statusPillClass}`}>
+                      <span className="status-pill-dot" />
                       {row.alignmentStatus}
                     </span>
                   </td>
                 </tr>
-              ))}
-              {filteredRows.length === 0 && (
-                <tr>
-                  <td colSpan="5" style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                    No skill comparison records match your search criteria.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              );
+            })}
+            {filteredRows.length === 0 && (
+              <tr>
+                <td colSpan="5" style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                  No skill comparison records match your search criteria.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 }
 
 const styles = {
-  container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
-  heading: { margin: 0, fontSize: 'var(--font-size-lg)', color: 'var(--color-primary)' },
-  subHeading: { margin: '4px 0 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' },
-  stripGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-3)' },
-  stripCard: { padding: 'var(--space-3) var(--space-4)', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '2px' },
-  stripLabel: { fontSize: '11px', color: 'var(--color-text-secondary)', fontWeight: '600', textTransform: 'uppercase' },
-  stripValue: { fontSize: 'var(--font-size-xl)', fontWeight: '800', color: 'var(--color-primary)' },
-  input: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-app)' },
-  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-app)' },
-  th: { padding: 'var(--space-3) var(--space-4)', fontWeight: '700', color: 'var(--color-text-secondary)', textTransform: 'uppercase', fontSize: '11px' },
-  td: { padding: 'var(--space-3) var(--space-4)', verticalAlign: 'middle' },
   stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
   spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
 };

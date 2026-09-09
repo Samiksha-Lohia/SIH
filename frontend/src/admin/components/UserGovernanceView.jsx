@@ -164,85 +164,77 @@ export function UserGovernanceView() {
       {loading ? (
         <div style={styles.stateBox}>
           <div style={styles.spinner}></div>
-          <p>Loading user directory...</p>
+          <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>Loading user directory...</p>
         </div>
       ) : error ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-danger)', marginBottom: 'var(--space-2)' }}>{error}</p>
+          <p style={{ color: 'var(--color-danger)', fontSize: 'var(--font-size-xs)', marginBottom: 'var(--space-2)' }}>{error}</p>
           <button onClick={fetchUsers} className="btn btn-primary">Try Again</button>
         </div>
       ) : users.length === 0 ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-text-muted)' }}>No user accounts found matching your query criteria.</p>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}>No user accounts found matching your query criteria.</p>
         </div>
       ) : (
-        <div style={styles.tableWrapper}>
-          <table style={styles.table}>
+        <div className="data-table-container">
+          <table className="data-table">
             <thead>
               <tr>
-                <th style={styles.th}>User</th>
-                <th style={styles.th}>Email & Verification</th>
-                <th style={styles.th}>Assigned Role</th>
-                <th style={styles.th}>Account Status</th>
-                <th style={styles.th}>Last Login</th>
-                <th style={styles.th}>Registered</th>
+                <th>User</th>
+                <th>Email & Verification</th>
+                <th>Assigned Role</th>
+                <th>Account Status</th>
+                <th>Last Login</th>
+                <th>Registered</th>
               </tr>
             </thead>
             <tbody>
               {users.map((u) => (
-                <tr key={u.id} style={styles.tr}>
-                  <td style={styles.td}>
+                <tr key={u.id}>
+                  <td>
                     <div style={styles.userCell}>
                       <div style={styles.avatarBubble}>
                         {(u.name || 'U').charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <strong>{u.name || 'Unnamed User'}</strong>
+                        <strong style={styles.userNameText}>{u.name || 'Unnamed User'}</strong>
                         {u.phone && <div style={styles.subtext}>{u.phone}</div>}
                       </div>
                     </div>
                   </td>
 
-                  <td style={styles.td}>
-                    <div>{u.email}</div>
+                  <td>
+                    <div style={styles.emailText}>{u.email}</div>
                     <div style={{ marginTop: '2px' }}>
                       {u.emailVerified ? (
-                        <span style={styles.verifiedBadge}>✓ Email Verified</span>
+                        <span style={styles.verifiedBadge}>✓ Verified</span>
                       ) : (
-                        <span style={styles.unverifiedBadge}>Unverified Email</span>
+                        <span style={styles.unverifiedBadge}>Unverified</span>
                       )}
                     </div>
                   </td>
 
-                  <td style={styles.td}>
+                  <td>
                     <span
                       className="badge"
-                      style={{
-                        ...styles.roleBadge,
-                        ...getRoleBadgeStyle(u.role),
-                      }}
+                      style={getRoleBadgeStyle(u.role)}
                     >
                       {ROLE_LABELS[u.role] || u.role}
                     </span>
                   </td>
 
-                  <td style={styles.td}>
-                    <span
-                      className="badge"
-                      style={{
-                        ...styles.statusBadge,
-                        ...getStatusBadgeStyle(u.status),
-                      }}
-                    >
+                  <td>
+                    <span className={`status-pill status-${u.status || 'pending'}`}>
+                      <span className="status-pill-dot" />
                       {u.status}
                     </span>
                   </td>
 
-                  <td style={{ ...styles.td, fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                  <td style={styles.monoCell}>
                     {formatDate(u.lastLogin)}
                   </td>
 
-                  <td style={{ ...styles.td, fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                  <td style={styles.monoCell}>
                     {formatDate(u.createdAt)}
                   </td>
                 </tr>
@@ -284,7 +276,7 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 'var(--space-4)',
+    gap: 'var(--space-3)',
   },
   headerRow: {
     display: 'flex',
@@ -294,9 +286,9 @@ const styles = {
     gap: 'var(--space-2)',
   },
   description: {
-    fontSize: 'var(--font-size-sm)',
+    fontSize: 'var(--font-size-xs)',
     color: 'var(--color-text-muted)',
-    marginTop: 'var(--space-1)',
+    marginTop: '2px',
   },
   refreshBtn: {
     fontSize: 'var(--font-size-xs)',
@@ -304,125 +296,106 @@ const styles = {
   toolbar: {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: 'var(--space-3)',
+    gap: 'var(--space-2)',
     alignItems: 'center',
+    padding: '8px 12px',
+    backgroundColor: 'var(--color-bg-surface)',
+    border: '1px solid var(--color-border)',
+    borderRadius: 'var(--radius-sm)',
   },
   searchInput: {
     flex: '1',
-    minWidth: '240px',
-    padding: 'var(--space-2) var(--space-3)',
-    borderRadius: 'var(--radius-md)',
+    minWidth: '220px',
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
     border: '1px solid var(--color-border)',
-    fontSize: 'var(--font-size-sm)',
-    backgroundColor: 'var(--color-bg-surface)',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-app)',
+    color: 'var(--color-text-primary)',
+    outline: 'none',
   },
   selectInput: {
-    padding: 'var(--space-2) var(--space-3)',
-    borderRadius: 'var(--radius-md)',
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
     border: '1px solid var(--color-border)',
-    fontSize: 'var(--font-size-sm)',
-    backgroundColor: 'var(--color-bg-surface)',
-    minWidth: '160px',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-app)',
+    color: 'var(--color-text-primary)',
+    minWidth: '150px',
+    outline: 'none',
   },
   stateBox: {
-    padding: 'var(--space-12)',
+    padding: 'var(--space-8)',
     textAlign: 'center',
     backgroundColor: 'var(--color-bg-surface)',
-    borderRadius: 'var(--radius-lg)',
+    borderRadius: 'var(--radius-md)',
     border: '1px solid var(--color-border)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 'var(--space-3)',
+    gap: 'var(--space-2)',
   },
   spinner: {
-    width: '32px',
-    height: '32px',
+    width: '24px',
+    height: '24px',
     borderRadius: '50%',
-    border: '3px solid var(--color-border)',
+    border: '2px solid var(--color-border)',
     borderTopColor: 'var(--color-primary)',
     animation: 'spin 0.8s linear infinite',
-  },
-  tableWrapper: {
-    overflowX: 'auto',
-    borderRadius: 'var(--radius-lg)',
-    border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-bg-surface)',
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    textAlign: 'left',
-    fontSize: 'var(--font-size-sm)',
-  },
-  th: {
-    padding: 'var(--space-3) var(--space-4)',
-    borderBottom: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-mist-light)',
-    color: 'var(--color-text-secondary)',
-    fontWeight: 'var(--font-weight-semibold)',
-    fontSize: 'var(--font-size-xs)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.04em',
-  },
-  tr: {
-    borderBottom: '1px solid var(--color-border-subtle)',
-  },
-  td: {
-    padding: 'var(--space-3) var(--space-4)',
-    verticalAlign: 'middle',
   },
   userCell: {
     display: 'flex',
     alignItems: 'center',
-    gap: 'var(--space-3)',
+    gap: 'var(--space-2)',
   },
   avatarBubble: {
-    width: '34px',
-    height: '34px',
+    width: '26px',
+    height: '26px',
     borderRadius: '50%',
     backgroundColor: 'var(--color-steel-light)',
     color: 'var(--color-steel-dark)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontWeight: 'bold',
-    fontSize: '14px',
+    fontWeight: '700',
+    fontSize: '11px',
+    flexShrink: 0,
+  },
+  userNameText: {
+    fontSize: '13px',
+    color: 'var(--color-text-primary)',
+    fontWeight: '600',
+    display: 'block',
+  },
+  emailText: {
+    fontSize: '12px',
+    color: 'var(--color-text-primary)',
   },
   subtext: {
-    fontSize: 'var(--font-size-xs)',
+    fontSize: '11px',
     color: 'var(--color-text-muted)',
-  },
-  roleBadge: {
-    fontSize: '11px',
-    fontWeight: '600',
-    padding: '2px 8px',
-    borderRadius: 'var(--radius-sm)',
-    display: 'inline-block',
-  },
-  statusBadge: {
-    fontSize: '11px',
-    fontWeight: '600',
-    textTransform: 'capitalize',
-    padding: '2px 8px',
-    borderRadius: 'var(--radius-sm)',
-    display: 'inline-block',
   },
   verifiedBadge: {
     fontSize: '10px',
-    color: '#15803d',
+    color: '#1e6b3f',
     fontWeight: '600',
   },
   unverifiedBadge: {
     fontSize: '10px',
     color: 'var(--color-text-muted)',
   },
+  monoCell: {
+    fontSize: '11px',
+    color: 'var(--color-text-secondary)',
+    fontVariantNumeric: 'tabular-nums',
+  },
   paginationRow: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 'var(--space-2)',
+    marginTop: 'var(--space-1)',
+    paddingTop: 'var(--space-2)',
   },
 };
 

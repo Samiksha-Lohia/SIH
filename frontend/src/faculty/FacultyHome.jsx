@@ -9,11 +9,11 @@ import ResearchCollaborationView from './components/ResearchCollaborationView.js
 import FacultyProfileView from './components/FacultyProfileView.jsx';
 
 const TABS = [
-  { id: 'cockpit', label: '📊 Engagements & Cockpit', desc: 'Track mentorships, FDP completions & active sessions' },
-  { id: 'opportunities', label: '🏛️ Academic Opportunities', desc: 'Faculty internships, industrial training, FDPs & consultancy' },
-  { id: 'mentorship', label: '🤝 Mentorship Hub', desc: 'Discover industry leaders and establish mentoring connections' },
-  { id: 'research', label: '🔬 Research & Capstones', desc: 'Collaborative research proposals & live industry projects' },
-  { id: 'profile', label: '👤 Faculty Dossier', desc: 'Profile, expertise tags, availability slots & collaboration settings' },
+  { id: 'cockpit', label: 'Engagements & Cockpit', desc: 'Track mentorships, FDP completions & active sessions' },
+  { id: 'opportunities', label: 'Academic Opportunities', desc: 'Faculty internships, industrial training, FDPs & consultancy' },
+  { id: 'mentorship', label: 'Mentorship Hub', desc: 'Discover industry leaders and establish mentoring connections' },
+  { id: 'research', label: 'Research & Capstones', desc: 'Collaborative research proposals & live industry projects' },
+  { id: 'profile', label: 'Faculty Dossier', desc: 'Profile, expertise tags, availability slots & collaboration settings' },
 ];
 
 export function FacultyHome() {
@@ -42,195 +42,99 @@ export function FacultyHome() {
     setProfileData(updatedProfile);
   };
 
-  // Compute completeness and badges
   const availabilityCount = (profileData?.availabilitySlots || []).length;
-  const isAvailableForMentorship = profileData?.collaborationPreferences?.mentorship !== false;
-  const hasExpertise = (profileData?.expertise || []).length > 0;
 
   return (
-    <div className="faculty-portal-root" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Faculty Hero Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%, #1e293b 100%)',
-          borderRadius: '16px',
-          border: '1px solid #312e81',
-          padding: '1.75rem',
-          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4)',
-        }}
-      >
+    <div className="faculty-portal-root" style={{ maxWidth: '1440px', margin: '0 auto', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+      {/* Faculty Header Card */}
+      <div className="card" style={{ padding: 'var(--space-6)' }}>
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '1.25rem',
+            gap: 'var(--space-4)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <div
-              style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '16px',
-                background: 'linear-gradient(135deg, #6366f1, #a855f7)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2rem',
-                color: '#ffffff',
-                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
-              }}
-            >
-              🎓
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-                  {profileData?.title ? `${profileData.title} ` : ''}
-                  {profileData?.name || user?.name || 'Faculty Member'}
-                </h1>
-                <span
-                  style={{
-                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                    color: '#a5b4fc',
-                    border: '1px solid rgba(99, 102, 241, 0.4)',
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: '9999px',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Verified Academician
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
+              <h1 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 700, color: 'var(--color-primary)', margin: 0 }}>
+                {profileData?.title ? `${profileData.title} ` : ''}
+                {profileData?.name || user?.name || 'Faculty Member'}
+              </h1>
+              <span className="status-pill status-verified">
+                <span className="status-pill-dot" />
+                Verified Academician
+              </span>
+              {availabilityCount > 0 ? (
+                <span className="badge badge-emerald" style={{ fontSize: '11px' }}>
+                  {availabilityCount} Mentorship Slot{availabilityCount > 1 ? 's' : ''} Active
                 </span>
-                {availabilityCount > 0 ? (
-                  <span
-                    style={{
-                      backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                      color: '#4ade80',
-                      border: '1px solid rgba(34, 197, 94, 0.4)',
-                      padding: '0.2rem 0.6rem',
-                      borderRadius: '9999px',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                    }}
-                  >
-                    ● {availabilityCount} Mentorship Slot{availabilityCount > 1 ? 's' : ''} Active
-                  </span>
-                ) : (
-                  <span
-                    style={{
-                      backgroundColor: 'rgba(234, 179, 8, 0.2)',
-                      color: '#facc15',
-                      border: '1px solid rgba(234, 179, 8, 0.4)',
-                      padding: '0.2rem 0.6rem',
-                      borderRadius: '9999px',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                    }}
-                  >
-                    No Active Slots
-                  </span>
-                )}
-              </div>
-              <p style={{ margin: '0.35rem 0 0', color: '#94a3b8', fontSize: '0.9rem' }}>
-                <span>{profileData?.designation || 'Academician'}</span>
-                {profileData?.department && <span> • {profileData.department}</span>}
-                {profileData?.institution && (
-                  <span style={{ color: '#cbd5e1' }}> • {profileData.institution}</span>
-                )}
-              </p>
+              ) : (
+                <span className="badge badge-subtle" style={{ fontSize: '11px' }}>
+                  No Active Slots
+                </span>
+              )}
             </div>
+            <p style={{ margin: 'var(--space-2) 0 0', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-xs)' }}>
+              <span>{profileData?.designation || 'Academician'}</span>
+              {profileData?.department && <span> • {profileData.department}</span>}
+              {profileData?.institution && (
+                <span style={{ color: 'var(--color-text)' }}> • {profileData.institution}</span>
+              )}
+            </p>
           </div>
 
           {/* Header Actions */}
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
             <button
               onClick={() => setActiveTab('profile')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '8px',
-                color: '#e2e8f0',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)')}
+              className="btn btn-ghost"
+              style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              ⚙️ Manage Dossier & Slots
+              Manage Dossier & Slots
             </button>
             <button
               onClick={() => setActiveTab('opportunities')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 1.15rem',
-                backgroundColor: '#4f46e5',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#ffffff',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.4)',
-              }}
+              className="btn btn-primary"
+              style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              Explore Calls 🚀
+              Explore Calls
             </button>
           </div>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '0.5rem',
-          borderBottom: '1px solid #1f2937',
-          paddingBottom: '0.25rem',
-          overflowX: 'auto',
-        }}
-      >
-        {TABS.map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                padding: '0.65rem 1rem',
-                backgroundColor: isActive ? '#1f2937' : 'transparent',
-                border: 'none',
-                borderBottom: isActive ? '3px solid #6366f1' : '3px solid transparent',
-                borderRadius: '8px 8px 0 0',
-                cursor: 'pointer',
-                color: isActive ? '#ffffff' : '#9ca3af',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <span style={{ fontSize: '0.9rem', fontWeight: isActive ? 700 : 500 }}>
+      {/* Navigation Tab Bar with Mobile Fallback */}
+      <div>
+        <div className="b2b-tab-bar">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`b2b-tab ${isActive ? 'active' : ''}`}
+                title={tab.desc}
+              >
                 {tab.label}
-              </span>
-              <span style={{ fontSize: '0.7rem', color: isActive ? '#94a3b8' : '#64748b' }}>
-                {tab.desc.slice(0, 32)}...
-              </span>
-            </button>
-          );
-        })}
+              </button>
+            );
+          })}
+        </div>
+        <div className="b2b-mobile-tab-nav">
+          <label style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Active View:</label>
+          <select
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value)}
+            style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
+          >
+            {TABS.map((t) => (
+              <option key={t.id} value={t.id}>{t.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Main Tab Content */}

@@ -295,13 +295,13 @@ export function StudentProfileView({ onProfileUpdated }) {
         syncFormDataFromProfile(res.profile);
         setFeedback({
           type: 'success',
-          message: `✨ Voice transcribed via Groq Whisper and automatically merged! Extracted ${res.extracted?.skills?.length || 0} skills and ${res.extracted?.softSkills?.length || 0} soft skills.`,
+          message: `Voice transcribed via Groq Whisper and automatically merged! Extracted ${res.extracted?.skills?.length || 0} skills and ${res.extracted?.softSkills?.length || 0} soft skills.`,
         });
         if (onProfileUpdated) onProfileUpdated(res.profile);
       } else {
         setFeedback({
           type: 'success',
-          message: `🎙️ Voice transcribed successfully! Review extracted competencies below and click "Merge Extracted Skills" to commit.`,
+          message: `Voice transcribed successfully! Review extracted competencies below and click "Merge Extracted Skills" to commit.`,
         });
       }
     } catch (err) {
@@ -315,7 +315,7 @@ export function StudentProfileView({ onProfileUpdated }) {
             syncFormDataFromProfile(fallbackRes.profile);
             setFeedback({
               type: 'success',
-              message: '✨ Extracted keywords and automatically merged into profile!',
+              message: 'Extracted keywords and automatically merged into profile!',
             });
             if (onProfileUpdated) onProfileUpdated(fallbackRes.profile);
           } else {
@@ -356,13 +356,13 @@ export function StudentProfileView({ onProfileUpdated }) {
         syncFormDataFromProfile(res.profile);
         setFeedback({
           type: 'success',
-          message: `✨ AI narrative analyzed and automatically merged into profile! (${res.extracted?.skills?.length || 0} skills added/updated)`,
+          message: `AI narrative analyzed and automatically merged into profile! (${res.extracted?.skills?.length || 0} skills added/updated)`,
         });
         if (onProfileUpdated) onProfileUpdated(res.profile);
       } else {
         setFeedback({
           type: 'success',
-          message: `✨ AI analyzed your text! Found ${res.extracted?.skills?.length || 0} skills and ${res.extracted?.softSkills?.length || 0} soft skills. Review proposal below.`,
+          message: `AI analyzed your text! Found ${res.extracted?.skills?.length || 0} skills and ${res.extracted?.softSkills?.length || 0} soft skills. Review proposal below.`,
         });
       }
     } catch (err) {
@@ -450,7 +450,7 @@ export function StudentProfileView({ onProfileUpdated }) {
         setProfile(updated);
         setFeedback({
           type: 'success',
-          message: '✨ Extracted competencies accepted and saved directly to your profile!',
+          message: 'Extracted competencies accepted and saved directly to your profile!',
         });
         if (onProfileUpdated) onProfileUpdated(updated);
       } catch (err) {
@@ -611,7 +611,7 @@ export function StudentProfileView({ onProfileUpdated }) {
       style={{
         marginBottom: 'var(--space-5)',
         backgroundColor: 'var(--color-mist-light)',
-        border: '1px solid rgba(141, 161, 185, 0.35)',
+        border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-lg)',
         padding: 'var(--space-4)',
       }}
@@ -627,8 +627,7 @@ export function StudentProfileView({ onProfileUpdated }) {
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '20px' }}>🎙️</span>
-            <h4 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)' }}>
+            <h4 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-text-primary)' }}>
               AI Voice & Narrative Skill Onboarding
             </h4>
             <span className="badge badge-sky" style={{ fontSize: '10px', textTransform: 'uppercase' }}>
@@ -662,53 +661,33 @@ export function StudentProfileView({ onProfileUpdated }) {
                 fontSize: 'var(--font-size-xs)',
                 fontWeight: '600',
                 padding: '8px 16px',
-                boxShadow: '0 2px 8px rgba(128, 0, 32, 0.2)',
               }}
             >
-              <span>🎙️</span>
-              <span>Start Voice Recording</span>
+              Start Voice Recording
             </button>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div
+                className="status-pill status-rejected"
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '6px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
-                  color: '#dc2626',
-                  fontWeight: '700',
                   fontSize: 'var(--font-size-xs)',
-                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  fontWeight: 600,
+                  padding: '6px 14px',
                 }}
               >
-                <span
-                  style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    backgroundColor: '#dc2626',
-                    display: 'inline-block',
-                  }}
-                />
+                <span className="status-pill-dot" style={{ animation: 'pulse 1.2s infinite' }} />
                 Recording live audio... {formatTimer(recordingTime)}
               </div>
               <button
                 type="button"
                 onClick={stopRecording}
-                className="btn btn-outline"
+                className="btn btn-ghost"
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
                   fontSize: 'var(--font-size-xs)',
-                  borderColor: '#dc2626',
-                  color: '#dc2626',
+                  color: 'var(--color-danger)',
                 }}
               >
-                ⏹️ Stop Recording
+                Stop Recording
               </button>
             </div>
           )}
@@ -728,15 +707,15 @@ export function StudentProfileView({ onProfileUpdated }) {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <span style={{ fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)' }}>
-              🎧 Audio Recording Preview ({formatTimer(recordingTime)}):
+              Audio Recording Preview ({formatTimer(recordingTime)}):
             </span>
             <button
               type="button"
               onClick={resetRecording}
-              className="btn btn-outline"
+              className="btn btn-ghost"
               style={{ fontSize: '11px', padding: '2px 8px' }}
             >
-              🔄 Re-record
+              Re-record
             </button>
           </div>
           <audio src={audioUrl} controls style={{ width: '100%', height: '36px' }} />
@@ -745,19 +724,19 @@ export function StudentProfileView({ onProfileUpdated }) {
               type="button"
               onClick={() => handleVoiceTranscribe(false)}
               disabled={isTranscribing}
-              className="btn btn-primary"
+              className="btn btn-ghost"
               style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              {isTranscribing ? 'Transcribing with Groq Whisper...' : '⚡ Transcribe with Groq Whisper & Extract Words'}
+              {isTranscribing ? 'Transcribing with Groq Whisper...' : 'Transcribe with Groq Whisper'}
             </button>
             <button
               type="button"
               onClick={() => handleVoiceTranscribe(true)}
               disabled={isTranscribing}
-              className="btn btn-outline"
+              className="btn btn-ghost"
               style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              {isTranscribing ? 'Processing...' : '✨ Transcribe & Auto-Merge to Profile'}
+              {isTranscribing ? 'Processing...' : 'Transcribe & Auto-Merge to Profile'}
             </button>
           </div>
         </div>
@@ -767,7 +746,7 @@ export function StudentProfileView({ onProfileUpdated }) {
       <div style={{ marginTop: 'var(--space-3)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
           <label style={{ ...styles.label, marginBottom: 0 }}>
-            {isRecording ? '🔴 Live Speech Transcript (Updating as you speak...)' : '📝 Spoken Transcript / Text Bio'}
+            {isRecording ? 'Live Speech Transcript (Listening...)' : 'Spoken Transcript / Text Bio'}
           </label>
           {transcript && (
             <button
@@ -800,19 +779,19 @@ export function StudentProfileView({ onProfileUpdated }) {
             type="button"
             onClick={() => handleVoiceExtract(false)}
             disabled={isExtracting || !transcript.trim()}
-            className="btn btn-primary"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            {isExtracting ? 'Analyzing Narrative...' : '⚡ Extract & Propose Skills'}
+            {isExtracting ? 'Analyzing Narrative...' : 'Extract & Propose Skills'}
           </button>
           <button
             type="button"
             onClick={() => handleVoiceExtract(true)}
             disabled={isExtracting || !transcript.trim()}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            {isExtracting ? 'Merging...' : '✨ Extract & Auto-Merge to Profile'}
+            {isExtracting ? 'Merging...' : 'Extract & Auto-Merge to Profile'}
           </button>
         </div>
       </div>
@@ -824,8 +803,7 @@ export function StudentProfileView({ onProfileUpdated }) {
           style={{
             marginTop: 'var(--space-4)',
             backgroundColor: 'var(--color-bg-surface)',
-            border: '1px solid var(--color-sky-light)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+            border: '1px solid var(--color-border)',
           }}
         >
           <div
@@ -837,7 +815,7 @@ export function StudentProfileView({ onProfileUpdated }) {
               gap: '8px',
             }}
           >
-            <h5 style={{ margin: 0, color: 'var(--color-primary)' }}>✨ Extracted Competencies & Important Words</h5>
+            <h5 style={{ margin: 0, color: 'var(--color-text-primary)' }}>Extracted Competencies & Keywords</h5>
             <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
               Source: {voiceResult._meta?.source || 'AI Whisper & NLP'}
             </span>
@@ -852,17 +830,8 @@ export function StudentProfileView({ onProfileUpdated }) {
               {voiceResult.skills?.map((s, i) => (
                 <span
                   key={i}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '4px 10px',
-                    borderRadius: 'var(--radius-full)',
-                    backgroundColor: 'rgba(56, 189, 248, 0.15)',
-                    border: '1px solid rgba(56, 189, 248, 0.35)',
-                    fontSize: '11px',
-                    color: 'var(--color-text-primary)',
-                  }}
+                  className="badge badge-sky"
+                  style={{ fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                 >
                   <strong>{s.name}</strong> <span style={{ opacity: 0.75 }}>({s.level})</span>
                 </span>
@@ -882,17 +851,8 @@ export function StudentProfileView({ onProfileUpdated }) {
               {voiceResult.softSkills?.map((s, i) => (
                 <span
                   key={i}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '4px 10px',
-                    borderRadius: 'var(--radius-full)',
-                    backgroundColor: 'rgba(168, 85, 247, 0.15)',
-                    border: '1px solid rgba(168, 85, 247, 0.35)',
-                    fontSize: '11px',
-                    color: 'var(--color-text-primary)',
-                  }}
+                  className="badge badge-mist"
+                  style={{ fontSize: '11px' }}
                 >
                   {s.name}
                 </span>
@@ -913,19 +873,11 @@ export function StudentProfileView({ onProfileUpdated }) {
                 {voiceResult.careerGoals.targetRoles.map((r, i) => (
                   <span
                     key={i}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      padding: '4px 10px',
-                      borderRadius: 'var(--radius-full)',
-                      backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                      border: '1px solid rgba(34, 197, 94, 0.35)',
-                      fontSize: '11px',
-                      color: 'var(--color-text-primary)',
-                    }}
+                    className="status-pill status-verified"
+                    style={{ fontSize: '11px' }}
                   >
-                    🎯 {r}
+                    <span className="status-pill-dot" />
+                    {r}
                   </span>
                 ))}
               </div>
@@ -953,12 +905,12 @@ export function StudentProfileView({ onProfileUpdated }) {
               className="btn btn-primary"
               style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              ✨ Merge Extracted Skills into Profile & Save
+              Merge Extracted Skills into Profile & Save
             </button>
             <button
               type="button"
               onClick={() => setVoiceResult(null)}
-              className="btn btn-outline"
+              className="btn btn-ghost"
               style={{ fontSize: 'var(--font-size-xs)' }}
             >
               Dismiss
@@ -987,24 +939,77 @@ export function StudentProfileView({ onProfileUpdated }) {
         </div>
       )}
 
-      {/* Section Navigation */}
-      <div className="card" style={{ padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-surface)' }}>
-        <div style={styles.subNavBar}>
+      {/* Profile Overview & Completeness Header */}
+      <div className="card" style={styles.headerCard}>
+        <div style={styles.headerTop}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <h3 style={{ margin: 0, color: 'var(--color-text-primary)' }}>{user?.name || 'Student Profile'}</h3>
+              <span className="badge badge-sky" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                {user?.role || 'Student'}
+              </span>
+              <span className={`status-pill ${completeness >= 80 ? 'status-verified' : 'status-pending'}`}>
+                <span className="status-pill-dot" />
+                {completeness >= 80 ? 'Profile Complete' : `${completeness}% Profile Readiness`}
+              </span>
+            </div>
+            <p style={{ ...styles.subText, marginTop: '4px', marginBottom: 0 }}>
+              {formData.branch ? `${formData.branch}` : 'Branch not configured'}
+              {formData.semester ? ` • Semester ${formData.semester}` : ''}
+              {formData.graduationYear ? ` • Class of ${formData.graduationYear}` : ''}
+            </p>
+          </div>
+
+          <div style={styles.meterContainer}>
+            <div style={styles.meterHeader}>
+              <span style={styles.meterTitle}>Readiness Index</span>
+              <span style={{ fontSize: 'var(--font-size-xs)', fontWeight: '700', color: 'var(--color-primary)' }}>
+                {completeness}%
+              </span>
+            </div>
+            <div style={styles.meterTrack}>
+              <div
+                style={{
+                  ...styles.meterFill,
+                  width: `${Math.min(100, Math.max(0, completeness))}%`,
+                  backgroundColor: completeness >= 80 ? 'var(--color-success)' : 'var(--color-primary)',
+                }}
+              />
+            </div>
+            <span style={styles.meterHint}>Higher completeness unlocks targeted recruiter invitations</span>
+          </div>
+        </div>
+
+        {/* Responsive Mobile Tab Navigation */}
+        <div className="b2b-mobile-tab-nav" style={{ marginTop: 'var(--space-3)' }}>
+          <select
+            value={activeSection}
+            onChange={(e) => setActiveSection(e.target.value)}
+            style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-surface)', fontSize: 'var(--font-size-sm)' }}
+          >
+            <option value="academic">Academic & Education</option>
+            <option value="skills">Skills & Competencies</option>
+            <option value="projects">Projects & Certifications</option>
+            <option value="goals">Career Goals & Preferences</option>
+            <option value="links">Portfolio & Links</option>
+            <option value="ai-voice">AI Voice Onboarding</option>
+          </select>
+        </div>
+
+        {/* Desktop / Tablet Sub-Tab Navigation */}
+        <div className="b2b-tab-bar" style={{ marginTop: 'var(--space-3)' }}>
           {[
-            { id: 'academic', label: '🎓 Academic & Education' },
-            { id: 'skills', label: '⚡ Skills & Competencies' },
-            { id: 'projects', label: '🚀 Projects & Certs' },
-            { id: 'goals', label: '🎯 Career Goals & Preferences' },
-            { id: 'links', label: '🔗 Portfolio & Social' },
-            { id: 'ai-voice', label: '🎙️ AI Voice / Text Onboarding' },
+            { id: 'academic', label: 'Academic & Education' },
+            { id: 'skills', label: 'Skills & Competencies' },
+            { id: 'projects', label: 'Projects & Certifications' },
+            { id: 'goals', label: 'Career Goals & Preferences' },
+            { id: 'links', label: 'Portfolio & Links' },
+            { id: 'ai-voice', label: 'AI Voice Onboarding' },
           ].map((sec) => (
             <button
               key={sec.id}
               onClick={() => setActiveSection(sec.id)}
-              style={{
-                ...styles.subTabButton,
-                ...(activeSection === sec.id ? styles.activeSubTab : {}),
-              }}
+              className={`b2b-tab ${activeSection === sec.id ? 'active' : ''}`}
             >
               {sec.label}
             </button>
@@ -1082,8 +1087,8 @@ export function StudentProfileView({ onProfileUpdated }) {
                   <option key={lvl} value={lvl}>{lvl}</option>
                 ))}
               </select>
-              <button onClick={addSkill} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
-                Add Skill
+              <button onClick={addSkill} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
+                + Add Skill
               </button>
             </div>
 
@@ -1117,8 +1122,8 @@ export function StudentProfileView({ onProfileUpdated }) {
                   <option key={lvl} value={lvl}>{lvl}</option>
                 ))}
               </select>
-              <button onClick={addSoftSkill} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
-                Add Soft Skill
+              <button onClick={addSoftSkill} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
+                + Add Soft Skill
               </button>
             </div>
 
@@ -1177,8 +1182,8 @@ export function StudentProfileView({ onProfileUpdated }) {
                 placeholder="Brief project description & impact..."
                 style={{ ...styles.input, marginTop: 'var(--space-2)', minHeight: '60px' }}
               />
-              <button onClick={addProject} className="btn btn-outline" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-xs)' }}>
-                Add Project to Profile
+              <button onClick={addProject} className="btn btn-ghost" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-xs)' }}>
+                + Add Project to Profile
               </button>
             </div>
 
@@ -1186,8 +1191,8 @@ export function StudentProfileView({ onProfileUpdated }) {
               {formData.projects.map((p, idx) => (
                 <div key={idx} style={styles.itemRow}>
                   <div>
-                    <strong>{p.title}</strong> {p.role && <span style={styles.subText}>• {p.role}</span>}
-                    <p style={{ fontSize: 'var(--font-size-xs)', marginTop: '2px' }}>{p.description}</p>
+                    <strong style={{ fontSize: 'var(--font-size-sm)' }}>{p.title}</strong> {p.role && <span style={styles.subText}>• {p.role}</span>}
+                    <p style={{ fontSize: 'var(--font-size-xs)', marginTop: '2px', color: 'var(--color-text-secondary)' }}>{p.description}</p>
                     {p.techStack?.length > 0 && (
                       <div style={{ display: 'flex', gap: '4px', marginTop: '4px', flexWrap: 'wrap' }}>
                         {p.techStack.map((t, i) => (
@@ -1196,7 +1201,7 @@ export function StudentProfileView({ onProfileUpdated }) {
                       </div>
                     )}
                   </div>
-                  <button onClick={() => removeProject(idx)} className="btn btn-outline" style={{ fontSize: '11px', padding: '2px 8px' }}>
+                  <button onClick={() => removeProject(idx)} className="btn btn-ghost" style={{ fontSize: '11px', padding: '2px 8px', color: 'var(--color-danger)' }}>
                     Remove
                   </button>
                 </div>
@@ -1235,8 +1240,8 @@ export function StudentProfileView({ onProfileUpdated }) {
                   style={styles.input}
                 />
               </div>
-              <button onClick={addCertification} className="btn btn-outline" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-xs)' }}>
-                Add Certification
+              <button onClick={addCertification} className="btn btn-ghost" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-xs)' }}>
+                + Add Certification
               </button>
             </div>
 
@@ -1244,10 +1249,10 @@ export function StudentProfileView({ onProfileUpdated }) {
               {formData.certifications.map((c, idx) => (
                 <div key={idx} style={styles.itemRow}>
                   <div>
-                    <strong>{c.name}</strong> {c.issuer && <span style={styles.subText}>— {c.issuer}</span>}
+                    <strong style={{ fontSize: 'var(--font-size-sm)' }}>{c.name}</strong> {c.issuer && <span style={styles.subText}>— {c.issuer}</span>}
                     {c.credentialId && <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>ID: {c.credentialId}</div>}
                   </div>
-                  <button onClick={() => removeCertification(idx)} className="btn btn-outline" style={{ fontSize: '11px', padding: '2px 8px' }}>
+                  <button onClick={() => removeCertification(idx)} className="btn btn-ghost" style={{ fontSize: '11px', padding: '2px 8px', color: 'var(--color-danger)' }}>
                     Remove
                   </button>
                 </div>
@@ -1268,8 +1273,8 @@ export function StudentProfileView({ onProfileUpdated }) {
                 placeholder="Add Target Role (e.g. Full Stack Developer, Data Scientist)"
                 style={{ ...styles.input, flex: 3 }}
               />
-              <button onClick={addTargetRole} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
-                Add Role
+              <button onClick={addTargetRole} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
+                + Add Role
               </button>
             </div>
 
@@ -1346,8 +1351,8 @@ export function StudentProfileView({ onProfileUpdated }) {
                   placeholder="e.g. Bangalore, Mumbai, Remote"
                   style={{ ...styles.input, flex: 3 }}
                 />
-                <button onClick={addLocation} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
-                  Add Location
+                <button onClick={addLocation} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
+                  + Add Location
                 </button>
               </div>
               <div style={styles.chipGrid}>
@@ -1463,7 +1468,7 @@ const styles = {
   headerTop: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)' },
   badgeRow: { display: 'flex', gap: 'var(--space-2)' },
   subText: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' },
-  meterContainer: { minWidth: '220px', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' },
+  meterContainer: { minWidth: '160px', flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' },
   meterHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' },
   meterTitle: { fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)', textTransform: 'uppercase' },
   meterTrack: { height: '8px', borderRadius: '4px', backgroundColor: 'var(--color-border)', overflow: 'hidden' },
@@ -1471,13 +1476,13 @@ const styles = {
   meterHint: { fontSize: '10px', color: 'var(--color-text-muted)' },
   feedbackBox: { padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)', marginTop: 'var(--space-3)' },
   closeFeedback: { fontSize: '18px', cursor: 'pointer', color: 'inherit' },
-  subNavBar: { display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)', marginTop: 'var(--space-4)', borderTop: '1px solid var(--color-border-subtle)', paddingTop: 'var(--space-3)' },
-  subTabButton: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-xs)', fontWeight: '500', color: 'var(--color-text-secondary)', backgroundColor: 'transparent', border: '1px solid transparent', cursor: 'pointer', transition: 'all var(--transition-fast)' },
+  subNavBar: { display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-4)', borderTop: '1px solid var(--color-border-subtle)', paddingTop: 'var(--space-3)', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' },
+  subTabButton: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-xs)', fontWeight: '500', color: 'var(--color-text-secondary)', backgroundColor: 'transparent', border: '1px solid transparent', cursor: 'pointer', transition: 'all var(--transition-fast)', whiteSpace: 'nowrap' },
   activeSubTab: { backgroundColor: 'var(--color-mist-light)', color: 'var(--color-burgundy-red)', borderColor: 'var(--color-border)', fontWeight: '600' },
   bodyCard: { backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' },
   formSection: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' },
   sectionHeading: { fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border-subtle)', paddingBottom: 'var(--space-1)' },
-  grid2: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-3)' },
+  grid2: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 'var(--space-3)' },
   label: { display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)', marginBottom: '4px' },
   input: { width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-app)' },
   select: { width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-app)' },

@@ -87,19 +87,19 @@ export function PlatformAnalyticsView() {
       <div style={styles.subtabsBar}>
         <button
           onClick={() => setActiveTab('cohort')}
-          style={{ ...styles.subtabBtn, ...(activeTab === 'cohort' ? styles.activeSubtab : {}) }}
+          className={`b2b-tab ${activeTab === 'cohort' ? 'active' : ''}`}
         >
           Cohort & Academic Funnel
         </button>
         <button
           onClick={() => setActiveTab('recruitment')}
-          style={{ ...styles.subtabBtn, ...(activeTab === 'recruitment' ? styles.activeSubtab : {}) }}
+          className={`b2b-tab ${activeTab === 'recruitment' ? 'active' : ''}`}
         >
           Industry & Recruitment Funnel
         </button>
         <button
           onClick={() => setActiveTab('demand')}
-          style={{ ...styles.subtabBtn, ...(activeTab === 'demand' ? styles.activeSubtab : {}) }}
+          className={`b2b-tab ${activeTab === 'demand' ? 'active' : ''}`}
         >
           Skill Demand Rankings
         </button>
@@ -108,11 +108,11 @@ export function PlatformAnalyticsView() {
       {loading ? (
         <div style={styles.stateBox}>
           <div style={styles.spinner}></div>
-          <p>Aggregating platform metrics...</p>
+          <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>Aggregating platform metrics...</p>
         </div>
       ) : error ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-danger)' }}>{error}</p>
+          <p style={{ color: 'var(--color-danger)', fontSize: 'var(--font-size-xs)' }}>{error}</p>
           <button onClick={loadAllAnalytics} className="btn btn-primary">Try Again</button>
         </div>
       ) : (
@@ -122,27 +122,27 @@ export function PlatformAnalyticsView() {
             <div style={styles.tabContent}>
               {/* Stat Cards Grid */}
               <div style={styles.statsGrid}>
-                <div className="card" style={styles.statCard}>
-                  <span style={styles.statLabel}>Total Students</span>
-                  <strong style={styles.statVal}>{cohortData.totalStudents || 0}</strong>
-                  <span style={styles.statSub}>Enrolled in platform</span>
+                <div className="b2b-kpi-tile">
+                  <span className="b2b-kpi-label">Total Students</span>
+                  <span className="b2b-kpi-value">{cohortData.totalStudents || 0}</span>
+                  <span className="b2b-kpi-subtext">Enrolled in platform</span>
                 </div>
-                <div className="card" style={styles.statCard}>
-                  <span style={styles.statLabel}>Assessed Candidates</span>
-                  <strong style={styles.statVal}>{cohortData.assessedStudents || 0}</strong>
-                  <span style={styles.statSub}>Completed 1+ tests</span>
+                <div className="b2b-kpi-tile">
+                  <span className="b2b-kpi-label">Assessed Candidates</span>
+                  <span className="b2b-kpi-value">{cohortData.assessedStudents || 0}</span>
+                  <span className="b2b-kpi-subtext">Completed 1+ tests</span>
                 </div>
-                <div className="card" style={styles.statCard}>
-                  <span style={styles.statLabel}>Avg Assessment Score</span>
-                  <strong style={{ ...styles.statVal, color: 'var(--color-primary)' }}>
+                <div className="b2b-kpi-tile">
+                  <span className="b2b-kpi-label">Avg Assessment Score</span>
+                  <span className="b2b-kpi-value" style={{ color: 'var(--color-burgundy-red)' }}>
                     {cohortData.averageAssessmentScore || 0}%
-                  </strong>
-                  <span style={styles.statSub}>Platform benchmark</span>
+                  </span>
+                  <span className="b2b-kpi-subtext">Platform benchmark</span>
                 </div>
-                <div className="card" style={styles.statCard}>
-                  <span style={styles.statLabel}>Learning Program Completions</span>
-                  <strong style={styles.statVal}>{cohortData.training?.completed || 0}</strong>
-                  <span style={styles.statSub}>{cohortData.training?.enrollments || 0} total enrollments</span>
+                <div className="b2b-kpi-tile">
+                  <span className="b2b-kpi-label">Training Completions</span>
+                  <span className="b2b-kpi-value">{cohortData.training?.completed || 0}</span>
+                  <span className="b2b-kpi-subtext">{cohortData.training?.enrollments || 0} enrollments</span>
                 </div>
               </div>
 
@@ -151,24 +151,42 @@ export function PlatformAnalyticsView() {
                 <div className="card">
                   <h4 style={styles.cardHeading}>Placement Application Funnel</h4>
                   <div style={styles.funnelRows}>
-                    {Object.entries(cohortData.placementFunnel || {}).map(([stage, count]) => (
-                      <div key={stage} style={styles.funnelItem}>
-                        <span style={{ textTransform: 'capitalize', fontWeight: '500' }}>{stage.replace('_', ' ')}</span>
-                        <span className="badge badge-role">{count}</span>
-                      </div>
-                    ))}
+                    {Object.entries(cohortData.placementFunnel || {}).map(([stage, count]) => {
+                      const total = cohortData.totalStudents || 1;
+                      const pct = Math.min(100, Math.round((count / total) * 100));
+                      return (
+                        <div key={stage} style={styles.proportionalRow}>
+                          <div style={styles.rowLabelRow}>
+                            <span style={styles.stageLabel}>{stage.replace('_', ' ')}</span>
+                            <span style={styles.stageCount}>{count} ({pct}%)</span>
+                          </div>
+                          <div style={styles.barBg}>
+                            <div style={{ ...styles.barFill, width: `${pct}%`, backgroundColor: 'var(--color-steel-blue)' }} />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
                 <div className="card">
                   <h4 style={styles.cardHeading}>Profile Readiness Distribution</h4>
                   <div style={styles.funnelRows}>
-                    {Object.entries(cohortData.readinessDistribution || {}).map(([bucket, count]) => (
-                      <div key={bucket} style={styles.funnelItem}>
-                        <span>Completeness {bucket}%</span>
-                        <strong style={{ color: 'var(--color-steel-dark)' }}>{count} students</strong>
-                      </div>
-                    ))}
+                    {Object.entries(cohortData.readinessDistribution || {}).map(([bucket, count]) => {
+                      const total = cohortData.totalStudents || 1;
+                      const pct = Math.min(100, Math.round((count / total) * 100));
+                      return (
+                        <div key={bucket} style={styles.proportionalRow}>
+                          <div style={styles.rowLabelRow}>
+                            <span style={styles.stageLabel}>Completeness {bucket}%</span>
+                            <span style={styles.stageCount}>{count} ({pct}%)</span>
+                          </div>
+                          <div style={styles.barBg}>
+                            <div style={{ ...styles.barFill, width: `${pct}%`, backgroundColor: 'var(--color-burgundy-red)' }} />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -180,7 +198,7 @@ export function PlatformAnalyticsView() {
                   <div style={styles.chipsWrap}>
                     {(cohortData.branchDistribution || []).map((b) => (
                       <div key={b.branch} style={styles.distChip}>
-                        <strong>{b.branch}:</strong> {b.count}
+                        <strong>{b.branch}:</strong> <span>{b.count}</span>
                       </div>
                     ))}
                   </div>
@@ -204,28 +222,28 @@ export function PlatformAnalyticsView() {
           {/* ---------------- Tab 2: Recruitment Analytics ---------------- */}
           {activeTab === 'recruitment' && industryData && (
             <div style={styles.tabContent}>
-              <div style={styles.statsGrid}>
-                <div className="card" style={styles.statCard}>
-                  <span style={styles.statLabel}>Total Opportunities</span>
-                  <strong style={styles.statVal}>{industryData.totalOpportunities || 0}</strong>
-                  <span style={styles.statSub}>{industryData.activeOpportunities || 0} currently published</span>
+              <div className="b2b-kpi-grid">
+                <div className="b2b-kpi-tile">
+                  <span className="b2b-kpi-label">Total Opportunities</span>
+                  <span className="b2b-kpi-value">{industryData.totalOpportunities || 0}</span>
+                  <span className="b2b-kpi-subtext">{industryData.activeOpportunities || 0} currently published</span>
                 </div>
-                <div className="card" style={styles.statCard}>
-                  <span style={styles.statLabel}>Applications Received</span>
-                  <strong style={styles.statVal}>{industryData.applicationsReceived || 0}</strong>
-                  <span style={styles.statSub}>Across all listings</span>
+                <div className="b2b-kpi-tile">
+                  <span className="b2b-kpi-label">Applications Received</span>
+                  <span className="b2b-kpi-value">{industryData.applicationsReceived || 0}</span>
+                  <span className="b2b-kpi-subtext">Across all active listings</span>
                 </div>
-                <div className="card" style={styles.statCard}>
-                  <span style={styles.statLabel}>Average Compatibility</span>
-                  <strong style={{ ...styles.statVal, color: 'var(--color-primary)' }}>
+                <div className="b2b-kpi-tile">
+                  <span className="b2b-kpi-label">Avg Compatibility</span>
+                  <span className="b2b-kpi-value" style={{ color: 'var(--color-primary)' }}>
                     {industryData.averageCompatibility || 0}%
-                  </strong>
-                  <span style={styles.statSub}>Explainable match average</span>
+                  </span>
+                  <span className="b2b-kpi-subtext">Explainable match score</span>
                 </div>
-                <div className="card" style={styles.statCard}>
-                  <span style={styles.statLabel}>Shortlist Conversion Rate</span>
-                  <strong style={styles.statVal}>{industryData.shortlistRate || 0}%</strong>
-                  <span style={styles.statSub}>Applications to interview</span>
+                <div className="b2b-kpi-tile">
+                  <span className="b2b-kpi-label">Shortlist Conversion</span>
+                  <span className="b2b-kpi-value">{industryData.shortlistRate || 0}%</span>
+                  <span className="b2b-kpi-subtext">Candidate advancement</span>
                 </div>
               </div>
 
@@ -248,7 +266,7 @@ export function PlatformAnalyticsView() {
                 <div style={styles.chipsWrap}>
                   {(industryData.topCandidateSkills || []).map((s) => (
                     <div key={s.skill} style={styles.distChip}>
-                      <span>{s.skill}</span>
+                      <span style={{ fontWeight: '500' }}>{s.skill}</span>
                       <span className="badge badge-role" style={{ fontSize: '10px' }}>{s.count} candidates</span>
                     </div>
                   ))}
@@ -260,37 +278,35 @@ export function PlatformAnalyticsView() {
           {/* ---------------- Tab 3: Demand Rankings ---------------- */}
           {activeTab === 'demand' && (
             <div style={styles.tabContent}>
-              <div className="card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
-                  <div>
-                    <h4 style={styles.cardHeading}>Industry Skill Demand Rankings</h4>
-                    <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                      Ranked by frequency and importance weighting in currently published opportunities.
-                    </p>
-                  </div>
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div style={{ padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-border)' }}>
+                  <h4 style={{ ...styles.cardHeading, marginBottom: '2px' }}>Industry Skill Demand Rankings</h4>
+                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', margin: 0 }}>
+                    Ranked by frequency and importance weighting in currently published opportunities.
+                  </p>
                 </div>
 
-                <div style={styles.tableWrapper}>
-                  <table style={styles.table}>
+                <div className="data-table-container" style={{ border: 'none', borderRadius: 0 }}>
+                  <table className="data-table">
                     <thead>
                       <tr>
-                        <th style={styles.th}>Rank</th>
-                        <th style={styles.th}>Skill Name</th>
-                        <th style={styles.th}>Opportunities Requesting</th>
-                        <th style={styles.th}>Weighted Demand Score</th>
+                        <th style={{ width: '70px' }}>Rank</th>
+                        <th>Skill Name</th>
+                        <th style={{ textAlign: 'right' }}>Opportunities Requesting</th>
+                        <th style={{ textAlign: 'right' }}>Weighted Score</th>
                       </tr>
                     </thead>
                     <tbody>
                       {skillDemand.map((s, idx) => (
-                        <tr key={s.slug || idx} style={styles.tr}>
-                          <td style={styles.td}>
+                        <tr key={s.slug || idx}>
+                          <td>
                             <span style={styles.rankBadge}>#{idx + 1}</span>
                           </td>
-                          <td style={styles.td}>
-                            <strong>{s.name}</strong>
+                          <td>
+                            <strong style={{ color: 'var(--color-text-main)' }}>{s.name}</strong>
                           </td>
-                          <td style={styles.td}>{s.demand}</td>
-                          <td style={styles.td}>
+                          <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{s.demand}</td>
+                          <td style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
                             <span style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
                               {s.weightedDemand}
                             </span>
@@ -320,27 +336,22 @@ const styles = {
   stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
   spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
   tabContent: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
-  statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-3)' },
-  statCard: { display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', padding: 'var(--space-4)' },
-  statLabel: { fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-muted)', fontWeight: '600' },
-  statVal: { fontSize: 'var(--font-size-3xl)', fontFamily: 'var(--font-family-display)', fontWeight: 'bold' },
-  statSub: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' },
   dualGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-4)' },
   cardHeading: { fontSize: 'var(--font-size-base)', fontWeight: '600', marginBottom: 'var(--space-3)' },
   funnelRows: { display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' },
-  funnelItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-mist-light)', borderRadius: 'var(--radius-sm)', fontSize: 'var(--font-size-xs)' },
+  proportionalRow: { display: 'flex', flexDirection: 'column', gap: '4px' },
+  rowLabelRow: { display: 'flex', justifyContent: 'space-between', fontSize: 'var(--font-size-xs)' },
+  stageLabel: { color: 'var(--color-text-secondary)', textTransform: 'capitalize' },
+  stageCount: { fontWeight: '600', color: 'var(--color-text-main)', fontVariantNumeric: 'tabular-nums' },
+  barBg: { height: '6px', backgroundColor: 'var(--color-mist-light)', borderRadius: '3px', overflow: 'hidden' },
+  barFill: { height: '100%', borderRadius: '3px', transition: 'width 0.3s ease' },
   chipsWrap: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
-  distChip: { display: 'flex', alignItems: 'center', gap: '6px', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)' },
+  distChip: { display: 'flex', alignItems: 'center', gap: '6px', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)' },
   pipelineGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 'var(--space-2)' },
-  pipelineCol: { padding: 'var(--space-3)', backgroundColor: 'var(--color-mist-light)', borderRadius: 'var(--radius-md)', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '4px' },
-  pipelineStage: { fontSize: 'var(--font-size-xs)', textTransform: 'capitalize', color: 'var(--color-text-muted)' },
-  pipelineCount: { fontSize: 'var(--font-size-xl)', color: 'var(--color-primary)' },
-  tableWrapper: { overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--font-size-sm)' },
-  th: { padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-mist-light)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.04em' },
-  tr: { borderBottom: '1px solid var(--color-border-subtle)' },
-  td: { padding: 'var(--space-3) var(--space-4)', verticalAlign: 'middle' },
-  rankBadge: { display: 'inline-block', padding: '2px 8px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-sky-blue-light)', color: 'var(--color-steel-dark)', fontWeight: 'bold', fontSize: '11px' },
+  pipelineCol: { padding: 'var(--space-3)', backgroundColor: 'var(--color-mist-light)', borderRadius: 'var(--radius-sm)', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '4px', border: '1px solid var(--color-border)' },
+  pipelineStage: { fontSize: 'var(--font-size-xs)', textTransform: 'capitalize', color: 'var(--color-text-muted)', fontWeight: '500' },
+  pipelineCount: { fontSize: 'var(--font-size-xl)', color: 'var(--color-primary)', fontVariantNumeric: 'tabular-nums' },
+  rankBadge: { display: 'inline-block', padding: '2px 6px', borderRadius: 'var(--radius-xs)', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)', fontWeight: '600', fontSize: '11px' },
   feedbackBox: { padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)' },
   closeFeedback: { fontSize: '18px', cursor: 'pointer', color: 'inherit' },
 };

@@ -177,24 +177,25 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
           style={{
             padding: '1rem 1.25rem',
             borderRadius: '12px',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            color: '#f87171',
+            backgroundColor: 'rgba(114, 16, 16, 0.08)',
+            border: '1px solid rgba(114, 16, 16, 0.25)',
+            color: 'var(--color-burgundy-red, #721010)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            borderRadius: '6px',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span>⚠️</span>
-            <span>{error}</span>
+            <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>Error:</span>
+            <span style={{ fontSize: '0.875rem' }}>{error}</span>
           </div>
           <button
             onClick={() => setError(null)}
+            className="btn-ghost"
             style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#f87171',
+              padding: '0.2rem 0.5rem',
+              color: 'var(--color-burgundy-red, #721010)',
               cursor: 'pointer',
               fontWeight: 'bold',
             }}
@@ -207,26 +208,26 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
       {successMsg && (
         <div
           style={{
-            padding: '1rem 1.25rem',
-            borderRadius: '12px',
-            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-            border: '1px solid rgba(34, 197, 94, 0.3)',
-            color: '#4ade80',
+            padding: '0.875rem 1.25rem',
+            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+            border: '1px solid rgba(16, 185, 129, 0.25)',
+            color: '#065f46',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            borderRadius: '6px',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span>✅</span>
-            <span>{successMsg}</span>
+            <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>Success:</span>
+            <span style={{ fontSize: '0.875rem' }}>{successMsg}</span>
           </div>
           <button
             onClick={() => setSuccessMsg(null)}
+            className="btn-ghost"
             style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#4ade80',
+              padding: '0.2rem 0.5rem',
+              color: '#065f46',
               cursor: 'pointer',
               fontWeight: 'bold',
             }}
@@ -237,179 +238,42 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
       )}
 
       {/* Cockpit KPI Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1.25rem',
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid #1f2937',
-            borderRadius: '16px',
-            padding: '1.25rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-          }}
-        >
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(59, 130, 246, 0.15)',
-              color: '#60a5fa',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.5rem',
-            }}
-          >
-            🤝
-          </div>
-          <div>
-            <div style={{ fontSize: '0.8rem', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase' }}>
-              Active Mentorships
-            </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f9fafb' }}>
-              {loading ? '...' : activeMentorships}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-              {pendingRequests} pending requests
-            </div>
+      <div className="b2b-kpi-grid">
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Active Mentorships</div>
+          <div className="b2b-kpi-value">{loading ? '...' : activeMentorships}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            {pendingRequests} pending requests
           </div>
         </div>
 
-        <div
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid #1f2937',
-            borderRadius: '16px',
-            padding: '1.25rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-          }}
-        >
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(168, 85, 247, 0.15)',
-              color: '#c084fc',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.5rem',
-            }}
-          >
-            🎓
-          </div>
-          <div>
-            <div style={{ fontSize: '0.8rem', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase' }}>
-              Completed Engagements
-            </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f9fafb' }}>
-              {loading ? '...' : completedMentorships}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-              Verified platform sessions
-            </div>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Completed Engagements</div>
+          <div className="b2b-kpi-value">{loading ? '...' : completedMentorships}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            Verified platform sessions
           </div>
         </div>
 
-        <div
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid #1f2937',
-            borderRadius: '16px',
-            padding: '1.25rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-          }}
-        >
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(16, 185, 129, 0.15)',
-              color: '#34d399',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.5rem',
-            }}
-          >
-            📚
-          </div>
-          <div>
-            <div style={{ fontSize: '0.8rem', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase' }}>
-              FDP & Learning
-            </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f9fafb' }}>
-              {loading ? '...' : enrolledProgramsCount}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-              {completedProgramsCount} finished / verified
-            </div>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">FDP & Learning Tracks</div>
+          <div className="b2b-kpi-value">{loading ? '...' : enrolledProgramsCount}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            {completedProgramsCount} finished / certified
           </div>
         </div>
 
-        <div
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid #1f2937',
-            borderRadius: '16px',
-            padding: '1.25rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-          }}
-        >
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(245, 158, 11, 0.15)',
-              color: '#fbbf24',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.5rem',
-            }}
-          >
-            🏛️
-          </div>
-          <div>
-            <div style={{ fontSize: '0.8rem', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase' }}>
-              Academic Calls
-            </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f9fafb' }}>
-              {loading ? '...' : academicStats.total}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-              Active grants & training calls
-            </div>
+        <div className="b2b-kpi-tile">
+          <div className="b2b-kpi-label">Academic Calls</div>
+          <div className="b2b-kpi-value">{loading ? '...' : academicStats.total}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            Active grants & training calls
           </div>
         </div>
       </div>
 
       {/* Main Section: Mentorship Action Console */}
-      <div
-        style={{
-          backgroundColor: '#111827',
-          border: '1px solid #1f2937',
-          borderRadius: '16px',
-          padding: '1.5rem',
-        }}
-      >
+      <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <div
           style={{
             display: 'flex',
@@ -417,35 +281,29 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: '1rem',
-            marginBottom: '1.5rem',
           }}
         >
           <div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f9fafb', margin: 0 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>
               Mentorship Engagement Queue & Actions
             </h3>
-            <p style={{ fontSize: '0.875rem', color: '#9ca3af', margin: '0.25rem 0 0' }}>
-              Review incoming mentee requests, manage ongoing guidance sessions, and mark completed milestones.
+            <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
+              Review incoming mentee requests, manage ongoing guidance sessions, and verify completed milestones.
             </p>
           </div>
 
           {/* Action Filters */}
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', backgroundColor: '#1f2937', borderRadius: '8px', padding: '2px' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div className="b2b-tab-bar" style={{ margin: 0, padding: '2px', height: 'auto' }}>
               {['all', 'pending', 'accepted', 'completed'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
+                  className={`b2b-tab ${statusFilter === status ? 'active' : ''}`}
                   style={{
                     padding: '0.35rem 0.75rem',
                     fontSize: '0.8rem',
-                    borderRadius: '6px',
-                    border: 'none',
-                    backgroundColor: statusFilter === status ? '#3b82f6' : 'transparent',
-                    color: statusFilter === status ? '#ffffff' : '#9ca3af',
-                    cursor: 'pointer',
                     textTransform: 'capitalize',
-                    fontWeight: 500,
                   }}
                 >
                   {status}
@@ -455,35 +313,16 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
 
             <button
               onClick={loadCockpitData}
-              title="Refresh Queue"
-              style={{
-                padding: '0.4rem 0.75rem',
-                backgroundColor: '#1f2937',
-                border: '1px solid #374151',
-                borderRadius: '8px',
-                color: '#d1d5db',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-              }}
+              className="btn-outline"
+              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
             >
-              🔄 Refresh
+              Refresh
             </button>
           </div>
         </div>
 
         {loading ? (
-          <div style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                border: '3px solid #374151',
-                borderTopColor: '#3b82f6',
-                borderRadius: '50%',
-                margin: '0 auto 1rem',
-                animation: 'spin 1s linear infinite',
-              }}
-            />
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
             <p>Loading engagement records from backend...</p>
           </div>
         ) : filteredMentorships.length === 0 ? (
@@ -491,14 +330,13 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
             style={{
               padding: '2.5rem',
               textAlign: 'center',
-              backgroundColor: '#0f172a',
-              borderRadius: '12px',
-              border: '1px dashed #334155',
+              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+              borderRadius: '6px',
+              border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
             }}
           >
-            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📭</div>
-            <h4 style={{ margin: '0 0 0.5rem', color: '#f1f5f9' }}>No mentorship records found</h4>
-            <p style={{ margin: '0 0 1rem', color: '#94a3b8', fontSize: '0.875rem' }}>
+            <h4 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600 }}>No mentorship records found</h4>
+            <p style={{ margin: '0 0 1rem', color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
               {statusFilter !== 'all'
                 ? `No mentorship engagements currently matching the "${statusFilter}" filter.`
                 : 'You have not initiated or received any mentorship requests yet.'}
@@ -506,39 +344,37 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
             {onNavigateTab && (
               <button
                 onClick={() => onNavigateTab('mentorship')}
-                style={{
-                  padding: '0.5rem 1.25rem',
-                  backgroundColor: '#2563eb',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#ffffff',
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                  cursor: 'pointer',
-                }}
+                className="btn-primary"
+                style={{ fontSize: '0.8125rem' }}
               >
-                Discover Industry Mentors & Connect →
+                Discover Industry Mentors & Connect
               </button>
             )}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {filteredMentorships.map((item) => {
               const isFacultyMentor = item.mentorId === facultyUser?.id || item.mentor?.email === facultyUser?.email;
               const counterpart = isFacultyMentor ? item.mentee : item.mentor;
               const counterpartRole = isFacultyMentor ? 'Mentee (Student)' : 'Industry Mentor';
 
+              const getStatusClass = (st) => {
+                if (st === 'accepted' || st === 'completed') return 'status-verified';
+                if (st === 'pending') return 'status-pending';
+                return 'status-rejected';
+              };
+
               return (
                 <div
                   key={item.id}
                   style={{
-                    backgroundColor: '#1e293b',
-                    border: '1px solid #334155',
-                    borderRadius: '12px',
+                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    borderRadius: '6px',
                     padding: '1.25rem',
+                    backgroundColor: '#ffffff',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '1rem',
+                    gap: '0.875rem',
                   }}
                 >
                   <div
@@ -551,135 +387,71 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                     }}
                   >
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem' }}>
-                        <h4 style={{ margin: 0, color: '#f8fafc', fontSize: '1.1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
+                        <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>
                           {item.topic || 'General Mentorship Session'}
                         </h4>
-                        <span
-                          style={{
-                            padding: '0.2rem 0.6rem',
-                            borderRadius: '9999px',
-                            fontSize: '0.75rem',
-                            fontWeight: 600,
-                            textTransform: 'uppercase',
-                            backgroundColor:
-                              item.status === 'accepted'
-                                ? 'rgba(34, 197, 94, 0.2)'
-                                : item.status === 'completed'
-                                ? 'rgba(168, 85, 247, 0.2)'
-                                : item.status === 'pending'
-                                ? 'rgba(245, 158, 11, 0.2)'
-                                : 'rgba(107, 114, 128, 0.2)',
-                            color:
-                              item.status === 'accepted'
-                                ? '#4ade80'
-                                : item.status === 'completed'
-                                ? '#c084fc'
-                                : item.status === 'pending'
-                                ? '#fbbf24'
-                                : '#9ca3af',
-                            border: `1px solid ${
-                              item.status === 'accepted'
-                                ? 'rgba(34, 197, 94, 0.4)'
-                                : item.status === 'completed'
-                                ? 'rgba(168, 85, 247, 0.4)'
-                                : item.status === 'pending'
-                                ? 'rgba(245, 158, 11, 0.4)'
-                                : 'rgba(107, 114, 128, 0.4)'
-                            }`,
-                          }}
-                        >
+                        <span className={`status-pill ${getStatusClass(item.status)}`}>
+                          <span className="status-pill-dot" />
                           {item.status}
                         </span>
                         <span
                           style={{
-                            fontSize: '0.75rem',
-                            color: '#94a3b8',
-                            backgroundColor: '#0f172a',
-                            padding: '0.2rem 0.5rem',
+                            fontSize: '0.7rem',
+                            fontFamily: 'monospace',
+                            color: 'var(--text-muted)',
+                            backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                            padding: '0.15rem 0.45rem',
                             borderRadius: '4px',
                           }}
                         >
-                          Role: {isFacultyMentor ? 'You (Mentor)' : 'You (Mentee)'}
+                          Role: {isFacultyMentor ? 'Mentor' : 'Mentee'}
                         </span>
                       </div>
 
-                      <div style={{ fontSize: '0.875rem', color: '#cbd5e1' }}>
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
                         <strong>{counterpartRole}:</strong> {counterpart?.name || 'Academician / Student'} ({counterpart?.email || 'N/A'})
                       </div>
                     </div>
 
-                    {/* Quick action buttons */}
+                    {/* Action buttons */}
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      {/* If faculty is mentor and request is pending -> Accept or Decline */}
                       {isFacultyMentor && item.status === 'pending' && (
                         <>
                           <button
                             onClick={() => handleOpenRespondModal(item, 'accepted')}
                             disabled={actionLoading}
-                            style={{
-                              padding: '0.45rem 0.9rem',
-                              backgroundColor: '#16a34a',
-                              border: 'none',
-                              borderRadius: '6px',
-                              color: '#ffffff',
-                              fontWeight: 600,
-                              fontSize: '0.8rem',
-                              cursor: 'pointer',
-                            }}
+                            className="btn-primary"
+                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}
                           >
-                            ✓ Accept Request
+                            Accept Request
                           </button>
                           <button
                             onClick={() => handleOpenRespondModal(item, 'declined')}
                             disabled={actionLoading}
-                            style={{
-                              padding: '0.45rem 0.9rem',
-                              backgroundColor: '#dc2626',
-                              border: 'none',
-                              borderRadius: '6px',
-                              color: '#ffffff',
-                              fontWeight: 600,
-                              fontSize: '0.8rem',
-                              cursor: 'pointer',
-                            }}
+                            className="btn-outline"
+                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}
                           >
-                            ✕ Decline
+                            Decline
                           </button>
                         </>
                       )}
 
-                      {/* If session is accepted -> Mark complete or cancel */}
                       {item.status === 'accepted' && (
                         <>
                           <button
                             onClick={() => handleCompleteMentorship(item)}
                             disabled={actionLoading}
-                            style={{
-                              padding: '0.45rem 0.9rem',
-                              backgroundColor: '#8b5cf6',
-                              border: 'none',
-                              borderRadius: '6px',
-                              color: '#ffffff',
-                              fontWeight: 600,
-                              fontSize: '0.8rem',
-                              cursor: 'pointer',
-                            }}
+                            className="btn-primary"
+                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}
                           >
-                            ★ Mark Completed
+                            Mark Completed
                           </button>
                           <button
                             onClick={() => handleCancelMentorship(item)}
                             disabled={actionLoading}
-                            style={{
-                              padding: '0.45rem 0.9rem',
-                              backgroundColor: '#374151',
-                              border: '1px solid #4b5563',
-                              borderRadius: '6px',
-                              color: '#d1d5db',
-                              fontSize: '0.8rem',
-                              cursor: 'pointer',
-                            }}
+                            className="btn-ghost"
+                            style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}
                           >
                             Cancel
                           </button>
@@ -692,32 +464,30 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                   {item.message && (
                     <div
                       style={{
-                        backgroundColor: '#0f172a',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '8px',
-                        fontSize: '0.85rem',
-                        color: '#94a3b8',
-                        borderLeft: '3px solid #3b82f6',
+                        backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                        padding: '0.625rem 0.875rem',
+                        borderRadius: '4px',
+                        fontSize: '0.8125rem',
+                        borderLeft: '3px solid var(--color-steel-blue, #8DA1B9)',
                       }}
                     >
-                      <strong style={{ color: '#e2e8f0' }}>Initial Note: </strong>
-                      {item.message}
+                      <strong style={{ color: 'var(--text-main)' }}>Initial Note: </strong>
+                      <span style={{ color: 'var(--text-muted)' }}>{item.message}</span>
                     </div>
                   )}
 
                   {item.responseMessage && (
                     <div
                       style={{
-                        backgroundColor: '#0f172a',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '8px',
-                        fontSize: '0.85rem',
-                        color: '#94a3b8',
-                        borderLeft: '3px solid #10b981',
+                        backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                        padding: '0.625rem 0.875rem',
+                        borderRadius: '4px',
+                        fontSize: '0.8125rem',
+                        borderLeft: '3px solid var(--color-burgundy-red, #721010)',
                       }}
                     >
-                      <strong style={{ color: '#e2e8f0' }}>Response Note: </strong>
-                      {item.responseMessage}
+                      <strong style={{ color: 'var(--text-main)' }}>Response Note: </strong>
+                      <span style={{ color: 'var(--text-muted)' }}>{item.responseMessage}</span>
                     </div>
                   )}
 
@@ -727,8 +497,8 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                       display: 'flex',
                       gap: '1.5rem',
                       fontSize: '0.75rem',
-                      color: '#64748b',
-                      borderTop: '1px solid #334155',
+                      color: 'var(--text-muted)',
+                      borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)',
                       paddingTop: '0.5rem',
                     }}
                   >
@@ -737,7 +507,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                       <span>Responded: {new Date(item.respondedAt).toLocaleDateString()}</span>
                     )}
                     {item.completedAt && (
-                      <span style={{ color: '#c084fc', fontWeight: 600 }}>
+                      <span style={{ color: 'var(--color-burgundy-red, #721010)', fontWeight: 600 }}>
                         Completed: {new Date(item.completedAt).toLocaleDateString()}
                       </span>
                     )}
@@ -750,53 +520,37 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
       </div>
 
       {/* Secondary Section: FDP & Continuous Learning Enrollments */}
-      <div
-        style={{
-          backgroundColor: '#111827',
-          border: '1px solid #1f2937',
-          borderRadius: '16px',
-          padding: '1.5rem',
-        }}
-      >
+      <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '1.25rem',
             flexWrap: 'wrap',
             gap: '1rem',
           }}
         >
           <div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f9fafb', margin: 0 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>
               Faculty Development & Continuous Learning Track
             </h3>
-            <p style={{ fontSize: '0.875rem', color: '#9ca3af', margin: '0.25rem 0 0' }}>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
               Industrial training modules, accredited FDP programs, and technical certifications.
             </p>
           </div>
           {onNavigateTab && (
             <button
               onClick={() => onNavigateTab('opportunities')}
-              style={{
-                padding: '0.45rem 1rem',
-                backgroundColor: '#1f2937',
-                border: '1px solid #374151',
-                borderRadius: '8px',
-                color: '#60a5fa',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-              }}
+              className="btn-outline"
+              style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}
             >
-              Explore New FDP Programs →
+              Explore New FDP Programs
             </button>
           )}
         </div>
 
         {loading ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af' }}>
+          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
             <p>Loading enrolled training programs...</p>
           </div>
         ) : enrollments.length === 0 ? (
@@ -804,29 +558,20 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
             style={{
               padding: '2rem',
               textAlign: 'center',
-              backgroundColor: '#0f172a',
-              borderRadius: '12px',
-              border: '1px dashed #334155',
+              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+              borderRadius: '6px',
+              border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
             }}
           >
-            <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>📖</div>
-            <h4 style={{ margin: '0 0 0.5rem', color: '#f1f5f9' }}>No Active FDP Enrollments</h4>
-            <p style={{ margin: '0 0 1rem', color: '#94a3b8', fontSize: '0.875rem' }}>
-              You haven't enrolled in any Faculty Development Programs or learning tracks yet.
+            <h4 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600 }}>No Active FDP Enrollments</h4>
+            <p style={{ margin: '0 0 1rem', color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
+              You have not enrolled in any Faculty Development Programs or learning tracks yet.
             </p>
             {onNavigateTab && (
               <button
                 onClick={() => onNavigateTab('opportunities')}
-                style={{
-                  padding: '0.5rem 1.25rem',
-                  backgroundColor: '#3b82f6',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#ffffff',
-                  fontWeight: 600,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                }}
+                className="btn-primary"
+                style={{ fontSize: '0.8125rem' }}
               >
                 Browse FDP & Industrial Training Calls
               </button>
@@ -836,7 +581,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
               gap: '1rem',
             }}
           >
@@ -849,10 +594,10 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                 <div
                   key={enrollment.id}
                   style={{
-                    backgroundColor: '#1e293b',
-                    border: '1px solid #334155',
-                    borderRadius: '12px',
+                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    borderRadius: '6px',
                     padding: '1.25rem',
+                    backgroundColor: '#ffffff',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -864,10 +609,10 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                       <span
                         style={{
                           fontSize: '0.7rem',
-                          fontWeight: 700,
+                          fontWeight: 600,
                           textTransform: 'uppercase',
-                          color: '#38bdf8',
-                          backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                          color: 'var(--color-burgundy-red, #721010)',
+                          backgroundColor: 'var(--color-mist-green, #E0E4DE)',
                           padding: '0.2rem 0.5rem',
                           borderRadius: '4px',
                         }}
@@ -875,20 +620,18 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                         {prog.type || 'FDP Track'}
                       </span>
                       <span
-                        style={{
-                          fontSize: '0.75rem',
-                          color: isCompleted ? '#4ade80' : '#fbbf24',
-                          fontWeight: 600,
-                        }}
+                        className={`status-pill ${isCompleted ? 'status-verified' : 'status-pending'}`}
+                        style={{ fontSize: '0.7rem' }}
                       >
-                        {isCompleted ? '✓ Completed' : `${progress}% In-progress`}
+                        <span className="status-pill-dot" />
+                        {isCompleted ? 'Completed' : `${progress}% In-progress`}
                       </span>
                     </div>
 
-                    <h4 style={{ margin: '0.75rem 0 0.25rem', color: '#f8fafc', fontSize: '1rem' }}>
+                    <h4 style={{ margin: '0.75rem 0 0.25rem', fontSize: '0.95rem', fontWeight: 600 }}>
                       {prog.title || 'Faculty Development Track'}
                     </h4>
-                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                       Provider: <strong>{prog.provider || 'SUTRA Learning Guild'}</strong>
                     </div>
                   </div>
@@ -901,7 +644,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                           display: 'flex',
                           justifyContent: 'space-between',
                           fontSize: '0.75rem',
-                          color: '#94a3b8',
+                          color: 'var(--text-muted)',
                           marginBottom: '0.25rem',
                         }}
                       >
@@ -911,8 +654,8 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                       <div
                         style={{
                           height: '6px',
-                          backgroundColor: '#334155',
-                          borderRadius: '9999px',
+                          backgroundColor: 'var(--color-pebble-grey, #BCBDB8)',
+                          borderRadius: '3px',
                           overflow: 'hidden',
                         }}
                       >
@@ -920,7 +663,7 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                           style={{
                             height: '100%',
                             width: `${Math.min(progress, 100)}%`,
-                            backgroundColor: isCompleted ? '#10b981' : '#3b82f6',
+                            backgroundColor: isCompleted ? '#10b981' : 'var(--color-burgundy-red, #721010)',
                             transition: 'width 0.3s ease',
                           }}
                         />
@@ -928,23 +671,15 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                         Enrolled: {new Date(enrollment.enrolledAt || enrollment.createdAt).toLocaleDateString()}
                       </span>
                       <button
                         onClick={() => handleOpenProgressModal(enrollment)}
-                        style={{
-                          padding: '0.35rem 0.75rem',
-                          backgroundColor: '#334155',
-                          border: 'none',
-                          borderRadius: '6px',
-                          color: '#e2e8f0',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
+                        className="btn-outline"
+                        style={{ fontSize: '0.75rem', padding: '0.3rem 0.65rem' }}
                       >
-                        Update Progress ✏️
+                        Update Progress
                       </button>
                     </div>
                   </div>
@@ -961,8 +696,8 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
-            backdropFilter: 'blur(4px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(2px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -971,31 +706,29 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
           }}
         >
           <div
+            className="card"
             style={{
-              backgroundColor: '#1e293b',
-              border: '1px solid #334155',
-              borderRadius: '16px',
-              padding: '1.75rem',
               maxWidth: '500px',
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
               gap: '1.25rem',
+              backgroundColor: '#ffffff',
             }}
           >
-            <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.25rem' }}>
-              {respondModal.action === 'accepted' ? '✓ Accept Mentorship Session' : '✕ Decline Mentorship Request'}
-            </h3>
-            <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.875rem' }}>
-              Mentee: <strong>{respondModal.item?.mentee?.name || 'Student'}</strong>
-              <br />
-              Topic: <em>{respondModal.item?.topic}</em>
-            </p>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 600 }}>
+                {respondModal.action === 'accepted' ? 'Accept Mentorship Session' : 'Decline Mentorship Request'}
+              </h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
+                Mentee: <strong>{respondModal.item?.mentee?.name || 'Student'}</strong> &middot; Topic: <em>{respondModal.item?.topic}</em>
+              </p>
+            </div>
 
             <form onSubmit={handleRespondSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-                  Response Message to Mentee:
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.35rem' }}>
+                  Response Note to Mentee:
                 </label>
                 <textarea
                   rows={4}
@@ -1004,14 +737,13 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                   onChange={(e) => setRespondModal({ ...respondModal, message: e.target.value })}
                   style={{
                     width: '100%',
-                    backgroundColor: '#0f172a',
-                    border: '1px solid #334155',
-                    borderRadius: '8px',
+                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    borderRadius: '6px',
                     padding: '0.75rem',
-                    color: '#f8fafc',
                     fontSize: '0.875rem',
                     boxSizing: 'border-box',
                     resize: 'vertical',
+                    fontFamily: 'inherit',
                   }}
                 />
               </div>
@@ -1021,29 +753,14 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                   type="button"
                   onClick={() => setRespondModal({ isOpen: false, item: null, action: 'accepted', message: '' })}
                   disabled={actionLoading}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: '#334155',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: '#e2e8f0',
-                    cursor: 'pointer',
-                  }}
+                  className="btn-ghost"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  style={{
-                    padding: '0.5rem 1.25rem',
-                    backgroundColor: respondModal.action === 'accepted' ? '#16a34a' : '#dc2626',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
+                  className="btn-primary"
                 >
                   {actionLoading ? 'Submitting...' : `Confirm ${respondModal.action}`}
                 </button>
@@ -1059,8 +776,8 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
-            backdropFilter: 'blur(4px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(2px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1069,30 +786,30 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
           }}
         >
           <div
+            className="card"
             style={{
-              backgroundColor: '#1e293b',
-              border: '1px solid #334155',
-              borderRadius: '16px',
-              padding: '1.75rem',
               maxWidth: '450px',
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
               gap: '1.25rem',
+              backgroundColor: '#ffffff',
             }}
           >
-            <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.25rem' }}>
-              Update Program Completion Progress
-            </h3>
-            <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.875rem' }}>
-              {progressModal.item?.program?.title || 'FDP Track'}
-            </p>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 600 }}>
+                Update Program Completion Progress
+              </h3>
+              <p style={{ margin: '0.35rem 0 0', color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
+                {progressModal.item?.program?.title || 'FDP Track'}
+              </p>
+            </div>
 
             <form onSubmit={handleUpdateProgressSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <label style={{ fontSize: '0.875rem', color: '#cbd5e1' }}>Completion Percentage:</label>
-                  <span style={{ fontWeight: 700, color: '#38bdf8' }}>{progressModal.progress}%</span>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 500 }}>Completion Percentage:</label>
+                  <span style={{ fontWeight: 700, color: 'var(--color-burgundy-red, #721010)' }}>{progressModal.progress}%</span>
                 </div>
                 <input
                   type="range"
@@ -1110,29 +827,14 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
                   type="button"
                   onClick={() => setProgressModal({ isOpen: false, item: null, progress: 0 })}
                   disabled={actionLoading}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: '#334155',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: '#e2e8f0',
-                    cursor: 'pointer',
-                  }}
+                  className="btn-ghost"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  style={{
-                    padding: '0.5rem 1.25rem',
-                    backgroundColor: '#3b82f6',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
+                  className="btn-primary"
                 >
                   {actionLoading ? 'Saving...' : 'Save Progress'}
                 </button>
@@ -1144,3 +846,5 @@ export default function FacultyCockpitView({ facultyUser, onNavigateTab }) {
     </div>
   );
 }
+
+

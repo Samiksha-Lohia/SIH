@@ -79,30 +79,44 @@ export function AdminHome() {
 
   return (
     <div style={styles.page}>
-      {/* Top Banner */}
-      <div className="card" style={styles.bannerCard}>
-        <div style={styles.bannerLeft}>
-          <div style={styles.badgeWrap}>
+      {/* Top Cockpit Header */}
+      <div style={styles.topHeader}>
+        <div style={styles.headerLeft}>
+          <div style={styles.breadcrumbs}>
+            <span style={styles.crumbCategory}>Governance & Compliance</span>
+            <span style={styles.crumbSeparator}>/</span>
             <span className="badge badge-burgundy">Administrator</span>
-            <span style={styles.welcomeText}>SUTRA Governance Center</span>
           </div>
-          <h2 style={styles.bannerTitle}>Administrator Control Deck</h2>
-          <p style={styles.bannerSub}>
-            Logged in as <strong>{user?.name || 'Administrator'}</strong> ({user?.email}).
+          <h2 style={styles.pageTitle}>Platform Control Deck</h2>
+          <p style={styles.subTitle}>
+            Session authenticated as <strong>{user?.name || 'Administrator'}</strong> <span style={{ color: 'var(--color-text-muted)' }}>({user?.email})</span>
           </p>
         </div>
       </div>
 
-      {/* Nav Tabs */}
-      <div style={styles.tabBar}>
+      {/* Mobile Tab Select Navigation (<768px) */}
+      <div className="b2b-mobile-tab-nav">
+        <label style={styles.mobileNavLabel}>Active Governance View</label>
+        <select
+          value={activeTab}
+          onChange={(e) => setActiveTab(e.target.value)}
+          className="b2b-mobile-tab-select"
+        >
+          {ADMIN_TABS.map((tab) => (
+            <option key={tab.id} value={tab.id}>
+              {tab.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Desktop/Tablet Segmented Nav Tabs Ribbon (>=768px) */}
+      <div className="nav-tabs-scroll hide-on-mobile" style={styles.tabBar}>
         {ADMIN_TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            style={{
-              ...styles.tabButton,
-              ...(activeTab === tab.id ? styles.activeTabButton : {}),
-            }}
+            className={`b2b-tab ${activeTab === tab.id ? 'active' : ''}`}
           >
             {tab.label}
           </button>
@@ -116,126 +130,124 @@ export function AdminHome() {
             {/* Quick Metric Cards */}
             <div style={styles.kpiGrid}>
               <div
-                className="card"
-                style={styles.kpiCard}
+                className="b2b-kpi-tile"
                 onClick={() => setActiveTab('users')}
               >
-                <span style={styles.kpiLabel}>Total Users</span>
-                <strong style={styles.kpiVal}>{kpis.loading ? '...' : kpis.totalUsers}</strong>
-                <span style={styles.kpiHint}>Manage user accounts →</span>
+                <span className="b2b-kpi-label">Total Users</span>
+                <span className="b2b-kpi-value">{kpis.loading ? '...' : kpis.totalUsers}</span>
+                <span className="b2b-kpi-subtext">Manage user directory →</span>
               </div>
 
               <div
-                className="card"
-                style={styles.kpiCard}
+                className="b2b-kpi-tile"
                 onClick={() => setActiveTab('institutions')}
               >
-                <span style={styles.kpiLabel}>Institutions</span>
-                <strong style={styles.kpiVal}>{kpis.loading ? '...' : kpis.totalInstitutions}</strong>
-                <span style={styles.kpiHint}>Accreditation & verification →</span>
+                <span className="b2b-kpi-label">Institutions</span>
+                <span className="b2b-kpi-value">{kpis.loading ? '...' : kpis.totalInstitutions}</span>
+                <span className="b2b-kpi-subtext">Accreditation status →</span>
               </div>
 
               <div
-                className="card"
-                style={styles.kpiCard}
+                className="b2b-kpi-tile"
                 onClick={() => setActiveTab('companies')}
               >
-                <span style={styles.kpiLabel}>Companies</span>
-                <strong style={styles.kpiVal}>{kpis.loading ? '...' : kpis.totalCompanies}</strong>
-                <span style={styles.kpiHint}>Corporate recruiter governance →</span>
+                <span className="b2b-kpi-label">Companies</span>
+                <span className="b2b-kpi-value">{kpis.loading ? '...' : kpis.totalCompanies}</span>
+                <span className="b2b-kpi-subtext">Recruiter accounts →</span>
               </div>
 
               <div
-                className="card"
-                style={styles.kpiCard}
+                className="b2b-kpi-tile"
                 onClick={() => setActiveTab('moderation')}
               >
-                <span style={styles.kpiLabel}>Active Opportunities</span>
-                <strong style={{ ...styles.kpiVal, color: 'var(--color-primary)' }}>
+                <span className="b2b-kpi-label">Active Opportunities</span>
+                <span className="b2b-kpi-value" style={{ color: 'var(--color-burgundy-red)' }}>
                   {kpis.loading ? '...' : kpis.activeOpportunities}
-                </strong>
-                <span style={styles.kpiHint}>Review moderation queue →</span>
+                </span>
+                <span className="b2b-kpi-subtext">Moderation queue →</span>
               </div>
 
               <div
-                className="card"
-                style={styles.kpiCard}
+                className="b2b-kpi-tile"
                 onClick={() => setActiveTab('skills')}
               >
-                <span style={styles.kpiLabel}>Canonical Skills</span>
-                <strong style={styles.kpiVal}>{kpis.loading ? '...' : kpis.totalSkills}</strong>
-                <span style={styles.kpiHint}>Manage taxonomy →</span>
+                <span className="b2b-kpi-label">Canonical Skills</span>
+                <span className="b2b-kpi-value">{kpis.loading ? '...' : kpis.totalSkills}</span>
+                <span className="b2b-kpi-subtext">Taxonomy items →</span>
               </div>
 
               <div
-                className="card"
-                style={styles.kpiCard}
+                className="b2b-kpi-tile"
                 onClick={() => setActiveTab('roles')}
               >
-                <span style={styles.kpiLabel}>Role Competency Models</span>
-                <strong style={styles.kpiVal}>{kpis.loading ? '...' : kpis.totalRoles}</strong>
-                <span style={styles.kpiHint}>Manage role models →</span>
+                <span className="b2b-kpi-label">Role Models</span>
+                <span className="b2b-kpi-value">{kpis.loading ? '...' : kpis.totalRoles}</span>
+                <span className="b2b-kpi-subtext">Competency matrix →</span>
               </div>
             </div>
 
             {/* Quick Modules Directory */}
-            <div className="card" style={{ marginTop: 'var(--space-2)' }}>
-              <h4 style={{ marginBottom: 'var(--space-3)' }}>Admin Capabilities Directory</h4>
+            <div className="card" style={{ marginTop: 'var(--space-1)' }}>
+              <div style={styles.directoryHeader}>
+                <h4 style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Platform Capabilities Directory</h4>
+                <span style={styles.directorySub}>Direct access to system administration modules</span>
+              </div>
+
               <div style={styles.modulesGrid}>
                 <div style={styles.moduleItem} onClick={() => setActiveTab('users')}>
-                  <span style={styles.moduleIcon}>👥</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>User Identity & Governance</strong>
+                    <strong style={styles.moduleTitle}>User Identity & Governance</strong>
                     <p style={styles.moduleDesc}>
-                      Filter by role and account status, search user directory, and inspect verification records.
+                      Filter by role and account status, search directory, and inspect verification records.
                     </p>
                   </div>
                 </div>
 
                 <div style={styles.moduleItem} onClick={() => setActiveTab('institutions')}>
-                  <span style={styles.moduleIcon}>🏛️</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>Institution Governance</strong>
+                    <strong style={styles.moduleTitle}>Institution Governance</strong>
                     <p style={styles.moduleDesc}>
-                      Audit college profiles, review department structures, and grant institutional verification badges.
+                      Audit college profiles, review department structures, and manage institutional verification badges.
                     </p>
                   </div>
                 </div>
 
                 <div style={styles.moduleItem} onClick={() => setActiveTab('companies')}>
-                  <span style={styles.moduleIcon}>🏢</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>Company Governance</strong>
+                    <strong style={styles.moduleTitle}>Company Governance</strong>
                     <p style={styles.moduleDesc}>
-                      Inspect enterprise employer registrations, review profile completeness, and verify or reject corporate accounts.
+                      Inspect employer registrations, review profile completeness, and verify or reject corporate accounts.
                     </p>
                   </div>
                 </div>
 
                 <div style={styles.moduleItem} onClick={() => setActiveTab('moderation')}>
-                  <span style={styles.moduleIcon}>📋</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>Content Moderation Queue</strong>
+                    <strong style={styles.moduleTitle}>Content Moderation Queue</strong>
                     <p style={styles.moduleDesc}>
-                      Filter, review, approve, pause, or remove published opportunities from recruiters.
+                      Review, approve, pause, or remove published opportunities and job postings from recruiters.
                     </p>
                   </div>
                 </div>
 
                 <div style={styles.moduleItem} onClick={() => setActiveTab('skills')}>
-                  <span style={styles.moduleIcon}>🏷️</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>Skills Taxonomy Management</strong>
+                    <strong style={styles.moduleTitle}>Skills Taxonomy Management</strong>
                     <p style={styles.moduleDesc}>
-                      Create and categorize canonical skills and map industry aliases for normalization.
+                      Create and categorize canonical skills and map industry aliases for matching normalization.
                     </p>
                   </div>
                 </div>
 
                 <div style={styles.moduleItem} onClick={() => setActiveTab('roles')}>
-                  <span style={styles.moduleIcon}>🎯</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>Role Competency Models</strong>
+                    <strong style={styles.moduleTitle}>Role Competency Models</strong>
                     <p style={styles.moduleDesc}>
                       Configure target job roles and their skill weights used by the matching engine.
                     </p>
@@ -243,19 +255,19 @@ export function AdminHome() {
                 </div>
 
                 <div style={styles.moduleItem} onClick={() => setActiveTab('assessments')}>
-                  <span style={styles.moduleIcon}>📝</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>Assessment & Question Bank</strong>
+                    <strong style={styles.moduleTitle}>Assessment & Question Bank</strong>
                     <p style={styles.moduleDesc}>
-                      Author technical questions, difficulty levels, passing thresholds, and tests.
+                      Author technical questions, difficulty levels, passing thresholds, and skill quizzes.
                     </p>
                   </div>
                 </div>
 
                 <div style={styles.moduleItem} onClick={() => setActiveTab('analytics')}>
-                  <span style={styles.moduleIcon}>📊</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>Platform-Wide Analytics</strong>
+                    <strong style={styles.moduleTitle}>Platform-Wide Analytics</strong>
                     <p style={styles.moduleDesc}>
                       Inspect cohort placement funnels, recruiter pipeline stats, and live skill demand scores.
                     </p>
@@ -263,9 +275,9 @@ export function AdminHome() {
                 </div>
 
                 <div style={styles.moduleItem} onClick={() => setActiveTab('audit')}>
-                  <span style={styles.moduleIcon}>🛡️</span>
+                  <div style={styles.moduleAccent} />
                   <div>
-                    <strong>System Audit Trail</strong>
+                    <strong style={styles.moduleTitle}>System Audit Trail</strong>
                     <p style={styles.moduleDesc}>
                       Review immutable access logs, verification events, status transitions, and IP records.
                     </p>
@@ -294,64 +306,67 @@ const styles = {
   page: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 'var(--space-6)',
+    gap: 'var(--space-4)',
   },
-  bannerCard: {
-    backgroundColor: 'var(--color-bg-surface)',
-    border: '1px solid var(--color-border)',
+  topHeader: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingBottom: 'var(--space-2)',
+    borderBottom: '1px solid var(--color-border)',
   },
-  bannerLeft: {
+  headerLeft: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 'var(--space-1)',
+    gap: '4px',
   },
-  badgeWrap: {
+  breadcrumbs: {
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--space-2)',
-    marginBottom: 'var(--space-1)',
   },
-  welcomeText: {
-    fontSize: 'var(--font-size-xs)',
+  crumbCategory: {
+    fontSize: '11px',
     color: 'var(--color-text-muted)',
     textTransform: 'uppercase',
     letterSpacing: '0.04em',
     fontWeight: '600',
   },
-  bannerTitle: {
-    fontSize: 'var(--font-size-2xl)',
-    color: 'var(--color-primary)',
+  crumbSeparator: {
+    fontSize: '11px',
+    color: 'var(--color-pebble-grey)',
   },
-  bannerSub: {
-    fontSize: 'var(--font-size-sm)',
+  pageTitle: {
+    fontSize: 'var(--font-size-xl)',
+    color: 'var(--color-text-primary)',
+    fontWeight: '700',
+    letterSpacing: '-0.02em',
+    margin: 0,
+  },
+  subTitle: {
+    fontSize: 'var(--font-size-xs)',
     color: 'var(--color-text-secondary)',
+    margin: 0,
+  },
+  mobileNavLabel: {
+    display: 'block',
+    fontSize: '11px',
+    fontWeight: '600',
+    color: 'var(--color-text-muted)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.04em',
+    marginBottom: '4px',
   },
   tabBar: {
     display: 'flex',
-    flexWrap: 'wrap',
-    gap: 'var(--space-2)',
+    gap: '2px',
     borderBottom: '1px solid var(--color-border)',
-    paddingBottom: 'var(--space-1)',
-  },
-  tabButton: {
-    padding: 'var(--space-2) var(--space-4)',
-    borderRadius: 'var(--radius-md)',
-    fontSize: 'var(--font-size-sm)',
-    fontWeight: '500',
-    color: 'var(--color-text-secondary)',
-    backgroundColor: 'var(--color-bg-surface)',
-    border: '1px solid var(--color-border)',
-    cursor: 'pointer',
-    transition: 'all var(--transition-fast)',
-  },
-  activeTabButton: {
-    backgroundColor: 'var(--color-burgundy-light)',
-    color: 'var(--color-burgundy-red)',
-    borderColor: 'rgba(114, 16, 16, 0.3)',
-    fontWeight: '600',
+    overflowX: 'auto',
+    WebkitOverflowScrolling: 'touch',
+    scrollbarWidth: 'none',
   },
   contentArea: {
-    minHeight: '400px',
+    minHeight: '450px',
   },
   overviewContainer: {
     display: 'flex',
@@ -360,57 +375,55 @@ const styles = {
   },
   kpiGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
     gap: 'var(--space-3)',
   },
-  kpiCard: {
-    cursor: 'pointer',
+  directoryHeader: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 'var(--space-1)',
-    transition: 'transform var(--transition-fast), box-shadow var(--transition-fast)',
+    gap: '2px',
+    marginBottom: 'var(--space-3)',
   },
-  kpiLabel: {
+  directorySub: {
     fontSize: 'var(--font-size-xs)',
-    textTransform: 'uppercase',
     color: 'var(--color-text-muted)',
-    fontWeight: '600',
-    letterSpacing: '0.04em',
-  },
-  kpiVal: {
-    fontSize: 'var(--font-size-3xl)',
-    fontFamily: 'var(--font-family-display)',
-    fontWeight: 'bold',
-  },
-  kpiHint: {
-    fontSize: 'var(--font-size-xs)',
-    color: 'var(--color-steel-dark)',
-    marginTop: 'var(--space-1)',
-    fontWeight: '500',
   },
   modulesGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
     gap: 'var(--space-3)',
   },
   moduleItem: {
     display: 'flex',
     gap: 'var(--space-3)',
-    padding: 'var(--space-3)',
-    borderRadius: 'var(--radius-md)',
-    backgroundColor: 'var(--color-mist-light)',
+    padding: '12px 14px',
+    borderRadius: 'var(--radius-sm)',
+    backgroundColor: 'var(--color-bg-surface)',
     border: '1px solid var(--color-border)',
     cursor: 'pointer',
-    transition: 'background-color var(--transition-fast)',
+    transition: 'border-color var(--transition-fast), background-color var(--transition-fast)',
+    alignItems: 'flex-start',
   },
-  moduleIcon: {
-    fontSize: '24px',
+  moduleAccent: {
+    width: '4px',
+    height: '24px',
+    borderRadius: '2px',
+    backgroundColor: 'var(--color-steel-blue)',
+    flexShrink: 0,
+    marginTop: '2px',
+  },
+  moduleTitle: {
+    fontSize: 'var(--font-size-xs)',
+    fontWeight: '600',
+    color: 'var(--color-text-primary)',
+    display: 'block',
   },
   moduleDesc: {
-    fontSize: 'var(--font-size-xs)',
+    fontSize: '11px',
     color: 'var(--color-text-secondary)',
     marginTop: '2px',
     lineHeight: '1.4',
+    margin: 0,
   },
 };
 

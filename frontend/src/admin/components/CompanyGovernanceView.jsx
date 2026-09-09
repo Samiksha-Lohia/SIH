@@ -182,28 +182,28 @@ export function CompanyGovernanceView() {
         </div>
       ) : industries.length === 0 ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-text-muted)' }}>No companies found matching current query criteria.</p>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}>No companies found matching current query criteria.</p>
         </div>
       ) : (
-        <div style={styles.tableWrapper}>
-          <table style={styles.table}>
+        <div className="data-table-container">
+          <table className="data-table">
             <thead>
               <tr>
-                <th style={styles.th}>Company</th>
-                <th style={styles.th}>Sector & Size</th>
-                <th style={styles.th}>Location</th>
-                <th style={styles.th}>Verification Status</th>
-                <th style={styles.th}>Verified By</th>
-                <th style={styles.th}>Completeness</th>
-                <th style={styles.th}>Actions</th>
+                <th>Company</th>
+                <th>Sector & Size</th>
+                <th>Location</th>
+                <th>Verification Status</th>
+                <th>Verified By</th>
+                <th>Completeness</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {industries.map((ind) => (
-                <tr key={ind.id} style={styles.tr}>
-                  <td style={styles.td}>
+                <tr key={ind.id}>
+                  <td>
                     <div>
-                      <strong>{ind.companyName}</strong>
+                      <strong style={styles.nameText}>{ind.companyName}</strong>
                       {ind.website && (
                         <div>
                           <a
@@ -224,44 +224,38 @@ export function CompanyGovernanceView() {
                     </div>
                   </td>
 
-                  <td style={styles.td}>
-                    <div>{ind.sector || 'General'}</div>
+                  <td>
+                    <div style={{ fontSize: 'var(--font-size-xs)' }}>{ind.sector || 'General'}</div>
                     {ind.size && (
-                      <span className="badge badge-mist" style={{ fontSize: '11px', marginTop: '2px' }}>
+                      <span className="badge badge-role" style={{ fontSize: '10px', marginTop: '2px' }}>
                         {ind.size} employees
                       </span>
                     )}
                   </td>
 
-                  <td style={styles.td}>
-                    <div>{ind.location || '—'}</div>
+                  <td>
+                    <div style={{ fontSize: 'var(--font-size-xs)' }}>{ind.location || '—'}</div>
                   </td>
 
-                  <td style={styles.td}>
-                    <span
-                      className="badge"
-                      style={{
-                        ...styles.statusBadge,
-                        ...getStatusBadgeStyle(ind.verificationStatus),
-                      }}
-                    >
+                  <td>
+                    <span className={`status-pill status-${ind.verificationStatus || 'unverified'}`}>
+                      <span className="status-pill-dot" />
                       {ind.verificationStatus || 'unverified'}
                     </span>
                   </td>
 
-                  <td style={styles.td}>
+                  <td>
                     {ind.verifiedBy ? (
                       <div>
-                        <strong>{ind.verifiedBy.name || 'Admin'}</strong>
-                        <div style={styles.subtext}>{ind.verifiedBy.email}</div>
-                        <div style={{ ...styles.subtext, marginTop: '2px' }}>{formatDate(ind.verifiedAt)}</div>
+                        <strong style={{ fontSize: '12px' }}>{ind.verifiedBy.name || 'Admin'}</strong>
+                        <div style={styles.subtext}>{formatDate(ind.verifiedAt)}</div>
                       </div>
                     ) : (
-                      <span style={styles.subtext}>Not verified yet</span>
+                      <span style={styles.subtext}>Unverified</span>
                     )}
                   </td>
 
-                  <td style={styles.td}>
+                  <td>
                     <div style={styles.completenessWrap}>
                       <div style={styles.progressBarBg}>
                         <div
@@ -270,24 +264,24 @@ export function CompanyGovernanceView() {
                             width: `${ind.completeness || 0}%`,
                             backgroundColor:
                               (ind.completeness || 0) >= 80
-                                ? '#15803d'
+                                ? '#207246'
                                 : (ind.completeness || 0) >= 50
-                                ? '#b45309'
-                                : '#b91c1c',
+                                ? '#946000'
+                                : 'var(--color-burgundy-red)',
                           }}
                         />
                       </div>
-                      <span style={{ fontSize: '11px', fontWeight: 'bold' }}>{ind.completeness || 0}%</span>
+                      <span style={styles.completenessText}>{ind.completeness || 0}%</span>
                     </div>
                   </td>
 
-                  <td style={styles.td}>
+                  <td>
                     <div style={styles.actionButtons}>
                       {ind.verificationStatus !== 'verified' && (
                         <button
                           onClick={() => setModalTarget({ industry: ind, targetStatus: 'verified' })}
-                          className="btn btn-outline"
-                          style={styles.verifyBtn}
+                          className="btn btn-primary"
+                          style={{ fontSize: '11px', padding: '4px 8px' }}
                         >
                           Verify
                         </button>
@@ -295,8 +289,8 @@ export function CompanyGovernanceView() {
                       {ind.verificationStatus !== 'rejected' && (
                         <button
                           onClick={() => setModalTarget({ industry: ind, targetStatus: 'rejected' })}
-                          className="btn btn-outline"
-                          style={styles.rejectBtn}
+                          className="btn btn-ghost"
+                          style={{ fontSize: '11px', padding: '4px 8px', color: 'var(--color-burgundy-red)' }}
                         >
                           Reject
                         </button>
@@ -402,7 +396,7 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 'var(--space-4)',
+    gap: 'var(--space-3)',
   },
   headerRow: {
     display: 'flex',
@@ -412,114 +406,95 @@ const styles = {
     gap: 'var(--space-2)',
   },
   description: {
-    fontSize: 'var(--font-size-sm)',
+    fontSize: 'var(--font-size-xs)',
     color: 'var(--color-text-muted)',
-    marginTop: 'var(--space-1)',
+    marginTop: '2px',
   },
   refreshBtn: {
     fontSize: 'var(--font-size-xs)',
   },
   feedbackBox: {
-    padding: 'var(--space-3) var(--space-4)',
-    borderRadius: 'var(--radius-md)',
+    padding: '8px 12px',
+    borderRadius: 'var(--radius-xs)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    fontSize: 'var(--font-size-sm)',
+    fontSize: 'var(--font-size-xs)',
+    border: '1px solid currentColor',
   },
   closeFeedback: {
-    fontSize: '18px',
+    fontSize: '16px',
     cursor: 'pointer',
     color: 'inherit',
+    border: 'none',
+    background: 'none',
   },
   toolbar: {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: 'var(--space-3)',
+    gap: 'var(--space-2)',
     alignItems: 'center',
+    padding: '8px 12px',
+    backgroundColor: 'var(--color-bg-surface)',
+    border: '1px solid var(--color-border)',
+    borderRadius: 'var(--radius-sm)',
   },
   searchInput: {
     flex: '1',
-    minWidth: '240px',
-    padding: 'var(--space-2) var(--space-3)',
-    borderRadius: 'var(--radius-md)',
+    minWidth: '220px',
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
     border: '1px solid var(--color-border)',
-    fontSize: 'var(--font-size-sm)',
-    backgroundColor: 'var(--color-bg-surface)',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-app)',
+    color: 'var(--color-text-primary)',
+    outline: 'none',
   },
   selectInput: {
-    padding: 'var(--space-2) var(--space-3)',
-    borderRadius: 'var(--radius-md)',
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
     border: '1px solid var(--color-border)',
-    fontSize: 'var(--font-size-sm)',
-    backgroundColor: 'var(--color-bg-surface)',
-    minWidth: '180px',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-app)',
+    color: 'var(--color-text-primary)',
+    minWidth: '170px',
+    outline: 'none',
   },
   stateBox: {
-    padding: 'var(--space-12)',
+    padding: 'var(--space-8)',
     textAlign: 'center',
     backgroundColor: 'var(--color-bg-surface)',
-    borderRadius: 'var(--radius-lg)',
+    borderRadius: 'var(--radius-md)',
     border: '1px solid var(--color-border)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 'var(--space-3)',
+    gap: 'var(--space-2)',
   },
   spinner: {
-    width: '32px',
-    height: '32px',
+    width: '24px',
+    height: '24px',
     borderRadius: '50%',
-    border: '3px solid var(--color-border)',
+    border: '2px solid var(--color-border)',
     borderTopColor: 'var(--color-primary)',
     animation: 'spin 0.8s linear infinite',
   },
-  tableWrapper: {
-    overflowX: 'auto',
-    borderRadius: 'var(--radius-lg)',
-    border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-bg-surface)',
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    textAlign: 'left',
-    fontSize: 'var(--font-size-sm)',
-  },
-  th: {
-    padding: 'var(--space-3) var(--space-4)',
-    borderBottom: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-mist-light)',
-    color: 'var(--color-text-secondary)',
-    fontWeight: 'var(--font-weight-semibold)',
-    fontSize: 'var(--font-size-xs)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.04em',
-  },
-  tr: {
-    borderBottom: '1px solid var(--color-border-subtle)',
-  },
-  td: {
-    padding: 'var(--space-3) var(--space-4)',
-    verticalAlign: 'middle',
+  nameText: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: 'var(--color-text-primary)',
+    display: 'block',
   },
   link: {
-    fontSize: 'var(--font-size-xs)',
-    color: 'var(--color-primary)',
+    fontSize: '11px',
+    color: 'var(--color-steel-dark)',
     textDecoration: 'none',
   },
   subtext: {
-    fontSize: 'var(--font-size-xs)',
-    color: 'var(--color-text-muted)',
-  },
-  statusBadge: {
     fontSize: '11px',
-    fontWeight: '600',
-    textTransform: 'capitalize',
-    padding: '2px 8px',
-    borderRadius: 'var(--radius-sm)',
-    display: 'inline-block',
+    color: 'var(--color-text-muted)',
+    marginTop: '1px',
   },
   completenessWrap: {
     display: 'flex',
@@ -527,52 +502,54 @@ const styles = {
     gap: 'var(--space-2)',
   },
   progressBarBg: {
-    width: '70px',
-    height: '6px',
-    borderRadius: '3px',
-    backgroundColor: 'var(--color-border)',
+    width: '60px',
+    height: '4px',
+    backgroundColor: 'var(--color-mist-light)',
+    borderRadius: '2px',
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    borderRadius: '3px',
-    transition: 'width var(--transition-base)',
+    borderRadius: '2px',
+    transition: 'width 0.3s ease',
+  },
+  completenessText: {
+    fontSize: '11px',
+    fontWeight: '600',
+    color: 'var(--color-text-primary)',
+    fontVariantNumeric: 'tabular-nums',
   },
   actionButtons: {
     display: 'flex',
-    gap: 'var(--space-2)',
-  },
-  verifyBtn: {
-    fontSize: '11px',
-    padding: '2px 8px',
-    color: '#15803d',
-    borderColor: 'rgba(34, 197, 94, 0.4)',
-  },
-  rejectBtn: {
-    fontSize: '11px',
-    padding: '2px 8px',
-    color: '#b91c1c',
-    borderColor: 'rgba(239, 68, 68, 0.4)',
+    gap: '4px',
+    alignItems: 'center',
   },
   paginationRow: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 'var(--space-2)',
+    marginTop: 'var(--space-1)',
+    paddingTop: 'var(--space-2)',
   },
   modalOverlay: {
     position: 'fixed',
-    inset: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(18, 24, 20, 0.45)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 100,
+    zIndex: 1000,
     padding: 'var(--space-4)',
   },
   modalCard: {
     maxWidth: '440px',
     width: '100%',
+    padding: 'var(--space-5)',
+    boxShadow: 'var(--shadow-md)',
+    borderRadius: 'var(--radius-md)',
   },
 };
 

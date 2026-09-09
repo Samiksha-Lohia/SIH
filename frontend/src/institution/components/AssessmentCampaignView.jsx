@@ -262,25 +262,23 @@ export function AssessmentCampaignView() {
   const totalCompletedAttempts = campaigns.reduce((sum, c) => sum + (c.completedCount || 0), 0);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
       {/* Feedback Banner */}
       {feedback && (
         <div
           style={{
-            padding: '1rem 1.25rem',
-            borderRadius: '12px',
-            backgroundColor: feedback.type === 'success' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-            border: `1px solid ${feedback.type === 'success' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-            color: feedback.type === 'success' ? '#4ade80' : '#f87171',
+            padding: 'var(--space-3) var(--space-4)',
+            borderRadius: 'var(--radius-md)',
+            backgroundColor: feedback.type === 'success' ? 'var(--color-success-bg)' : 'var(--color-danger-bg)',
+            border: `1px solid ${feedback.type === 'success' ? 'var(--color-success)' : 'var(--color-danger)'}`,
+            color: feedback.type === 'success' ? 'var(--color-success)' : 'var(--color-danger)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            fontSize: 'var(--font-size-xs)'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span>{feedback.type === 'success' ? '✅' : '⚠️'}</span>
-            <span>{feedback.message}</span>
-          </div>
+          <span>{feedback.message}</span>
           <button
             onClick={() => setFeedback(null)}
             style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer', fontWeight: 'bold' }}
@@ -291,146 +289,103 @@ export function AssessmentCampaignView() {
       )}
 
       {/* Sub Tabs Navigation */}
-      <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid #1f2937', paddingBottom: '0.5rem' }}>
+      <div className="b2b-tab-bar" role="tablist" style={{ marginBottom: 0 }}>
         <button
+          role="tab"
+          aria-selected={subTab === 'campaigns'}
+          className={`b2b-tab ${subTab === 'campaigns' ? 'active' : ''}`}
           onClick={() => setSubTab('campaigns')}
-          style={{
-            padding: '0.65rem 1.25rem',
-            backgroundColor: subTab === 'campaigns' ? '#2563eb' : '#1e293b',
-            color: subTab === 'campaigns' ? '#ffffff' : '#94a3b8',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 600,
-            fontSize: '0.9rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
         >
-          <span>🎯</span> Assessment Campaigns & Cohort Monitoring
-          <span style={{ fontSize: '0.75rem', backgroundColor: 'rgba(255,255,255,0.2)', padding: '0.1rem 0.45rem', borderRadius: '9999px' }}>
-            {campaigns.length}
-          </span>
+          Assessment Campaigns & Monitoring ({campaigns.length})
         </button>
 
         <button
+          role="tab"
+          aria-selected={subTab === 'assessments'}
+          className={`b2b-tab ${subTab === 'assessments' ? 'active' : ''}`}
           onClick={() => setSubTab('assessments')}
-          style={{
-            padding: '0.65rem 1.25rem',
-            backgroundColor: subTab === 'assessments' ? '#2563eb' : '#1e293b',
-            color: subTab === 'assessments' ? '#ffffff' : '#94a3b8',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 600,
-            fontSize: '0.9rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
         >
-          <span>📋</span> Question Bank Assessments
-          <span style={{ fontSize: '0.75rem', backgroundColor: 'rgba(255,255,255,0.2)', padding: '0.1rem 0.45rem', borderRadius: '9999px' }}>
-            {assessments.length}
-          </span>
+          Question Bank Assessments ({assessments.length})
         </button>
 
         <button
+          role="tab"
+          aria-selected={subTab === 'questions'}
+          className={`b2b-tab ${subTab === 'questions' ? 'active' : ''}`}
           onClick={() => setSubTab('questions')}
-          style={{
-            padding: '0.65rem 1.25rem',
-            backgroundColor: subTab === 'questions' ? '#2563eb' : '#1e293b',
-            color: subTab === 'questions' ? '#ffffff' : '#94a3b8',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 600,
-            fontSize: '0.9rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
         >
-          <span>❓</span> Question Bank Authoring
-          <span style={{ fontSize: '0.75rem', backgroundColor: 'rgba(255,255,255,0.2)', padding: '0.1rem 0.45rem', borderRadius: '9999px' }}>
-            {questions.length}
-          </span>
+          Question Authoring ({questions.length})
         </button>
       </div>
 
       {/* ===================== TAB 1: CAMPAIGNS & MONITORING ===================== */}
       {subTab === 'campaigns' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
           {/* Top Banner & KPI row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-            <div style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', color: '#9ca3af', textTransform: 'uppercase', fontWeight: 600 }}>Active Campaigns</div>
-              <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f9fafb', margin: '0.35rem 0 0' }}>{activeCampaigns}</div>
-              <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Out of {totalCampaigns} total</div>
+          <div className="b2b-kpi-grid">
+            <div className="b2b-kpi-tile">
+              <div className="b2b-kpi-label">Active Campaigns</div>
+              <div className="b2b-kpi-value">{activeCampaigns}</div>
+              <div className="b2b-kpi-subtext">Out of {totalCampaigns} total</div>
             </div>
 
-            <div style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', color: '#9ca3af', textTransform: 'uppercase', fontWeight: 600 }}>Total Assigned Students</div>
-              <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#38bdf8', margin: '0.35rem 0 0' }}>{totalAssignedStudents}</div>
-              <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Target cohort students</div>
+            <div className="b2b-kpi-tile">
+              <div className="b2b-kpi-label">Total Assigned Students</div>
+              <div className="b2b-kpi-value" style={{ color: 'var(--color-steel-blue)' }}>{totalAssignedStudents}</div>
+              <div className="b2b-kpi-subtext">Target cohort students</div>
             </div>
 
-            <div style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', color: '#9ca3af', textTransform: 'uppercase', fontWeight: 600 }}>Completed Attempts</div>
-              <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#34d399', margin: '0.35rem 0 0' }}>{totalCompletedAttempts}</div>
-              <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Evaluated with real scores</div>
+            <div className="b2b-kpi-tile">
+              <div className="b2b-kpi-label">Completed Attempts</div>
+              <div className="b2b-kpi-value" style={{ color: 'var(--color-emerald)' }}>{totalCompletedAttempts}</div>
+              <div className="b2b-kpi-subtext">Evaluated with real scores</div>
             </div>
 
-            <div style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className="b2b-kpi-tile" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <button
                 onClick={() => setShowCreateCampaignModal(true)}
+                className="btn btn-primary"
                 style={{
-                  padding: '0.75rem 1.25rem',
-                  backgroundColor: '#2563eb',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 700,
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                  padding: '8px 16px',
+                  fontSize: 'var(--font-size-xs)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.5rem',
+                  gap: 'var(--space-2)'
                 }}
               >
-                <span>➕</span> Create Assessment Campaign
+                Create Assessment Campaign
               </button>
             </div>
           </div>
 
           {/* Campaigns Grid */}
-          <div>
-            <h3 style={{ fontSize: '1.2rem', color: '#f8fafc', margin: '0 0 1rem' }}>Live Institutional Assessment Drives</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <h3 style={{ fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', margin: 0, fontWeight: 700 }}>
+              Live Institutional Assessment Drives
+            </h3>
 
             {loading ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>
-                <div style={{ width: '32px', height: '32px', border: '3px solid #374151', borderTopColor: '#3b82f6', borderRadius: '50%', margin: '0 auto 1rem', animation: 'spin 1s linear infinite' }} />
-                <p>Loading assessment campaigns from institutional database...</p>
+              <div className="card" style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                <div style={{ width: '32px', height: '32px', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', borderRadius: '50%', margin: '0 auto var(--space-3)', animation: 'spin 1s linear infinite' }} />
+                <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Loading assessment campaigns from institutional database...</p>
               </div>
             ) : campaigns.length === 0 ? (
-              <div style={{ padding: '3rem', textAlign: 'center', backgroundColor: '#111827', borderRadius: '12px', border: '1px dashed #374151' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🎯</div>
-                <h4 style={{ margin: '0 0 0.5rem', color: '#f9fafb' }}>No Assessment Campaigns Created Yet</h4>
-                <p style={{ color: '#9ca3af', fontSize: '0.9rem', maxWidth: '500px', margin: '0 auto 1.5rem' }}>
+              <div className="card" style={{ padding: 'var(--space-12)', textAlign: 'center', borderStyle: 'dashed' }}>
+                <h4 style={{ margin: '0 0 var(--space-2)', color: 'var(--color-primary)', fontSize: 'var(--font-size-md)' }}>No Assessment Campaigns Created Yet</h4>
+                <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-xs)', maxWidth: '500px', margin: '0 auto var(--space-4)' }}>
                   Create an assessment campaign to benchmark your students, track skill proficiency gaps, and monitor readiness scores.
                 </p>
                 <button
                   onClick={() => setShowCreateCampaignModal(true)}
-                  style={{ padding: '0.6rem 1.25rem', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+                  className="btn btn-primary"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   Create Your First Campaign →
                 </button>
               </div>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '1.25rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: 'var(--space-4)' }}>
                 {campaigns.map((camp) => {
                   const deadlineDate = new Date(camp.deadline);
                   const isOverdue = deadlineDate < new Date();
@@ -439,87 +394,72 @@ export function AssessmentCampaignView() {
                   return (
                     <div
                       key={camp.id}
+                      className="card"
                       style={{
-                        backgroundColor: '#111827',
-                        border: '1px solid #1f2937',
-                        borderRadius: '12px',
-                        padding: '1.5rem',
+                        padding: 'var(--space-5)',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
-                        gap: '1.25rem',
+                        gap: 'var(--space-4)',
                       }}
                     >
                       <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                          <span style={{ backgroundColor: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', fontSize: '0.75rem', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontWeight: 600 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
+                          <span className="badge badge-sky" style={{ fontSize: '11px' }}>
                             Cohort: {camp.cohort || 'All Students'}
                           </span>
-                          <span
-                            style={{
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              color: isOverdue ? '#f87171' : '#4ade80',
-                              backgroundColor: isOverdue ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
-                              padding: '0.2rem 0.5rem',
-                              borderRadius: '4px',
-                            }}
-                          >
-                            {isOverdue ? 'Closed / Expired' : '● Active'}
+                          <span className={`status-pill ${isOverdue ? 'status-rejected' : 'status-verified'}`} style={{ fontSize: '11px' }}>
+                            <span className="status-pill-dot" />
+                            {isOverdue ? 'Closed / Expired' : 'Active'}
                           </span>
                         </div>
 
-                        <h4 style={{ margin: '0.35rem 0 0.5rem', fontSize: '1.15rem', color: '#f8fafc', fontWeight: 700 }}>
+                        <h4 style={{ margin: 'var(--space-1) 0 var(--space-2)', fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 600 }}>
                           {camp.title}
                         </h4>
 
-                        <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.75rem' }}>
-                          Assessment: <strong style={{ color: '#cbd5e1' }}>{camp.assessment?.title || 'Custom Test'}</strong>
+                        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-3)' }}>
+                          Assessment: <strong style={{ color: 'var(--color-text)' }}>{camp.assessment?.title || 'Custom Test'}</strong>
                         </div>
 
                         {camp.description && (
-                          <p style={{ margin: '0 0 1rem', fontSize: '0.825rem', color: '#9ca3af', lineClamp: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          <p style={{ margin: '0 0 var(--space-3)', fontSize: '11px', color: 'var(--color-text-secondary)', lineClamp: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                             {camp.description}
                           </p>
                         )}
 
                         {/* Progress meter */}
-                        <div style={{ marginBottom: '0.75rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#9ca3af', marginBottom: '0.25rem' }}>
+                        <div style={{ marginBottom: 'var(--space-3)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)' }}>
                             <span>Completion ({camp.completedCount || 0}/{camp.totalAssigned || 0})</span>
-                            <span style={{ fontWeight: 700, color: '#f9fafb' }}>{compRate}%</span>
+                            <span style={{ fontWeight: 700, color: 'var(--color-text)' }}>{compRate}%</span>
                           </div>
-                          <div style={{ height: '6px', backgroundColor: '#1f2937', borderRadius: '9999px', overflow: 'hidden' }}>
-                            <div style={{ height: '100%', width: `${compRate}%`, backgroundColor: compRate === 100 ? '#10b981' : '#3b82f6', transition: 'width 0.3s' }} />
+                          <div style={{ height: '6px', backgroundColor: 'var(--color-border)', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${compRate}%`, backgroundColor: compRate === 100 ? 'var(--color-emerald)' : 'var(--color-steel-blue)', transition: 'width 0.3s' }} />
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#9ca3af' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-text-secondary)' }}>
                           <span>Deadline: {deadlineDate.toLocaleDateString()}</span>
                           {camp.avgScore !== null && (
-                            <span style={{ color: '#34d399', fontWeight: 600 }}>Avg Score: {camp.avgScore}%</span>
+                            <span style={{ color: 'var(--color-emerald)', fontWeight: 600 }}>Avg Score: {camp.avgScore}%</span>
                           )}
                         </div>
                       </div>
 
-                      <div style={{ borderTop: '1px solid #1f2937', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                      <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)', display: 'flex', justifyContent: 'flex-end' }}>
                         <button
                           onClick={() => handleOpenMonitor(camp.id)}
+                          className="btn btn-ghost"
                           style={{
-                            padding: '0.5rem 1rem',
-                            backgroundColor: '#1f2937',
-                            border: '1px solid #374151',
-                            borderRadius: '8px',
-                            color: '#38bdf8',
-                            fontWeight: 600,
-                            fontSize: '0.85rem',
-                            cursor: 'pointer',
+                            fontSize: 'var(--font-size-xs)',
+                            padding: '6px 12px',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.4rem',
+                            gap: 'var(--space-1)'
                           }}
                         >
-                          <span>📊</span> Monitor Campaign & Students →
+                          Monitor Campaign & Students →
                         </button>
                       </div>
                     </div>
@@ -533,56 +473,58 @@ export function AssessmentCampaignView() {
 
       {/* ===================== TAB 2: QUESTION BANK ASSESSMENTS ===================== */}
       {subTab === 'assessments' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#f8fafc' }}>Question Bank Assessment Suites</h3>
-              <p style={{ margin: '0.25rem 0 0', color: '#9ca3af', fontSize: '0.85rem' }}>
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>Question Bank Assessment Suites</h3>
+              <p style={{ margin: '4px 0 0', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-xs)' }}>
                 Standardized technical and role-aligned evaluations ready to be assigned to campaigns.
               </p>
             </div>
             <button
               onClick={() => setShowCreateAssessmentModal(true)}
-              style={{ padding: '0.6rem 1.25rem', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+              className="btn btn-primary"
+              style={{ fontSize: 'var(--font-size-xs)', padding: '6px 14px' }}
             >
-              ➕ Author New Assessment
+              Author New Assessment
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 'var(--space-4)' }}>
             {assessments.map((a) => (
-              <div key={a.id || a._id} style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '12px', padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1rem' }}>
+              <div key={a.id || a._id} className="card" style={{ padding: 'var(--space-5)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 'var(--space-3)' }}>
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#38bdf8', textTransform: 'uppercase', fontWeight: 700 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-2)' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--color-steel-blue)', textTransform: 'uppercase', fontWeight: 700 }}>
                       {a.type || 'technical'} • {a.difficulty || 'intermediate'}
                     </span>
-                    <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{a.durationMinutes || 30} mins</span>
+                    <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{a.durationMinutes || 30} mins</span>
                   </div>
-                  <h4 style={{ margin: '0 0 0.35rem', color: '#f9fafb', fontSize: '1.05rem' }}>{a.title}</h4>
-                  <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: '0.5rem' }}>
+                  <h4 style={{ margin: '0 0 var(--space-1)', color: 'var(--color-primary)', fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>{a.title}</h4>
+                  <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-2)' }}>
                     Target Role: <strong>{a.role || 'General Engineering'}</strong>
                   </div>
-                  {a.description && <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0 0 0.75rem' }}>{a.description}</p>}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                  {a.description && <p style={{ fontSize: '11px', color: 'var(--color-text-secondary)', margin: '0 0 var(--space-2)' }}>{a.description}</p>}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                     {(a.skillSet || []).map((sk, i) => (
-                      <span key={i} style={{ backgroundColor: '#1f2937', color: '#cbd5e1', fontSize: '0.7rem', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>
+                      <span key={i} className="badge badge-sky" style={{ fontSize: '10px' }}>
                         {sk}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                <div style={{ borderTop: '1px solid #1f2937', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>Pass mark: {a.passingScore || 50}%</span>
+                <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>Pass mark: {a.passingScore || 50}%</span>
                   <button
                     onClick={() => {
                       setCampaignForm((prev) => ({ ...prev, assessmentId: a.id || a._id, title: `${a.title} Cohort Benchmark` }));
                       setShowCreateCampaignModal(true);
                     }}
-                    style={{ padding: '0.4rem 0.85rem', backgroundColor: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
+                    className="btn btn-ghost"
+                    style={{ fontSize: '11px', padding: '4px 10px' }}
                   >
-                    Assign to Cohort 🚀
+                    Assign to Cohort →
                   </button>
                 </div>
               </div>
@@ -593,39 +535,49 @@ export function AssessmentCampaignView() {
 
       {/* ===================== TAB 3: QUESTION AUTHORING ===================== */}
       {subTab === 'questions' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#f8fafc' }}>Question Bank Repository</h3>
-              <p style={{ margin: '0.25rem 0 0', color: '#9ca3af', fontSize: '0.85rem' }}>
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>Question Bank Repository</h3>
+              <p style={{ margin: '4px 0 0', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-xs)' }}>
                 Canonical questions linked to skill taxonomy. Answers are evaluated via deterministic correctness checks.
               </p>
             </div>
             <button
               onClick={() => setShowCreateQuestionModal(true)}
-              style={{ padding: '0.6rem 1.25rem', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+              className="btn btn-primary"
+              style={{ fontSize: 'var(--font-size-xs)', padding: '6px 14px' }}
             >
-              ➕ Add New Question
+              Add New Question
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
             {questions.map((q) => (
-              <div key={q.id || q._id} style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '8px', padding: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.35rem' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.1)', padding: '0.15rem 0.5rem', borderRadius: '4px' }}>
+              <div key={q.id || q._id} className="card" style={{ padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <span className="badge badge-sky" style={{ fontSize: '11px' }}>
                     Skill: {q.skill || 'General'}
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
                     {q.difficulty} • {q.points || 1} pt(s)
                   </span>
                 </div>
-                <div style={{ color: '#f9fafb', fontSize: '0.95rem', fontWeight: 600, margin: '0.35rem 0 0.5rem' }}>{q.text}</div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem', fontSize: '0.8rem', color: '#cbd5e1' }}>
+                <div style={{ color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', fontWeight: 600 }}>{q.text}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-2)', fontSize: '11px' }}>
                   {(q.options || []).map((opt) => {
                     const isCorrect = (q.correctKeys || []).includes(opt.key);
                     return (
-                      <div key={opt.key} style={{ padding: '0.4rem 0.6rem', backgroundColor: isCorrect ? 'rgba(34, 197, 94, 0.1)' : '#1f2937', border: `1px solid ${isCorrect ? 'rgba(34, 197, 94, 0.4)' : '#374151'}`, borderRadius: '6px', color: isCorrect ? '#4ade80' : '#d1d5db' }}>
+                      <div
+                        key={opt.key}
+                        style={{
+                          padding: 'var(--space-2)',
+                          backgroundColor: isCorrect ? 'var(--color-success-bg)' : 'var(--color-bg-app)',
+                          border: `1px solid ${isCorrect ? 'var(--color-success)' : 'var(--color-border)'}`,
+                          borderRadius: 'var(--radius-sm)',
+                          color: isCorrect ? 'var(--color-success)' : 'var(--color-text-secondary)'
+                        }}
+                      >
                         <strong>{opt.key}:</strong> {opt.text} {isCorrect && '✓'}
                       </div>
                     );
@@ -639,33 +591,33 @@ export function AssessmentCampaignView() {
 
       {/* ===================== MODAL: CREATE ASSESSMENT CAMPAIGN ===================== */}
       {showCreateCampaignModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '16px', maxWidth: '600px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.25rem' }}>🎯 Create Assessment Campaign</h3>
-              <button onClick={() => setShowCreateCampaignModal(false)} style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '1.25rem', cursor: 'pointer' }}>✕</button>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)' }}>
+          <div className="card" style={{ maxWidth: '600px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, color: 'var(--color-primary)', fontSize: 'var(--font-size-md)', fontWeight: 700 }}>Create Assessment Campaign</h3>
+              <button onClick={() => setShowCreateCampaignModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-lg)', cursor: 'pointer' }}>✕</button>
             </div>
 
-            <form onSubmit={handleCreateCampaign} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <form onSubmit={handleCreateCampaign} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Campaign Title *</label>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Campaign Title *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Autumn 2026 Full Stack Core Competency Drive"
                   value={campaignForm.title}
                   onChange={(e) => setCampaignForm({ ...campaignForm, title: e.target.value })}
-                  style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Select Assessment from Question Bank *</label>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Select Assessment from Question Bank *</label>
                 <select
                   required
                   value={campaignForm.assessmentId}
                   onChange={(e) => setCampaignForm({ ...campaignForm, assessmentId: e.target.value })}
-                  style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                 >
                   <option value="">-- Choose Assessment --</option>
                   {assessments.map((a) => (
@@ -676,35 +628,35 @@ export function AssessmentCampaignView() {
                 </select>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 'var(--space-3)' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Target Cohort / Batch</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Target Cohort / Batch</label>
                   <input
                     type="text"
                     placeholder="e.g. CSE-2026"
                     value={campaignForm.cohort}
                     onChange={(e) => setCampaignForm({ ...campaignForm, cohort: e.target.value })}
-                    style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Campaign Deadline *</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Campaign Deadline *</label>
                   <input
                     type="date"
                     required
                     min={new Date().toISOString().split('T')[0]}
                     value={campaignForm.deadline}
                     onChange={(e) => setCampaignForm({ ...campaignForm, deadline: e.target.value })}
-                    style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Student Assignment Mode</label>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#e2e8f0', fontSize: '0.85rem', cursor: 'pointer' }}>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Student Assignment Mode</label>
+                <div style={{ display: 'flex', gap: 'var(--space-4)', marginBottom: 'var(--space-2)' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', cursor: 'pointer' }}>
                     <input
                       type="radio"
                       name="assignMode"
@@ -715,7 +667,7 @@ export function AssessmentCampaignView() {
                     Assign to All Enrolled Students ({availableStudents.length})
                   </label>
 
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#e2e8f0', fontSize: '0.85rem', cursor: 'pointer' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', cursor: 'pointer' }}>
                     <input
                       type="radio"
                       name="assignMode"
@@ -728,11 +680,11 @@ export function AssessmentCampaignView() {
                 </div>
 
                 {campaignForm.assignMode === 'specific' && (
-                  <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid #374151', borderRadius: '6px', padding: '0.5rem', backgroundColor: '#0f172a' }}>
+                  <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-2)', backgroundColor: 'var(--color-bg-app)' }}>
                     {availableStudents.map((st) => {
                       const isChecked = campaignForm.selectedStudentIds.includes(st.id);
                       return (
-                        <label key={st.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem', cursor: 'pointer', borderBottom: '1px solid #1f2937' }}>
+                        <label key={st.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-1) var(--space-2)', cursor: 'pointer', borderBottom: '1px solid var(--color-border-subtle)' }}>
                           <input
                             type="checkbox"
                             checked={isChecked}
@@ -744,8 +696,8 @@ export function AssessmentCampaignView() {
                               }
                             }}
                           />
-                          <span style={{ fontSize: '0.85rem', color: '#f1f5f9' }}>{st.name}</span>
-                          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>({st.email} • {st.branch})</span>
+                          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text)' }}>{st.name}</span>
+                          <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>({st.email} • {st.branch})</span>
                         </label>
                       );
                     })}
@@ -754,28 +706,30 @@ export function AssessmentCampaignView() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Description / Guidelines</label>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Description / Guidelines</label>
                 <textarea
                   rows={2}
                   placeholder="Instructions for students taking this assessment..."
                   value={campaignForm.description}
                   onChange={(e) => setCampaignForm({ ...campaignForm, description: e.target.value })}
-                  style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
                 <button
                   type="button"
                   onClick={() => setShowCreateCampaignModal(false)}
-                  style={{ padding: '0.55rem 1rem', backgroundColor: '#1f2937', color: '#d1d5db', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                  className="btn btn-ghost"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  style={{ padding: '0.55rem 1.25rem', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}
+                  className="btn btn-primary"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   {submitting ? 'Creating...' : 'Create & Assign Campaign'}
                 </button>
@@ -787,84 +741,80 @@ export function AssessmentCampaignView() {
 
       {/* ===================== MODAL: MONITOR CAMPAIGN ===================== */}
       {selectedMonitorCampaignId && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '16px', maxWidth: '850px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)' }}>
+          <div className="card" style={{ maxWidth: '850px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.35rem' }}>📊 Campaign Performance Monitor</h3>
-                  <span style={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                  <h3 style={{ margin: 0, color: 'var(--color-primary)', fontSize: 'var(--font-size-md)', fontWeight: 700 }}>Campaign Performance Monitor</h3>
+                  <span className="badge badge-sky" style={{ fontSize: '11px' }}>
                     {monitorData?.cohort || 'Cohort'}
                   </span>
                 </div>
-                <p style={{ margin: '0.25rem 0 0', color: '#9ca3af', fontSize: '0.9rem' }}>
-                  Campaign: <strong style={{ color: '#f1f5f9' }}>{monitorData?.title}</strong> • Assessment: {monitorData?.assessment?.title}
+                <p style={{ margin: '4px 0 0', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-xs)' }}>
+                  Campaign: <strong style={{ color: 'var(--color-text)' }}>{monitorData?.title}</strong> • Assessment: {monitorData?.assessment?.title}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedMonitorCampaignId(null)}
-                style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '1.25rem', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-lg)', cursor: 'pointer' }}
               >
                 ✕
               </button>
             </div>
 
             {loadingMonitor ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>
-                <p>Loading real-time student attempt records...</p>
+              <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Loading real-time student attempt records...</p>
               </div>
             ) : !monitorData ? (
-              <p style={{ color: '#f87171' }}>Failed to load campaign data.</p>
+              <p style={{ color: 'var(--color-danger)', fontSize: 'var(--font-size-xs)' }}>Failed to load campaign data.</p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
                 {/* Real-time KPI summary */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                  <div style={{ backgroundColor: '#0f172a', padding: '0.85rem', borderRadius: '8px', border: '1px solid #1e293b' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Total Assigned</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc' }}>{monitorData.stats?.totalAssigned || 0}</div>
+                <div className="b2b-kpi-grid">
+                  <div className="b2b-kpi-tile">
+                    <div className="b2b-kpi-label">Total Assigned</div>
+                    <div className="b2b-kpi-value">{monitorData.stats?.totalAssigned || 0}</div>
                   </div>
 
-                  <div style={{ backgroundColor: '#0f172a', padding: '0.85rem', borderRadius: '8px', border: '1px solid #1e293b' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Completed</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#4ade80' }}>{monitorData.stats?.completedCount || 0}</div>
+                  <div className="b2b-kpi-tile">
+                    <div className="b2b-kpi-label">Completed</div>
+                    <div className="b2b-kpi-value" style={{ color: 'var(--color-emerald)' }}>{monitorData.stats?.completedCount || 0}</div>
                   </div>
 
-                  <div style={{ backgroundColor: '#0f172a', padding: '0.85rem', borderRadius: '8px', border: '1px solid #1e293b' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Pending / Not Attempted</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fbbf24' }}>{monitorData.stats?.pendingCount || 0}</div>
+                  <div className="b2b-kpi-tile">
+                    <div className="b2b-kpi-label">Pending Attempt</div>
+                    <div className="b2b-kpi-value" style={{ color: 'var(--color-amber)' }}>{monitorData.stats?.pendingCount || 0}</div>
                   </div>
 
-                  <div style={{ backgroundColor: '#0f172a', padding: '0.85rem', borderRadius: '8px', border: '1px solid #1e293b' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Passed (&gt;={monitorData.assessment?.passingScore || 50}%)</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#38bdf8' }}>{monitorData.stats?.passedCount || 0}</div>
+                  <div className="b2b-kpi-tile">
+                    <div className="b2b-kpi-label">Passed (&gt;={monitorData.assessment?.passingScore || 50}%)</div>
+                    <div className="b2b-kpi-value" style={{ color: 'var(--color-steel-blue)' }}>{monitorData.stats?.passedCount || 0}</div>
                   </div>
 
-                  <div style={{ backgroundColor: '#0f172a', padding: '0.85rem', borderRadius: '8px', border: '1px solid #1e293b' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Average Score</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#c084fc' }}>
+                  <div className="b2b-kpi-tile">
+                    <div className="b2b-kpi-label">Average Score</div>
+                    <div className="b2b-kpi-value">
                       {monitorData.stats?.avgScore !== null ? `${monitorData.stats.avgScore}%` : 'N/A'}
                     </div>
                   </div>
                 </div>
 
                 {/* Filter and Student Breakdown Table */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                    <h4 style={{ margin: 0, color: '#f1f5f9', fontSize: '1rem' }}>Student Progress Breakdown</h4>
-                    <div style={{ display: 'flex', gap: '0.35rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+                    <h4 style={{ margin: 0, color: 'var(--color-primary)', fontSize: 'var(--font-size-sm)', fontWeight: 600 }}>Student Progress Breakdown</h4>
+                    <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
                       {['all', 'completed', 'pending'].map((flt) => (
                         <button
                           key={flt}
                           onClick={() => setMonitorFilter(flt)}
+                          className={`btn ${monitorFilter === flt ? 'btn-primary' : 'btn-ghost'}`}
                           style={{
-                            padding: '0.25rem 0.65rem',
-                            backgroundColor: monitorFilter === flt ? '#2563eb' : '#1f2937',
-                            color: monitorFilter === flt ? '#fff' : '#9ca3af',
-                            border: 'none',
-                            borderRadius: '4px',
-                            fontSize: '0.75rem',
-                            cursor: 'pointer',
-                            textTransform: 'capitalize',
+                            fontSize: '11px',
+                            padding: '4px 10px',
+                            textTransform: 'capitalize'
                           }}
                         >
                           {flt}
@@ -873,15 +823,15 @@ export function AssessmentCampaignView() {
                     </div>
                   </div>
 
-                  <div style={{ border: '1px solid #1f2937', borderRadius: '8px', overflow: 'hidden' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
-                      <thead style={{ backgroundColor: '#0f172a', color: '#94a3b8' }}>
+                  <div className="data-table-container">
+                    <table className="data-table">
+                      <thead>
                         <tr>
-                          <th style={{ padding: '0.75rem 1rem' }}>Student Name</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>Email</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>Status</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>Calculated Score</th>
-                          <th style={{ padding: '0.75rem 1rem' }}>Completed At</th>
+                          <th>Student Name</th>
+                          <th>Email</th>
+                          <th>Status</th>
+                          <th>Calculated Score</th>
+                          <th>Completed At</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -892,37 +842,25 @@ export function AssessmentCampaignView() {
                             return true;
                           })
                           .map((st) => (
-                            <tr key={st.studentId} style={{ borderBottom: '1px solid #1f2937' }}>
-                              <td style={{ padding: '0.75rem 1rem', color: '#f8fafc', fontWeight: 600 }}>{st.name}</td>
-                              <td style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>{st.email}</td>
-                              <td style={{ padding: '0.75rem 1rem' }}>
-                                <span
-                                  style={{
-                                    padding: '0.2rem 0.5rem',
-                                    borderRadius: '9999px',
-                                    fontSize: '0.7rem',
-                                    fontWeight: 700,
-                                    textTransform: 'uppercase',
-                                    backgroundColor:
-                                      st.status === 'completed'
-                                        ? 'rgba(34, 197, 94, 0.15)'
-                                        : 'rgba(245, 158, 11, 0.15)',
-                                    color: st.status === 'completed' ? '#4ade80' : '#fbbf24',
-                                  }}
-                                >
-                                  {st.status === 'completed' ? '✓ Completed' : 'Pending Attempt'}
+                            <tr key={st.studentId}>
+                              <td><strong style={{ color: 'var(--color-primary)' }}>{st.name}</strong></td>
+                              <td style={{ color: 'var(--color-text-secondary)' }}>{st.email}</td>
+                              <td>
+                                <span className={`status-pill ${st.status === 'completed' ? 'status-verified' : 'status-pending'}`}>
+                                  <span className="status-pill-dot" />
+                                  {st.status === 'completed' ? 'Completed' : 'Pending'}
                                 </span>
                               </td>
-                              <td style={{ padding: '0.75rem 1rem' }}>
+                              <td>
                                 {st.score !== null ? (
-                                  <span style={{ fontWeight: 700, color: st.passed ? '#34d399' : '#f87171' }}>
+                                  <span style={{ fontWeight: 700, color: st.passed ? 'var(--color-emerald)' : 'var(--color-burgundy-red)' }}>
                                     {st.score}% {st.passed ? '(Passed)' : '(Failed)'}
                                   </span>
                                 ) : (
-                                  <span style={{ color: '#64748b' }}>Not attempted</span>
+                                  <span style={{ color: 'var(--color-text-muted)' }}>Not attempted</span>
                                 )}
                               </td>
-                              <td style={{ padding: '0.75rem 1rem', color: '#64748b', fontSize: '0.8rem' }}>
+                              <td style={{ color: 'var(--color-text-muted)', fontSize: '11px' }}>
                                 {st.completedAt ? new Date(st.completedAt).toLocaleString() : '—'}
                               </td>
                             </tr>
@@ -935,9 +873,10 @@ export function AssessmentCampaignView() {
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <button
                     onClick={() => handleOpenMonitor(selectedMonitorCampaignId)}
-                    style={{ padding: '0.45rem 0.9rem', backgroundColor: '#1f2937', color: '#cbd5e1', border: '1px solid #374151', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer' }}
+                    className="btn btn-ghost"
+                    style={{ fontSize: 'var(--font-size-xs)' }}
                   >
-                    🔄 Refresh Live Status
+                    Refresh Live Status
                   </button>
                 </div>
               </div>
@@ -948,33 +887,33 @@ export function AssessmentCampaignView() {
 
       {/* ===================== MODAL: CREATE ASSESSMENT ===================== */}
       {showCreateAssessmentModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '16px', maxWidth: '550px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.25rem' }}>📋 Author New Assessment</h3>
-              <button onClick={() => setShowCreateAssessmentModal(false)} style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '1.25rem', cursor: 'pointer' }}>✕</button>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)' }}>
+          <div className="card" style={{ maxWidth: '550px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, color: 'var(--color-primary)', fontSize: 'var(--font-size-md)', fontWeight: 700 }}>Author New Assessment</h3>
+              <button onClick={() => setShowCreateAssessmentModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-lg)', cursor: 'pointer' }}>✕</button>
             </div>
 
-            <form onSubmit={handleCreateAssessment} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleCreateAssessment} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Assessment Title *</label>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Assessment Title *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Distributed Systems & Cloud Evaluation"
                   value={assessmentForm.title}
                   onChange={(e) => setAssessmentForm({ ...assessmentForm, title: e.target.value })}
-                  style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 'var(--space-3)' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Target Role *</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Target Role *</label>
                   <select
                     value={assessmentForm.role}
                     onChange={(e) => setAssessmentForm({ ...assessmentForm, role: e.target.value })}
-                    style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   >
                     {roles.map((r) => (
                       <option key={r.id || r._id} value={r.title}>{r.title}</option>
@@ -983,11 +922,11 @@ export function AssessmentCampaignView() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Difficulty</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Difficulty</label>
                   <select
                     value={assessmentForm.difficulty}
                     onChange={(e) => setAssessmentForm({ ...assessmentForm, difficulty: e.target.value })}
-                    style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   >
                     <option value="beginner">Beginner</option>
                     <option value="intermediate">Intermediate</option>
@@ -996,40 +935,40 @@ export function AssessmentCampaignView() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 'var(--space-3)' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Duration (Minutes)</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Duration (Minutes)</label>
                   <input
                     type="number"
                     min="5"
                     max="180"
                     value={assessmentForm.durationMinutes}
                     onChange={(e) => setAssessmentForm({ ...assessmentForm, durationMinutes: e.target.value })}
-                    style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Passing Score (%)</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Passing Score (%)</label>
                   <input
                     type="number"
                     min="10"
                     max="100"
                     value={assessmentForm.passingScore}
                     onChange={(e) => setAssessmentForm({ ...assessmentForm, passingScore: e.target.value })}
-                    style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Link Questions from Bank</label>
-                <div style={{ maxHeight: '160px', overflowY: 'auto', border: '1px solid #374151', borderRadius: '6px', padding: '0.5rem', backgroundColor: '#0f172a' }}>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Link Questions from Bank</label>
+                <div style={{ maxHeight: '160px', overflowY: 'auto', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: 'var(--space-2)', backgroundColor: 'var(--color-bg-app)' }}>
                   {questions.map((q) => {
                     const qId = q.id || q._id;
                     const isChecked = assessmentForm.questionIds.includes(qId);
                     return (
-                      <label key={qId} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.3rem', cursor: 'pointer', borderBottom: '1px solid #1f2937' }}>
+                      <label key={qId} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-1) var(--space-2)', cursor: 'pointer', borderBottom: '1px solid var(--color-border-subtle)' }}>
                         <input
                           type="checkbox"
                           checked={isChecked}
@@ -1041,17 +980,17 @@ export function AssessmentCampaignView() {
                             }
                           }}
                         />
-                        <span style={{ fontSize: '0.8rem', color: '#e2e8f0' }}>{q.text.slice(0, 60)}...</span>
-                        <span style={{ fontSize: '0.7rem', color: '#38bdf8' }}>({q.skill})</span>
+                        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text)' }}>{q.text.slice(0, 60)}...</span>
+                        <span style={{ fontSize: '10px', color: 'var(--color-steel-blue)' }}>({q.skill})</span>
                       </label>
                     );
                   })}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button type="button" onClick={() => setShowCreateAssessmentModal(false)} style={{ padding: '0.55rem 1rem', backgroundColor: '#1f2937', color: '#d1d5db', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" disabled={submitting} style={{ padding: '0.55rem 1.25rem', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
+                <button type="button" onClick={() => setShowCreateAssessmentModal(false)} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>Cancel</button>
+                <button type="submit" disabled={submitting} className="btn btn-primary" style={{ fontSize: 'var(--font-size-xs)' }}>
                   {submitting ? 'Creating...' : 'Save Assessment'}
                 </button>
               </div>
@@ -1062,45 +1001,45 @@ export function AssessmentCampaignView() {
 
       {/* ===================== MODAL: CREATE QUESTION ===================== */}
       {showCreateQuestionModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '16px', maxWidth: '550px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.25rem' }}>❓ Author Question</h3>
-              <button onClick={() => setShowCreateQuestionModal(false)} style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '1.25rem', cursor: 'pointer' }}>✕</button>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)' }}>
+          <div className="card" style={{ maxWidth: '550px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, color: 'var(--color-primary)', fontSize: 'var(--font-size-md)', fontWeight: 700 }}>Author Question</h3>
+              <button onClick={() => setShowCreateQuestionModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-lg)', cursor: 'pointer' }}>✕</button>
             </div>
 
-            <form onSubmit={handleCreateQuestion} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleCreateQuestion} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Question Statement *</label>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Question Statement *</label>
                 <textarea
                   rows={3}
                   required
                   placeholder="e.g. Which concurrency primitive in Go is used to prevent race conditions?"
                   value={questionForm.text}
                   onChange={(e) => setQuestionForm({ ...questionForm, text: e.target.value })}
-                  style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 'var(--space-3)' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Skill Label *</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Skill Label *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. React, Node.js, Python"
                     value={questionForm.skill}
                     onChange={(e) => setQuestionForm({ ...questionForm, skill: e.target.value })}
-                    style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Difficulty</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Difficulty</label>
                   <select
                     value={questionForm.difficulty}
                     onChange={(e) => setQuestionForm({ ...questionForm, difficulty: e.target.value })}
-                    style={{ width: '100%', padding: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '6px', color: '#fff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   >
                     <option value="beginner">Beginner</option>
                     <option value="intermediate">Intermediate</option>
@@ -1110,10 +1049,10 @@ export function AssessmentCampaignView() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>Multiple Choice Options (Check the correct key)</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Multiple Choice Options (Check the correct key)</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                   {questionForm.options.map((opt, idx) => (
-                    <div key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                       <input
                         type="checkbox"
                         checked={opt.isCorrect}
@@ -1123,7 +1062,7 @@ export function AssessmentCampaignView() {
                           setQuestionForm({ ...questionForm, options: updated });
                         }}
                       />
-                      <span style={{ fontWeight: 700, color: '#9ca3af', width: '20px' }}>{opt.key}:</span>
+                      <span style={{ fontWeight: 700, color: 'var(--color-text-secondary)', width: '20px', fontSize: 'var(--font-size-xs)' }}>{opt.key}:</span>
                       <input
                         type="text"
                         required
@@ -1134,16 +1073,16 @@ export function AssessmentCampaignView() {
                           updated[idx].text = e.target.value;
                           setQuestionForm({ ...questionForm, options: updated });
                         }}
-                        style={{ flex: 1, padding: '0.45rem', backgroundColor: '#0f172a', border: '1px solid #374151', borderRadius: '4px', color: '#fff' }}
+                        style={{ flex: 1, padding: 'var(--space-2)', backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
                       />
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button type="button" onClick={() => setShowCreateQuestionModal(false)} style={{ padding: '0.55rem 1rem', backgroundColor: '#1f2937', color: '#d1d5db', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" disabled={submitting} style={{ padding: '0.55rem 1.25rem', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
+                <button type="button" onClick={() => setShowCreateQuestionModal(false)} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>Cancel</button>
+                <button type="submit" disabled={submitting} className="btn btn-primary" style={{ fontSize: 'var(--font-size-xs)' }}>
                   {submitting ? 'Authoring...' : 'Save Question to Bank'}
                 </button>
               </div>

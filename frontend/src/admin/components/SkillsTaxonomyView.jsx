@@ -170,33 +170,33 @@ export function SkillsTaxonomyView() {
         </div>
       ) : skills.length === 0 ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-text-muted)' }}>No skills found matching your search.</p>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)' }}>No skills found matching your search.</p>
         </div>
       ) : (
-        <div style={styles.tableWrapper}>
-          <table style={styles.table}>
+        <div className="data-table-container">
+          <table className="data-table">
             <thead>
               <tr>
-                <th style={styles.th}>Canonical Name</th>
-                <th style={styles.th}>Category</th>
-                <th style={styles.th}>Aliases / Synonyms</th>
-                <th style={styles.th}>Demand Score</th>
-                <th style={styles.th}>Actions</th>
+                <th>Canonical Name</th>
+                <th>Category</th>
+                <th>Aliases / Synonyms</th>
+                <th>Demand Score</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {skills.map((skill) => (
-                <tr key={skill.id} style={styles.tr}>
-                  <td style={styles.td}>
-                    <strong>{skill.canonicalName}</strong>
+                <tr key={skill.id}>
+                  <td>
+                    <strong style={styles.nameText}>{skill.canonicalName}</strong>
                     <div style={styles.subtext}>{skill.slug}</div>
                   </td>
-                  <td style={styles.td}>
+                  <td>
                     <span className="badge badge-role" style={{ textTransform: 'capitalize' }}>
                       {skill.category}
                     </span>
                   </td>
-                  <td style={styles.td}>
+                  <td>
                     {skill.aliases && skill.aliases.length > 0 ? (
                       <div style={styles.aliasGroup}>
                         {skill.aliases.map((a) => (
@@ -204,25 +204,25 @@ export function SkillsTaxonomyView() {
                         ))}
                       </div>
                     ) : (
-                      <span style={styles.subtext}>None</span>
+                      <span style={styles.subtext}>—</span>
                     )}
                   </td>
-                  <td style={styles.td}>
-                    <span style={{ fontWeight: '600' }}>{skill.demandScore || 0}</span>
+                  <td>
+                    <span style={styles.demandScore}>{skill.demandScore || 0}</span>
                   </td>
-                  <td style={styles.td}>
+                  <td>
                     <div style={styles.actionRow}>
                       <button
                         onClick={() => openEdit(skill)}
                         className="btn btn-outline"
-                        style={{ fontSize: 'var(--font-size-xs)' }}
+                        style={{ fontSize: '11px', padding: '3px 8px' }}
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => setDeleteTarget(skill)}
-                        className="btn btn-outline"
-                        style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-danger)' }}
+                        className="btn btn-ghost"
+                        style={{ fontSize: '11px', padding: '3px 8px', color: 'var(--color-burgundy-red)' }}
                       >
                         Delete
                       </button>
@@ -365,31 +365,149 @@ export function SkillsTaxonomyView() {
 }
 
 const styles = {
-  container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
+  container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' },
   headerRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' },
-  description: { fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' },
+  description: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginTop: '2px' },
   actionBtn: { fontSize: 'var(--font-size-xs)' },
-  toolbar: { display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' },
-  searchInput: { flex: 1, minWidth: '240px', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)' },
-  selectInput: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)' },
-  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
-  spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
-  tableWrapper: { overflowX: 'auto', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-surface)' },
-  table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--font-size-sm)' },
-  th: { padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-mist-light)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.04em' },
-  tr: { borderBottom: '1px solid var(--color-border-subtle)' },
-  td: { padding: 'var(--space-3) var(--space-4)', verticalAlign: 'middle' },
-  subtext: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' },
+  toolbar: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 'var(--space-2)',
+    alignItems: 'center',
+    padding: '8px 12px',
+    backgroundColor: 'var(--color-bg-surface)',
+    border: '1px solid var(--color-border)',
+    borderRadius: 'var(--radius-sm)',
+  },
+  searchInput: {
+    flex: 1,
+    minWidth: '220px',
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
+    border: '1px solid var(--color-border)',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-app)',
+    color: 'var(--color-text-primary)',
+    outline: 'none',
+  },
+  selectInput: {
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
+    border: '1px solid var(--color-border)',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-app)',
+    color: 'var(--color-text-primary)',
+    minWidth: '150px',
+    outline: 'none',
+  },
+  stateBox: {
+    padding: 'var(--space-8)',
+    textAlign: 'center',
+    backgroundColor: 'var(--color-bg-surface)',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--color-border)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 'var(--space-2)',
+  },
+  spinner: {
+    width: '24px',
+    height: '24px',
+    borderRadius: '50%',
+    border: '2px solid var(--color-border)',
+    borderTopColor: 'var(--color-primary)',
+    animation: 'spin 0.8s linear infinite',
+  },
+  nameText: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: 'var(--color-text-primary)',
+    display: 'block',
+  },
+  subtext: {
+    fontSize: '11px',
+    color: 'var(--color-text-muted)',
+    marginTop: '1px',
+  },
   aliasGroup: { display: 'flex', flexWrap: 'wrap', gap: '4px' },
-  aliasChip: { fontSize: '11px', padding: '2px 6px', borderRadius: '4px', backgroundColor: 'var(--color-mist-light)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' },
-  actionRow: { display: 'flex', gap: 'var(--space-2)' },
-  paginationRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'var(--space-2)' },
-  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'var(--space-4)' },
-  modalCard: { maxWidth: '480px', width: '100%' },
-  modalLabel: { display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' },
-  modalInput: { width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)' },
-  feedbackBox: { padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)' },
-  closeFeedback: { fontSize: '18px', cursor: 'pointer', color: 'inherit' },
+  aliasChip: {
+    fontSize: '10px',
+    padding: '1px 5px',
+    borderRadius: '3px',
+    backgroundColor: 'var(--color-mist-light)',
+    color: 'var(--color-text-secondary)',
+    border: '1px solid var(--color-border)',
+  },
+  demandScore: {
+    fontSize: '12px',
+    fontWeight: '600',
+    color: 'var(--color-text-primary)',
+    fontVariantNumeric: 'tabular-nums',
+  },
+  actionRow: { display: 'flex', gap: '4px', alignItems: 'center' },
+  paginationRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 'var(--space-1)',
+    paddingTop: 'var(--space-2)',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(18, 24, 20, 0.45)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: 'var(--space-4)',
+  },
+  modalCard: {
+    maxWidth: '460px',
+    width: '100%',
+    padding: 'var(--space-5)',
+    boxShadow: 'var(--shadow-md)',
+    borderRadius: 'var(--radius-md)',
+  },
+  modalLabel: {
+    display: 'block',
+    fontSize: '11px',
+    fontWeight: '600',
+    marginBottom: '4px',
+    color: 'var(--color-text-secondary)',
+  },
+  modalInput: {
+    width: '100%',
+    padding: '6px 10px',
+    borderRadius: 'var(--radius-xs)',
+    border: '1px solid var(--color-border)',
+    fontSize: 'var(--font-size-xs)',
+    backgroundColor: 'var(--color-bg-surface)',
+    color: 'var(--color-text-primary)',
+    boxSizing: 'border-box',
+    outline: 'none',
+  },
+  feedbackBox: {
+    padding: '8px 12px',
+    borderRadius: 'var(--radius-xs)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    fontSize: 'var(--font-size-xs)',
+    border: '1px solid currentColor',
+  },
+  closeFeedback: {
+    fontSize: '16px',
+    cursor: 'pointer',
+    color: 'inherit',
+    border: 'none',
+    background: 'none',
+  },
 };
 
 export default SkillsTaxonomyView;

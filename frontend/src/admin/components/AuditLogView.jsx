@@ -100,57 +100,57 @@ export function AuditLogView() {
           <p style={{ color: 'var(--color-text-muted)' }}>No audit events recorded under this filter.</p>
         </div>
       ) : (
-        <div style={styles.tableWrapper}>
-          <table style={styles.table}>
+        <div className="data-table-container">
+          <table className="data-table">
             <thead>
               <tr>
-                <th style={styles.th}>Timestamp</th>
-                <th style={styles.th}>Action</th>
-                <th style={styles.th}>Actor</th>
-                <th style={styles.th}>Resource & ID</th>
-                <th style={styles.th}>IP Address</th>
-                <th style={styles.th}>Payload</th>
+                <th style={{ width: '160px' }}>Timestamp</th>
+                <th>Action</th>
+                <th>Actor</th>
+                <th>Resource & ID</th>
+                <th>IP Address</th>
+                <th style={{ textAlign: 'right' }}>Payload</th>
               </tr>
             </thead>
             <tbody>
               {logs.map((log) => (
-                <tr key={log.id} style={styles.tr}>
-                  <td style={{ ...styles.td, whiteSpace: 'nowrap', color: 'var(--color-text-muted)' }}>
+                <tr key={log.id}>
+                  <td style={{ whiteSpace: 'nowrap', color: 'var(--color-text-muted)', fontSize: '11px', fontVariantNumeric: 'tabular-nums' }}>
                     {formatDate(log.createdAt)}
                   </td>
-                  <td style={styles.td}>
-                    <span className="badge badge-burgundy" style={{ fontSize: '11px', textTransform: 'none' }}>
+                  <td>
+                    <span className="badge badge-role" style={{ fontSize: '11px', fontWeight: '500' }}>
                       {log.action}
                     </span>
                   </td>
-                  <td style={styles.td}>
+                  <td>
                     {log.actor ? (
                       <div>
-                        <strong>{log.actor.name || 'User'}</strong>
-                        <div style={styles.subtext}>{log.actor.email} ({log.actorRole || log.actor.role})</div>
+                        <strong style={{ color: 'var(--color-text-main)', fontSize: 'var(--font-size-xs)' }}>{log.actor.name || 'User'}</strong>
+                        <div style={styles.subtext}>{log.actor.email} • {log.actorRole || log.actor.role}</div>
                       </div>
                     ) : (
                       <span style={styles.subtext}>System / Anonymous</span>
                     )}
                   </td>
-                  <td style={styles.td}>
-                    <div>{log.resource || '—'}</div>
-                    {log.resourceId && <div style={{ ...styles.subtext, fontFamily: 'monospace' }}>{log.resourceId}</div>}
+                  <td>
+                    <div style={{ fontSize: 'var(--font-size-xs)' }}>{log.resource || '—'}</div>
+                    {log.resourceId && <div style={{ ...styles.subtext, fontFamily: 'monospace', fontSize: '10px' }}>{log.resourceId}</div>}
                   </td>
-                  <td style={{ ...styles.td, fontFamily: 'monospace', fontSize: '11px' }}>
+                  <td style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--color-text-muted)' }}>
                     {log.ip || '127.0.0.1'}
                   </td>
-                  <td style={styles.td}>
+                  <td style={{ textAlign: 'right' }}>
                     {log.meta && Object.keys(log.meta).length > 0 ? (
                       <button
                         onClick={() => setInspectedLog(log)}
-                        className="btn btn-outline"
+                        className="btn btn-ghost"
                         style={{ fontSize: '11px', padding: '2px 8px' }}
                       >
                         Inspect
                       </button>
                     ) : (
-                      <span style={styles.subtext}>None</span>
+                      <span style={styles.subtext}>—</span>
                     )}
                   </td>
                 </tr>
@@ -166,21 +166,21 @@ export function AuditLogView() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={!meta.hasPrevPage || loading}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            Previous
+            ← Previous
           </button>
-          <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
             Page {meta.page} of {meta.totalPages} ({meta.total} events)
           </span>
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={!meta.hasNextPage || loading}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            Next
+            Next →
           </button>
         </div>
       )}
@@ -190,8 +190,8 @@ export function AuditLogView() {
         <div style={styles.modalOverlay}>
           <div className="card" style={styles.modalCard}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
-              <h4>Audit Event Payload</h4>
-              <button onClick={() => setInspectedLog(null)} style={{ fontSize: '20px', cursor: 'pointer' }}>×</button>
+              <h4 style={{ fontSize: 'var(--font-size-base)', fontWeight: '600' }}>Audit Event Payload</h4>
+              <button onClick={() => setInspectedLog(null)} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: 'var(--color-text-muted)' }}>×</button>
             </div>
             <div style={{ marginBottom: 'var(--space-2)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
               Action: <strong>{inspectedLog.action}</strong> • Time: {formatDate(inspectedLog.createdAt)}
@@ -200,8 +200,8 @@ export function AuditLogView() {
               {JSON.stringify(inspectedLog.meta, null, 2)}
             </pre>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-3)' }}>
-              <button onClick={() => setInspectedLog(null)} className="btn btn-primary">
-                Close
+              <button onClick={() => setInspectedLog(null)} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
+                Dismiss
               </button>
             </div>
           </div>
@@ -216,23 +216,18 @@ const styles = {
   headerRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' },
   description: { fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' },
   refreshBtn: { fontSize: 'var(--font-size-xs)' },
-  toolbar: { display: 'flex', gap: 'var(--space-3)' },
-  selectInput: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)' },
-  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
+  toolbar: { display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' },
+  selectInput: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-surface)' },
+  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
   spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
-  tableWrapper: { overflowX: 'auto', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-surface)' },
-  table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 'var(--font-size-sm)' },
-  th: { padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-mist-light)', color: 'var(--color-text-secondary)', fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.04em' },
-  tr: { borderBottom: '1px solid var(--color-border-subtle)' },
-  td: { padding: 'var(--space-3) var(--space-4)', verticalAlign: 'middle' },
   subtext: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' },
   paginationRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'var(--space-2)' },
-  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'var(--space-4)' },
-  modalCard: { maxWidth: '520px', width: '100%' },
+  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'clamp(8px, 2vw, 16px)' },
+  modalCard: { maxWidth: 'min(95vw, 520px)', width: '100%', maxHeight: '90vh', overflowY: 'auto' },
   jsonPre: {
     backgroundColor: 'var(--color-bg-app)',
     padding: 'var(--space-3)',
-    borderRadius: 'var(--radius-md)',
+    borderRadius: 'var(--radius-sm)',
     border: '1px solid var(--color-border)',
     fontSize: '11px',
     fontFamily: 'monospace',

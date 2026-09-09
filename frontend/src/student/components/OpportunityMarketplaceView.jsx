@@ -195,9 +195,9 @@ export function OpportunityMarketplaceView() {
         </div>
 
         {myApplications.length > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="badge" style={{ backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #86efac', fontSize: '12px' }}>
-              ✓ {myApplications.length} Opportunities Tracked
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <span className="badge badge-role" style={{ fontSize: '11px', fontVariantNumeric: 'tabular-nums' }}>
+              {myApplications.length} Opportunities Tracked
             </span>
           </div>
         )}
@@ -218,18 +218,18 @@ export function OpportunityMarketplaceView() {
       )}
 
       {/* Tabs: Browse vs AI Matched */}
-      <div style={styles.tabPillGroup}>
+      <div className="b2b-tab-bar">
         <button
           onClick={() => { setActiveTab('browse'); setPage(1); }}
-          style={{ ...styles.pillBtn, ...(activeTab === 'browse' ? styles.activePill : {}) }}
+          className={`b2b-tab ${activeTab === 'browse' ? 'active' : ''}`}
         >
-          🔍 Browse All Opportunities
+          All Opportunities
         </button>
         <button
           onClick={() => { setActiveTab('matched'); setPage(1); }}
-          style={{ ...styles.pillBtn, ...(activeTab === 'matched' ? styles.activePill : {}) }}
+          className={`b2b-tab ${activeTab === 'matched' ? 'active' : ''}`}
         >
-          ⚡ AI Matched Recommendations
+          AI Matched Recommendations
         </button>
       </div>
 
@@ -316,47 +316,35 @@ export function OpportunityMarketplaceView() {
                 <div
                   key={opp.id}
                   className="card"
-                  style={{
-                    ...styles.oppCard,
-                    borderColor: statusInfo ? statusInfo.badgeBorder : 'var(--color-border)',
-                    backgroundColor: statusInfo ? '#fcfdfd' : 'var(--color-bg-surface)',
-                  }}
+                  style={styles.oppCard}
                 >
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-2)' }}>
                       <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                        <span className="badge badge-sky" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                        <span className="badge badge-role" style={{ fontSize: '10px', textTransform: 'capitalize' }}>
                           {opp.type?.replace('_', ' ')}
                         </span>
-                        <span className="badge badge-mist" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                        <span className="badge" style={{ fontSize: '10px', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)', textTransform: 'capitalize' }}>
                           {opp.workMode}
                         </span>
                       </div>
 
                       {statusInfo && (
-                        <span
-                          className="badge"
-                          style={{
-                            backgroundColor: statusInfo.badgeBg,
-                            color: statusInfo.badgeColor,
-                            border: `1px solid ${statusInfo.badgeBorder}`,
-                            fontSize: '11px',
-                            fontWeight: 600,
-                          }}
-                        >
+                        <span className={`status-pill ${statusInfo.label === 'Applied' ? 'status-verified' : 'status-rejected'}`} style={{ fontSize: '10px' }}>
+                          <span className="status-pill-dot" />
                           {statusInfo.label}
                         </span>
                       )}
                     </div>
 
-                    <h4 style={{ color: 'var(--color-primary)', marginBottom: '2px' }}>{opp.title}</h4>
+                    <h4 style={{ color: 'var(--color-text-main)', margin: '0 0 2px 0', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>{opp.title}</h4>
                     <div style={styles.companyName}>
-                      🏢 {opp.companyName || opp.company?.companyName || 'Verified Recruiter'}
+                      {opp.companyName || opp.company?.companyName || 'Verified Recruiter'}
                     </div>
 
                     <div style={styles.metaRow}>
-                      <span>📍 {opp.location || 'Remote'}</span>
-                      <span>💰 {formatStipend(opp)}</span>
+                      <span>{opp.location || 'Remote'}</span>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: '500' }}>{formatStipend(opp)}</span>
                     </div>
 
                     <p style={styles.oppDesc}>{opp.description}</p>
@@ -364,13 +352,13 @@ export function OpportunityMarketplaceView() {
                     {opp.requiredSkills?.length > 0 && (
                       <div style={styles.skillChipsWrap}>
                         {opp.requiredSkills.slice(0, 4).map((s, idx) => (
-                          <span key={idx} className="badge badge-mist" style={{ fontSize: '10px' }}>
+                          <span key={idx} className="badge" style={{ fontSize: '10px', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' }}>
                             {typeof s === 'string' ? s : s.name}
                           </span>
                         ))}
                         {opp.requiredSkills.length > 4 && (
-                          <span style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>
-                            +{opp.requiredSkills.length - 4} more
+                          <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', alignSelf: 'center' }}>
+                            +{opp.requiredSkills.length - 4}
                           </span>
                         )}
                       </div>
@@ -380,7 +368,7 @@ export function OpportunityMarketplaceView() {
                   <div style={styles.cardActions}>
                     <button
                       onClick={() => setDetailOpp(opp)}
-                      className="btn btn-outline"
+                      className="btn btn-ghost"
                       style={{ fontSize: 'var(--font-size-xs)', flex: 1 }}
                     >
                       View Details
@@ -389,15 +377,12 @@ export function OpportunityMarketplaceView() {
                     {statusInfo ? (
                       <button
                         disabled
-                        className="btn"
+                        className="btn btn-ghost"
                         style={{
                           fontSize: 'var(--font-size-xs)',
                           flex: 1,
-                          backgroundColor: statusInfo.btnBg,
-                          color: statusInfo.btnColor,
-                          border: `1px solid ${statusInfo.btnBorder}`,
+                          opacity: 0.7,
                           cursor: 'default',
-                          fontWeight: 600,
                         }}
                       >
                         {statusInfo.label}
@@ -438,75 +423,63 @@ export function OpportunityMarketplaceView() {
                 <div
                   key={opp.id}
                   className="card"
-                  style={{
-                    ...styles.oppCard,
-                    borderColor: statusInfo ? statusInfo.badgeBorder : matchScore >= 75 ? 'var(--color-primary)' : 'var(--color-border)',
-                  }}
+                  style={styles.oppCard}
                 >
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
                       <span
-                        className="badge"
+                        className="status-pill status-active"
                         style={{
-                          fontSize: '11px',
-                          fontWeight: 'bold',
-                          backgroundColor: matchScore >= 80 ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                          color: matchScore >= 80 ? '#15803d' : '#b45309',
-                          border: '1px solid currentColor',
+                          fontSize: '10px',
+                          fontWeight: '600',
+                          fontVariantNumeric: 'tabular-nums',
                         }}
                       >
-                        ⚡ {matchScore}% Match Index
+                        <span className="status-pill-dot" />
+                        {matchScore}% Match Index
                       </span>
 
                       <div style={{ display: 'flex', gap: '4px' }}>
                         {statusInfo && (
-                          <span
-                            className="badge"
-                            style={{
-                              backgroundColor: statusInfo.badgeBg,
-                              color: statusInfo.badgeColor,
-                              border: `1px solid ${statusInfo.badgeBorder}`,
-                              fontSize: '11px',
-                              fontWeight: 600,
-                            }}
-                          >
+                          <span className={`status-pill ${statusInfo.label === 'Applied' ? 'status-verified' : 'status-rejected'}`} style={{ fontSize: '10px' }}>
+                            <span className="status-pill-dot" />
                             {statusInfo.label}
                           </span>
                         )}
-                        <span className="badge badge-sky" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                        <span className="badge badge-role" style={{ fontSize: '10px', textTransform: 'capitalize' }}>
                           {opp.type?.replace('_', ' ')}
                         </span>
                       </div>
                     </div>
 
-                    <h4 style={{ color: 'var(--color-primary)', marginBottom: '2px' }}>{opp.title}</h4>
+                    <h4 style={{ color: 'var(--color-text-main)', margin: '0 0 2px 0', fontSize: 'var(--font-size-base)', fontWeight: '600' }}>{opp.title}</h4>
                     <div style={styles.companyName}>
-                      🏢 {opp.companyName || opp.company?.companyName || 'Corporate Partner'}
+                      {opp.companyName || opp.company?.companyName || 'Corporate Partner'}
                     </div>
 
                     <div style={styles.metaRow}>
-                      <span>📍 {opp.location || 'Flexible'}</span>
-                      <span>💰 {formatStipend(opp)}</span>
+                      <span>{opp.location || 'Flexible'}</span>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: '500' }}>{formatStipend(opp)}</span>
                     </div>
 
                     {/* Matched vs Missing Skills */}
                     <div style={{ margin: 'var(--space-2) 0', fontSize: '11px' }}>
                       {matchItem.matchedSkills?.length > 0 && (
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                          <span style={{ color: '#15803d', fontWeight: 'bold' }}>Matched:</span>
+                          <span style={{ color: 'var(--color-text-muted)', fontSize: '10px' }}>Matched:</span>
                           {matchItem.matchedSkills.map((ms, i) => (
-                            <span key={i} className="badge" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#15803d', fontSize: '10px' }}>
-                              ✓ {ms}
+                            <span key={i} className="badge" style={{ backgroundColor: 'var(--color-mist-light)', color: 'var(--color-text-main)', border: '1px solid var(--color-border)', fontSize: '10px' }}>
+                              {ms}
                             </span>
                           ))}
                         </div>
                       )}
                       {matchItem.missingSkills?.length > 0 && (
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                          <span style={{ color: '#b45309', fontWeight: 'bold' }}>Growth Gaps:</span>
+                          <span style={{ color: 'var(--color-text-muted)', fontSize: '10px' }}>Growth:</span>
                           {matchItem.missingSkills.map((ms, i) => (
-                            <span key={i} className="badge" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', color: '#b45309', fontSize: '10px' }}>
-                              • {ms}
+                            <span key={i} className="badge" style={{ backgroundColor: 'transparent', color: 'var(--color-text-muted)', border: '1px dashed var(--color-border)', fontSize: '10px' }}>
+                              {ms}
                             </span>
                           ))}
                         </div>
@@ -517,7 +490,7 @@ export function OpportunityMarketplaceView() {
                   <div style={styles.cardActions}>
                     <button
                       onClick={() => setDetailOpp(opp)}
-                      className="btn btn-outline"
+                      className="btn btn-ghost"
                       style={{ fontSize: 'var(--font-size-xs)', flex: 1 }}
                     >
                       View Details
@@ -526,15 +499,12 @@ export function OpportunityMarketplaceView() {
                     {statusInfo ? (
                       <button
                         disabled
-                        className="btn"
+                        className="btn btn-ghost"
                         style={{
                           fontSize: 'var(--font-size-xs)',
                           flex: 1,
-                          backgroundColor: statusInfo.btnBg,
-                          color: statusInfo.btnColor,
-                          border: `1px solid ${statusInfo.btnBorder}`,
+                          opacity: 0.7,
                           cursor: 'default',
-                          fontWeight: 600,
                         }}
                       >
                         {statusInfo.label}
@@ -562,21 +532,21 @@ export function OpportunityMarketplaceView() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            Previous
+            ← Previous
           </button>
-          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
             Page {page} of {meta.totalPages} ({meta.total} positions)
           </span>
           <button
             onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
             disabled={page >= meta.totalPages}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            Next
+            Next →
           </button>
         </div>
       )}
@@ -587,12 +557,12 @@ export function OpportunityMarketplaceView() {
           <div className="card" style={styles.largeModalCard}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-3)' }}>
               <div>
-                <span className="badge badge-sky" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
+                <span className="badge badge-role" style={{ fontSize: '10px', textTransform: 'capitalize' }}>
                   {detailOpp.type?.replace('_', ' ')}
                 </span>
-                <h3 style={{ color: 'var(--color-primary)', marginTop: 'var(--space-1)' }}>{detailOpp.title}</h3>
-                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
-                  🏢 {detailOpp.companyName || 'Verified Corporate Partner'} • 📍 {detailOpp.location || 'Remote'} ({detailOpp.workMode})
+                <h3 style={{ margin: '4px 0 2px 0', fontSize: 'var(--font-size-lg)', fontWeight: '600' }}>{detailOpp.title}</h3>
+                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
+                  {detailOpp.companyName || 'Verified Corporate Partner'} • {detailOpp.location || 'Remote'} ({detailOpp.workMode})
                 </div>
               </div>
               <button onClick={() => setDetailOpp(null)} style={styles.closeIcon}>×</button>
@@ -630,26 +600,26 @@ export function OpportunityMarketplaceView() {
             })()}
 
             <div style={{ overflowY: 'auto', flex: 1, paddingRight: '4px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-2)', padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: 'var(--space-3)', fontSize: 'var(--font-size-xs)' }}>
-                <div>💰 <strong>Compensation:</strong> {formatStipend(detailOpp)}</div>
-                <div>📅 <strong>Deadline:</strong> {detailOpp.deadline ? new Date(detailOpp.deadline).toLocaleDateString() : 'Rolling Application'}</div>
-                <div>👥 <strong>Openings:</strong> {detailOpp.openings || 'Multiple Positions'}</div>
-                <div>💼 <strong>Category:</strong> {detailOpp.category || 'Engineering'}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: 'var(--space-2)', padding: 'var(--space-3)', backgroundColor: 'var(--color-mist-light)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', marginBottom: 'var(--space-3)', fontSize: 'var(--font-size-xs)' }}>
+                <div><strong>Compensation:</strong> <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatStipend(detailOpp)}</span></div>
+                <div><strong>Deadline:</strong> {detailOpp.deadline ? new Date(detailOpp.deadline).toLocaleDateString() : 'Rolling'}</div>
+                <div><strong>Openings:</strong> {detailOpp.openings || 'Multiple Positions'}</div>
+                <div><strong>Category:</strong> {detailOpp.category || 'Engineering'}</div>
               </div>
 
               <div style={{ marginBottom: 'var(--space-3)' }}>
-                <h5 style={{ textTransform: 'uppercase', fontSize: 'var(--font-size-xs)', color: 'var(--color-primary)' }}>Role Description</h5>
-                <p style={{ fontSize: 'var(--font-size-sm)', lineHeight: 1.6, color: 'var(--color-text)', whiteSpace: 'pre-wrap', marginTop: '4px' }}>
+                <h5 style={{ textTransform: 'uppercase', fontSize: '10px', color: 'var(--color-text-muted)', letterSpacing: '0.04em', margin: '0 0 4px 0' }}>Role Description</h5>
+                <p style={{ fontSize: 'var(--font-size-xs)', lineHeight: 1.5, color: 'var(--color-text-main)', whiteSpace: 'pre-wrap', margin: 0 }}>
                   {detailOpp.description}
                 </p>
               </div>
 
               {detailOpp.requiredSkills?.length > 0 && (
                 <div style={{ marginBottom: 'var(--space-3)' }}>
-                  <h5 style={{ textTransform: 'uppercase', fontSize: 'var(--font-size-xs)', color: 'var(--color-primary)' }}>Required Technical Competencies</h5>
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
+                  <h5 style={{ textTransform: 'uppercase', fontSize: '10px', color: 'var(--color-text-muted)', letterSpacing: '0.04em', margin: '0 0 4px 0' }}>Required Competencies</h5>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     {detailOpp.requiredSkills.map((s, idx) => (
-                      <span key={idx} className="badge badge-mist" style={{ fontSize: '11px' }}>
+                      <span key={idx} className="badge" style={{ fontSize: '11px', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' }}>
                         {typeof s === 'string' ? s : `${s.name} (${s.minimumProficiency || 'Intermediate'})`}
                       </span>
                     ))}
@@ -658,8 +628,8 @@ export function OpportunityMarketplaceView() {
               )}
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-4)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)' }}>
-              <button onClick={() => setDetailOpp(null)} className="btn btn-outline">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)' }}>
+              <button onClick={() => setDetailOpp(null)} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
                 Close
               </button>
 
@@ -670,13 +640,11 @@ export function OpportunityMarketplaceView() {
                   return (
                     <button
                       disabled
-                      className="btn"
+                      className="btn btn-ghost"
                       style={{
-                        backgroundColor: sInfo.btnBg,
-                        color: sInfo.btnColor,
-                        border: `1px solid ${sInfo.btnBorder}`,
+                        fontSize: 'var(--font-size-xs)',
                         cursor: 'default',
-                        fontWeight: 600,
+                        opacity: 0.7,
                       }}
                     >
                       {sInfo.label}
@@ -691,6 +659,7 @@ export function OpportunityMarketplaceView() {
                       handleOpenApply(o);
                     }}
                     className="btn btn-primary"
+                    style={{ fontSize: 'var(--font-size-xs)' }}
                   >
                     Apply to this Position
                   </button>
@@ -706,12 +675,12 @@ export function OpportunityMarketplaceView() {
         <div style={styles.modalOverlay}>
           <div className="card" style={styles.modalCard}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
-              <h4>Apply for {applyOpp.title}</h4>
+              <h4 style={{ margin: 0, fontSize: 'var(--font-size-base)', fontWeight: '600' }}>Apply for {applyOpp.title}</h4>
               <button onClick={() => setApplyOpp(null)} style={styles.closeIcon}>×</button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
                 Submitting your verified SUTRA skill profile and portfolio to <strong>{applyOpp.companyName || 'the recruiter'}</strong>.
               </div>
 
@@ -721,7 +690,7 @@ export function OpportunityMarketplaceView() {
                   type="text"
                   value={applyForm.resumeUrl}
                   onChange={(e) => setApplyForm({ ...applyForm, resumeUrl: e.target.value })}
-                  placeholder="https://drive.google.com/... or LinkedIn / GitHub link"
+                  placeholder="https://drive.google.com/... or cloud portfolio link"
                   style={styles.input}
                 />
               </div>
@@ -731,17 +700,17 @@ export function OpportunityMarketplaceView() {
                 <textarea
                   value={applyForm.coverLetter}
                   onChange={(e) => setApplyForm({ ...applyForm, coverLetter: e.target.value })}
-                  placeholder="Explain why you are an exceptional fit for this opening..."
+                  placeholder="Explain your relevant project experience and alignment..."
                   style={{ ...styles.input, minHeight: '90px' }}
                 />
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-4)' }}>
-              <button onClick={() => setApplyOpp(null)} className="btn btn-outline">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-3)' }}>
+              <button onClick={() => setApplyOpp(null)} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
                 Cancel
               </button>
-              <button onClick={handleApplySubmit} disabled={applying} className="btn btn-primary">
+              <button onClick={handleApplySubmit} disabled={applying} className="btn btn-primary" style={{ fontSize: 'var(--font-size-xs)' }}>
                 {applying ? 'Submitting Application...' : 'Confirm & Apply'}
               </button>
             </div>
@@ -756,29 +725,26 @@ const styles = {
   container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
   headerRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' },
   description: { fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' },
-  tabPillGroup: { display: 'flex', gap: 'var(--space-2)', borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-2)' },
-  pillBtn: { border: 'none', background: 'none', padding: '6px 14px', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 500 },
-  activePill: { backgroundColor: 'var(--color-primary)', color: '#fff', fontWeight: 600 },
   filterBar: { display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap', alignItems: 'center' },
-  searchInput: { flex: '1 1 200px', minWidth: '180px', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)' },
-  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)' },
-  input: { width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)' },
-  cardGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 'var(--space-3)' },
-  oppCard: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' },
-  companyName: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-2)' },
+  searchInput: { flex: '1 1 180px', minWidth: '140px', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)' },
+  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)' },
+  input: { width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)' },
+  cardGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 'var(--space-3)' },
+  oppCard: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between' },
+  companyName: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-2)' },
   metaRow: { display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: 'var(--space-2)' },
   oppDesc: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', lineHeight: 1.4, maxHeight: '42px', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom: 'var(--space-2)' },
   skillChipsWrap: { display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: 'var(--space-2)' },
-  cardActions: { display: 'flex', gap: 'var(--space-2)', borderTop: '1px solid var(--color-border-subtle)', paddingTop: 'var(--space-2)', marginTop: 'var(--space-2)' },
-  feedbackBox: { padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)' },
-  closeFeedback: { fontSize: '18px', cursor: 'pointer', color: 'inherit' },
-  closeIcon: { background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: 'var(--color-text-muted)' },
-  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'var(--space-4)' },
-  modalCard: { maxWidth: '480px', width: '100%' },
-  largeModalCard: { maxWidth: '640px', width: '100%', maxHeight: '85vh', display: 'flex', flexDirection: 'column' },
+  cardActions: { display: 'flex', gap: 'var(--space-2)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-2)', marginTop: 'var(--space-2)' },
+  feedbackBox: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-xs)' },
+  closeFeedback: { fontSize: '16px', cursor: 'pointer', color: 'inherit', background: 'none', border: 'none' },
+  closeIcon: { background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'var(--color-text-muted)' },
+  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'clamp(8px, 2vw, 16px)' },
+  modalCard: { maxWidth: '440px', width: '100%', maxHeight: '90vh', overflowY: 'auto' },
+  largeModalCard: { maxWidth: '600px', width: '100%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' },
   label: { display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)', marginBottom: '4px' },
   paginationRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'var(--space-2)' },
-  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
+  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
   spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
 };
 

@@ -81,13 +81,13 @@ export const MentorDiscoveryView = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Search Header */}
-      <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
+      <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#f8fafc' }}>
-              🤝 Industry & Academic Mentor Discovery
+            <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 600 }}>
+              Industry & Academic Mentor Discovery
             </h3>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
               Connect with senior faculty researchers, industry technical leaders, and specialized subject-matter experts.
             </p>
           </div>
@@ -99,11 +99,19 @@ export const MentorDiscoveryView = () => {
             placeholder="Search by expertise (e.g. Machine Learning, Cloud, VLSI, Cybersecurity)..."
             value={searchExpertise}
             onChange={(e) => setSearchExpertise(e.target.value)}
-            style={{ flex: 1, minWidth: '260px', padding: '0.55rem 0.85rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+            style={{
+              flex: 1,
+              minWidth: '260px',
+              padding: '0.55rem 0.85rem',
+              border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+              borderRadius: '6px',
+              fontSize: '0.875rem',
+            }}
           />
           <button
             type="submit"
-            style={{ padding: '0.55rem 1.25rem', background: '#38bdf8', color: '#0f172a', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}
+            className="btn-primary"
+            style={{ fontSize: '0.8125rem', padding: '0.55rem 1.25rem' }}
           >
             Filter Mentors
           </button>
@@ -112,17 +120,24 @@ export const MentorDiscoveryView = () => {
 
       {/* Loading state */}
       {loading && (
-        <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-          <div style={{ margin: '0 auto 1rem', width: '32px', height: '32px', border: '3px solid #334155', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
           <p>Discovering available mentors across institutions and industry networks...</p>
         </div>
       )}
 
       {/* Error state */}
       {error && !loading && (
-        <div style={{ padding: '1.25rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '8px', color: '#fca5a5' }}>
-          <h4 style={{ margin: '0 0 0.35rem', color: '#ef4444' }}>Error Discovering Mentors</h4>
-          <p style={{ margin: 0, fontSize: '0.9rem' }}>{error}</p>
+        <div
+          style={{
+            padding: '1rem 1.25rem',
+            backgroundColor: 'rgba(114, 16, 16, 0.08)',
+            border: '1px solid rgba(114, 16, 16, 0.25)',
+            borderRadius: '6px',
+            color: 'var(--color-burgundy-red, #721010)',
+          }}
+        >
+          <h4 style={{ margin: '0 0 0.25rem', fontSize: '0.9rem', fontWeight: 600 }}>Error Discovering Mentors</h4>
+          <p style={{ margin: 0, fontSize: '0.8125rem' }}>{error}</p>
         </div>
       )}
 
@@ -130,12 +145,21 @@ export const MentorDiscoveryView = () => {
       {!loading && !error && (
         <div>
           {mentors.length === 0 ? (
-            <div style={{ padding: '3.5rem', textAlign: 'center', background: '#1e293b', borderRadius: '12px', border: '1px solid #334155', color: '#64748b' }}>
-              <p style={{ margin: 0, fontSize: '1rem' }}>No mentors found matching your expertise filter.</p>
-              <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem' }}>Try searching with broader terms or clear the filter.</p>
+            <div
+              style={{
+                padding: '3.5rem',
+                textAlign: 'center',
+                backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                borderRadius: '6px',
+                border: '1px dashed var(--color-pebble-grey, #BCBDB8)',
+                color: 'var(--text-muted)',
+              }}
+            >
+              <p style={{ margin: 0, fontSize: '0.95rem', fontWeight: 500 }}>No mentors found matching your expertise filter.</p>
+              <p style={{ margin: '0.5rem 0 0', fontSize: '0.8125rem' }}>Try searching with broader terms or clear the filter.</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
               {mentors.map((m) => {
                 const expertise = m.expertise || [];
                 const slots = m.slots || [];
@@ -143,72 +167,73 @@ export const MentorDiscoveryView = () => {
                 return (
                   <div
                     key={m.mentorId}
+                    className="card"
                     style={{
-                      background: '#1e293b',
-                      borderRadius: '12px',
-                      border: '1px solid #334155',
-                      padding: '1.25rem',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       gap: '1rem',
+                      padding: '1.25rem',
                     }}
                   >
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
                         <div>
-                          <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#f8fafc', fontWeight: 600 }}>
+                          <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>
                             {m.name || 'Verified Academician / Mentor'}
                           </h4>
-                          <div style={{ fontSize: '0.8rem', color: '#38bdf8', marginTop: '0.2rem' }}>
-                            {m.designation || 'Faculty'} • {m.institution || 'Demo Institute'}
+                          <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                            {m.designation || 'Faculty'} &middot; {m.institution || 'Configured Institute'}
                           </div>
                         </div>
-                        <span style={{ background: '#065f46', color: '#34d399', fontSize: '0.7rem', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 600 }}>
+                        <span className="status-pill status-verified" style={{ fontSize: '0.7rem' }}>
+                          <span className="status-pill-dot" />
                           Available
                         </span>
                       </div>
 
                       {/* Expertise tags */}
                       <div style={{ marginTop: '0.85rem' }}>
-                        <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.35rem' }}>Core Domains:</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Core Domains:</div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
                           {expertise.slice(0, 5).map((exp, eIdx) => (
-                            <span key={eIdx} style={{ background: '#0f172a', border: '1px solid #334155', color: '#cbd5e1', fontSize: '0.75rem', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>
+                            <span
+                              key={eIdx}
+                              style={{
+                                backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                                color: 'var(--text-main)',
+                                fontSize: '0.75rem',
+                                padding: '0.15rem 0.45rem',
+                                borderRadius: '4px',
+                              }}
+                            >
                               {exp}
                             </span>
                           ))}
                           {expertise.length > 5 && (
-                            <span style={{ color: '#64748b', fontSize: '0.75rem', alignSelf: 'center' }}>+{expertise.length - 5}</span>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', alignSelf: 'center' }}>+{expertise.length - 5}</span>
                           )}
-                          {expertise.length === 0 && <span style={{ color: '#64748b', fontSize: '0.75rem', fontStyle: 'italic' }}>General</span>}
+                          {expertise.length === 0 && <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontStyle: 'italic' }}>General</span>}
                         </div>
                       </div>
 
                       {/* Schedule preview */}
                       {slots.length > 0 && (
-                        <div style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: '#94a3b8' }}>
-                          🗓️ Active Slots: <strong style={{ color: '#f8fafc' }}>{slots[0].day} ({slots[0].from} - {slots[0].to})</strong>
+                        <div style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          Active Slots: <strong style={{ color: 'var(--text-main)' }}>{slots[0].day} ({slots[0].from} - {slots[0].to})</strong>
                           {slots.length > 1 && ` +${slots.length - 1} more`}
                         </div>
                       )}
                     </div>
 
-                    <div style={{ borderTop: '1px solid #0f172a', paddingTop: '0.75rem', display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'flex-end' }}>
                       <button
                         onClick={() => handleOpenModal(m)}
-                        style={{
-                          padding: '0.45rem 1rem',
-                          background: '#38bdf8',
-                          color: '#0f172a',
-                          border: 'none',
-                          borderRadius: '6px',
-                          fontWeight: 700,
-                          fontSize: '0.8rem',
-                          cursor: 'pointer',
-                        }}
+                        className="btn-primary"
+                        style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}
                       >
-                        Request Mentorship Session ↗
+                        Request Mentorship Session
                       </button>
                     </div>
                   </div>
@@ -219,20 +244,22 @@ export const MentorDiscoveryView = () => {
 
           {/* Pagination */}
           {meta.totalPages > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
               <span>Page {meta.page} of {meta.totalPages} ({meta.total} mentors)</span>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button
                   disabled={meta.page <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                  style={{ padding: '0.35rem 0.75rem', background: '#1e293b', border: '1px solid #334155', color: '#fff', borderRadius: '4px', cursor: meta.page <= 1 ? 'not-allowed' : 'pointer' }}
+                  className="btn-outline"
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
                 >
                   Previous
                 </button>
                 <button
                   disabled={meta.page >= meta.totalPages}
                   onClick={() => setCurrentPage((p) => p + 1)}
-                  style={{ padding: '0.35rem 0.75rem', background: '#1e293b', border: '1px solid #334155', color: '#fff', borderRadius: '4px', cursor: meta.page >= meta.totalPages ? 'not-allowed' : 'pointer' }}
+                  className="btn-outline"
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
                 >
                   Next
                 </button>
@@ -244,39 +271,82 @@ export const MentorDiscoveryView = () => {
 
       {/* Request Mentorship Modal */}
       {selectedMentor && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', width: '100%', maxWidth: '480px', padding: '1.75rem' }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.45)',
+            backdropFilter: 'blur(2px)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+        >
+          <div
+            className="card"
+            style={{
+              width: '100%',
+              maxWidth: 'min(95vw, 480px)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              padding: '1.5rem',
+              backgroundColor: '#ffffff',
+            }}
+          >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#f8fafc' }}>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 600 }}>
                 Request Mentorship Connection
               </h3>
               <button
                 onClick={() => setSelectedMentor(null)}
-                style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '1.2rem', cursor: 'pointer' }}
+                className="btn-ghost"
+                style={{ padding: '0.2rem 0.5rem', fontSize: '1rem' }}
               >
                 ✕
               </button>
             </div>
 
-            <p style={{ margin: '0 0 1rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
-              Connecting with: <strong style={{ color: '#38bdf8' }}>{selectedMentor.name}</strong> ({selectedMentor.institution})
+            <p style={{ margin: '0 0 1rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+              Connecting with: <strong style={{ color: 'var(--text-main)' }}>{selectedMentor.name}</strong> ({selectedMentor.institution})
             </p>
 
             {requestError && (
-              <div style={{ padding: '0.65rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '6px', color: '#fca5a5', marginBottom: '1rem', fontSize: '0.8rem' }}>
+              <div
+                style={{
+                  padding: '0.65rem 0.85rem',
+                  backgroundColor: 'rgba(114, 16, 16, 0.08)',
+                  border: '1px solid rgba(114, 16, 16, 0.25)',
+                  borderRadius: '6px',
+                  color: 'var(--color-burgundy-red, #721010)',
+                  marginBottom: '1rem',
+                  fontSize: '0.8125rem',
+                }}
+              >
                 {requestError}
               </div>
             )}
 
             {requestSuccess && (
-              <div style={{ padding: '0.65rem', background: '#064e3b', border: '1px solid #059669', borderRadius: '6px', color: '#a7f3d0', marginBottom: '1rem', fontSize: '0.8rem' }}>
+              <div
+                style={{
+                  padding: '0.65rem 0.85rem',
+                  backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  borderRadius: '6px',
+                  color: '#065f46',
+                  marginBottom: '1rem',
+                  fontSize: '0.8125rem',
+                }}
+              >
                 ✓ {requestSuccess}
               </div>
             )}
 
             <form onSubmit={handleSendRequest} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.35rem' }}>
                   Mentorship Topic / Focus Area *
                 </label>
                 <input
@@ -285,12 +355,19 @@ export const MentorDiscoveryView = () => {
                   placeholder="e.g. Research grant guidance, Curriculum design, PhD advisory"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem',
+                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    borderRadius: '6px',
+                    fontSize: '0.875rem',
+                    boxSizing: 'border-box',
+                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.35rem' }}>
                   Introduction & Message (Optional)
                 </label>
                 <textarea
@@ -298,7 +375,15 @@ export const MentorDiscoveryView = () => {
                   placeholder="Share details about your objectives or specific questions..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem',
+                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                    borderRadius: '6px',
+                    fontSize: '0.875rem',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                  }}
                 />
               </div>
 
@@ -306,24 +391,14 @@ export const MentorDiscoveryView = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedMentor(null)}
-                  style={{ padding: '0.5rem 1rem', background: '#334155', color: '#cbd5e1', border: 'none', borderRadius: '6px', fontSize: '0.85rem', cursor: 'pointer' }}
+                  className="btn-ghost"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={sendingRequest || !topic.trim()}
-                  style={{
-                    padding: '0.5rem 1.25rem',
-                    background: '#38bdf8',
-                    color: '#0f172a',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    cursor: sendingRequest || !topic.trim() ? 'not-allowed' : 'pointer',
-                    opacity: sendingRequest || !topic.trim() ? 0.6 : 1,
-                  }}
+                  className="btn-primary"
                 >
                   {sendingRequest ? 'Sending...' : 'Send Request'}
                 </button>

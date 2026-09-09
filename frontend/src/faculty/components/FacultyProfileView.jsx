@@ -166,114 +166,197 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Top Banner Card */}
-      <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-              <h2 style={{ margin: 0, fontSize: '1.35rem', color: '#f8fafc' }}>
-                {formData.designation ? `${formData.designation} Profile` : 'Faculty Profile'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
+              <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>
+                {formData.designation ? `${formData.designation} Dossier` : 'Faculty Profile Dossier'}
               </h2>
-              <span style={{ background: '#0284c7', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>
+              <span
+                style={{
+                  backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+                  color: 'var(--color-burgundy-red, #721010)',
+                  padding: '0.2rem 0.5rem',
+                  borderRadius: '4px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Academician
               </span>
               {formData.openToMentorship && (
-                <span style={{ background: '#065f46', color: '#34d399', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
-                  🤝 Active Mentor
+                <span className="status-pill status-verified" style={{ fontSize: '0.75rem' }}>
+                  <span className="status-pill-dot" />
+                  Active Mentor
                 </span>
               )}
             </div>
-            <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
-              Institution: <strong style={{ color: '#cbd5e1' }}>{formData.institution || 'Demo Institute'}</strong> • Experience: {formData.experienceYears} Years
+            <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+              Institution: <strong style={{ color: 'var(--text-main)' }}>{formData.institution || 'Configured Institute'}</strong> &middot; Experience: {formData.experienceYears} Years
             </p>
           </div>
 
-          <div style={{ minWidth: '200px', background: '#0f172a', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #334155' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
-              <span>Profile Completeness:</span>
-              <strong style={{ color: completeness >= 80 ? '#34d399' : '#38bdf8' }}>{completeness}%</strong>
+          <div
+            style={{
+              minWidth: '220px',
+              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+              padding: '0.75rem 1rem',
+              borderRadius: '6px',
+              border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+              <span>Dossier Completeness</span>
+              <strong style={{ color: completeness >= 80 ? '#065f46' : 'var(--color-burgundy-red, #721010)' }}>{completeness}%</strong>
             </div>
-            <div style={{ height: '6px', background: '#1e293b', borderRadius: '3px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${completeness}%`, background: completeness >= 80 ? '#34d399' : '#38bdf8' }} />
+            <div style={{ height: '6px', backgroundColor: 'var(--color-pebble-grey, #BCBDB8)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div
+                style={{
+                  height: '100%',
+                  width: `${completeness}%`,
+                  backgroundColor: completeness >= 80 ? '#10b981' : 'var(--color-burgundy-red, #721010)',
+                  transition: 'width 0.3s ease',
+                }}
+              />
             </div>
           </div>
         </div>
       </div>
 
       {/* Edit Form */}
-      <form onSubmit={handleSave} style={{ background: '#1e293b', padding: '1.75rem', borderRadius: '12px', border: '1px solid #334155' }}>
-        <h3 style={{ margin: '0 0 1.25rem', fontSize: '1.15rem', color: '#f8fafc', borderBottom: '1px solid #334155', paddingBottom: '0.75rem' }}>
-          🎓 Academic Details & Affiliation
-        </h3>
+      <form onSubmit={handleSave} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+        <div>
+          <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.05rem', fontWeight: 600 }}>
+            Academic Affiliation & Credentials
+          </h3>
+          <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+            Institutional tenure, professional designations, and verified qualifications.
+          </p>
+        </div>
 
         {error && (
-          <div style={{ padding: '0.75rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '6px', color: '#fca5a5', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              padding: '0.75rem 1rem',
+              backgroundColor: 'rgba(114, 16, 16, 0.08)',
+              border: '1px solid rgba(114, 16, 16, 0.25)',
+              borderRadius: '6px',
+              color: 'var(--color-burgundy-red, #721010)',
+              fontSize: '0.8125rem',
+            }}
+          >
             {error}
           </div>
         )}
 
         {successMsg && (
-          <div style={{ padding: '0.75rem', background: '#064e3b', border: '1px solid #059669', borderRadius: '6px', color: '#a7f3d0', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              padding: '0.75rem 1rem',
+              backgroundColor: 'rgba(16, 185, 129, 0.08)',
+              border: '1px solid rgba(16, 185, 129, 0.25)',
+              borderRadius: '6px',
+              color: '#065f46',
+              fontSize: '0.8125rem',
+            }}
+          >
             ✓ {successMsg}
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.25rem' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.35rem' }}>Current Institution *</label>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.35rem' }}>
+              Current Institution *
+            </label>
             <input
               type="text"
               required
-              placeholder="e.g. Demo Institute / National University"
+              placeholder="e.g. National Institute of Technology"
               value={formData.institution}
               onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '6px', fontSize: '0.9rem' }}
+              style={{
+                width: '100%',
+                padding: '0.6rem 0.75rem',
+                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.35rem' }}>Academic Designation *</label>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.35rem' }}>
+              Academic Designation *
+            </label>
             <input
               type="text"
               required
-              placeholder="e.g. Associate Professor, Professor, Dean"
+              placeholder="e.g. Associate Professor, Department Chair"
               value={formData.designation}
               onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '6px', fontSize: '0.9rem' }}
+              style={{
+                width: '100%',
+                padding: '0.6rem 0.75rem',
+                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.35rem' }}>Years of Experience</label>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.35rem' }}>
+              Years of Professional Experience
+            </label>
             <input
               type="number"
               min="0"
               max="70"
               value={formData.experienceYears}
               onChange={(e) => setFormData({ ...formData, experienceYears: e.target.value })}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '6px', fontSize: '0.9rem' }}
+              style={{
+                width: '100%',
+                padding: '0.6rem 0.75rem',
+                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             />
           </div>
 
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.35rem' }}>
               Domain & Technical Expertise (Comma-separated)
             </label>
             <input
               type="text"
-              placeholder="Machine Learning, Data Structures, Distributed Systems, Cloud Architecture..."
+              placeholder="Machine Learning, Distributed Systems, Cloud Architecture..."
               value={formData.expertiseStr}
               onChange={(e) => setFormData({ ...formData, expertiseStr: e.target.value })}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '6px', fontSize: '0.9rem' }}
+              style={{
+                width: '100%',
+                padding: '0.6rem 0.75rem',
+                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             />
-            <span style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', display: 'block' }}>
-              These skills match student mentorship requests and collaborative research proposals.
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'block' }}>
+              Skills match student mentorship queries and collaborative research opportunities.
             </span>
           </div>
 
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.35rem' }}>
               Academic Qualifications & Degrees (Comma-separated)
             </label>
             <input
@@ -281,158 +364,210 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
               placeholder="Ph.D. in Computer Science, M.Tech, B.Tech..."
               value={formData.qualificationsStr}
               onChange={(e) => setFormData({ ...formData, qualificationsStr: e.target.value })}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '6px', fontSize: '0.9rem' }}
+              style={{
+                width: '100%',
+                padding: '0.6rem 0.75rem',
+                border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                boxSizing: 'border-box',
+              }}
             />
           </div>
         </div>
 
         {/* Mentorship & Consultancy Availability Section */}
-        <h3 style={{ margin: '2rem 0 1.25rem', fontSize: '1.15rem', color: '#f8fafc', borderBottom: '1px solid #334155', paddingBottom: '0.75rem' }}>
-          🤝 Mentorship & Consultancy Availability
-        </h3>
+        <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '1.25rem' }}>
+          <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.05rem', fontWeight: 600 }}>
+            Mentorship & Consultancy Availability
+          </h3>
+          <p style={{ margin: '0 0 1rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+            Configure open channels for student guidance and industrial consulting engagements.
+          </p>
 
-        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#f8fafc', fontSize: '0.9rem', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={formData.openToMentorship}
-              onChange={(e) => setFormData({ ...formData, openToMentorship: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: '#38bdf8', cursor: 'pointer' }}
-            />
-            Open to Student & Peer Mentorship
-          </label>
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={formData.openToMentorship}
+                onChange={(e) => setFormData({ ...formData, openToMentorship: e.target.checked })}
+                style={{ width: '16px', height: '16px', accentColor: 'var(--color-burgundy-red, #721010)', cursor: 'pointer' }}
+              />
+              Open to Student & Peer Mentorship
+            </label>
 
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#f8fafc', fontSize: '0.9rem', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={formData.openToConsultancy}
-              onChange={(e) => setFormData({ ...formData, openToConsultancy: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: '#38bdf8', cursor: 'pointer' }}
-            />
-            Open to Industrial Technical Consultancy
-          </label>
-        </div>
-
-        {/* Availability Schedule Slots Builder */}
-        <div style={{ background: '#0f172a', padding: '1.25rem', borderRadius: '8px', border: '1px solid #334155', marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <div>
-              <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#f8fafc' }}>Weekly Availability Schedule Slots</h4>
-              <p style={{ margin: '0.2rem 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>Define weekly hours when students and industry peers can request 1-on-1 sessions.</p>
-            </div>
-            <button
-              type="button"
-              onClick={addSlot}
-              style={{ padding: '0.35rem 0.75rem', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.8rem', cursor: 'pointer' }}
-            >
-              + Add Time Slot
-            </button>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={formData.openToConsultancy}
+                onChange={(e) => setFormData({ ...formData, openToConsultancy: e.target.checked })}
+                style={{ width: '16px', height: '16px', accentColor: 'var(--color-burgundy-red, #721010)', cursor: 'pointer' }}
+              />
+              Open to Industrial Technical Consultancy
+            </label>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-            {formData.slots.map((slot, sIdx) => (
-              <div key={sIdx} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                <select
-                  value={slot.day}
-                  onChange={(e) => handleSlotChange(sIdx, 'day', e.target.value)}
-                  style={{ padding: '0.45rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '4px', color: '#fff', fontSize: '0.85rem' }}
-                >
-                  {DAYS_OF_WEEK.map((d) => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>From:</span>
-                  <input
-                    type="time"
-                    value={slot.from}
-                    onChange={(e) => handleSlotChange(sIdx, 'from', e.target.value)}
-                    style={{ padding: '0.45rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '4px', color: '#fff', fontSize: '0.85rem' }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>To:</span>
-                  <input
-                    type="time"
-                    value={slot.to}
-                    onChange={(e) => handleSlotChange(sIdx, 'to', e.target.value)}
-                    style={{ padding: '0.45rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '4px', color: '#fff', fontSize: '0.85rem' }}
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => removeSlot(sIdx)}
-                  style={{ background: 'transparent', border: 'none', color: '#ef4444', fontSize: '1.1rem', cursor: 'pointer', marginLeft: 'auto' }}
-                >
-                  ✕
-                </button>
+          {/* Availability Schedule Slots Builder */}
+          <div
+            style={{
+              backgroundColor: 'var(--color-mist-green, #E0E4DE)',
+              padding: '1.25rem',
+              borderRadius: '6px',
+              border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.875rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div>
+                <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600 }}>Weekly Availability Time Slots</h4>
+                <p style={{ margin: '0.2rem 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  Define recurring availability when students and industry partners can book 1-on-1 sessions.
+                </p>
               </div>
-            ))}
+              <button
+                type="button"
+                onClick={addSlot}
+                className="btn-outline"
+                style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem' }}
+              >
+                + Add Time Slot
+              </button>
+            </div>
 
-            {formData.slots.length === 0 && (
-              <span style={{ color: '#64748b', fontSize: '0.85rem', fontStyle: 'italic' }}>
-                No fixed schedule slots added. Add slots to appear in the SUTRA Mentor Directory.
-              </span>
-            )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              {formData.slots.map((slot, sIdx) => (
+                <div
+                  key={sIdx}
+                  style={{
+                    display: 'flex',
+                    gap: '0.75rem',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    backgroundColor: '#ffffff',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: '4px',
+                    border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                  }}
+                >
+                  <select
+                    value={slot.day}
+                    onChange={(e) => handleSlotChange(sIdx, 'day', e.target.value)}
+                    style={{
+                      padding: '0.35rem 0.5rem',
+                      border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                      borderRadius: '4px',
+                      fontSize: '0.8125rem',
+                    }}
+                  >
+                    {DAYS_OF_WEEK.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>From:</span>
+                    <input
+                      type="time"
+                      value={slot.from}
+                      onChange={(e) => handleSlotChange(sIdx, 'from', e.target.value)}
+                      style={{
+                        padding: '0.35rem 0.5rem',
+                        border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                        borderRadius: '4px',
+                        fontSize: '0.8125rem',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>To:</span>
+                    <input
+                      type="time"
+                      value={slot.to}
+                      onChange={(e) => handleSlotChange(sIdx, 'to', e.target.value)}
+                      style={{
+                        padding: '0.35rem 0.5rem',
+                        border: '1px solid var(--color-pebble-grey, #BCBDB8)',
+                        borderRadius: '4px',
+                        fontSize: '0.8125rem',
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => removeSlot(sIdx)}
+                    className="btn-ghost"
+                    style={{
+                      color: 'var(--color-burgundy-red, #721010)',
+                      fontSize: '0.875rem',
+                      marginLeft: 'auto',
+                      padding: '0.2rem 0.5rem',
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+
+              {formData.slots.length === 0 && (
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', fontStyle: 'italic' }}>
+                  No fixed schedule slots added. Add slots to appear in the SUTRA Mentor Directory.
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Collaboration Preferences */}
-        <h3 style={{ margin: '2rem 0 1rem', fontSize: '1.15rem', color: '#f8fafc', borderBottom: '1px solid #334155', paddingBottom: '0.75rem' }}>
-          🔬 Industry & Institutional Collaboration Preferences
-        </h3>
+        <div style={{ borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '1.25rem' }}>
+          <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.05rem', fontWeight: 600 }}>
+            Industry & Institutional Collaboration Tracks
+          </h3>
+          <p style={{ margin: '0 0 1rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+            Select collaboration modes matching your academic and consulting interests.
+          </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem', marginBottom: '2rem' }}>
-          {COLLAB_OPTIONS.map((opt) => {
-            const isChecked = formData.collaborationPreferences.includes(opt.id);
-            return (
-              <label
-                key={opt.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.6rem',
-                  padding: '0.75rem',
-                  background: isChecked ? '#1e1b4b' : '#0f172a',
-                  border: `1px solid ${isChecked ? '#6366f1' : '#334155'}`,
-                  borderRadius: '6px',
-                  color: isChecked ? '#e0e7ff' : '#cbd5e1',
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={isChecked}
-                  onChange={() => toggleCollab(opt.id)}
-                  style={{ width: '16px', height: '16px', accentColor: '#6366f1', cursor: 'pointer' }}
-                />
-                {opt.label}
-              </label>
-            );
-          })}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '0.75rem' }}>
+            {COLLAB_OPTIONS.map((opt) => {
+              const isChecked = formData.collaborationPreferences.includes(opt.id);
+              return (
+                <label
+                  key={opt.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    padding: '0.75rem',
+                    backgroundColor: isChecked ? 'var(--color-mist-green, #E0E4DE)' : '#ffffff',
+                    border: `1px solid ${isChecked ? 'var(--color-burgundy-red, #721010)' : 'var(--color-pebble-grey, #BCBDB8)'}`,
+                    borderRadius: '6px',
+                    color: isChecked ? 'var(--color-burgundy-red, #721010)' : 'var(--text-main)',
+                    fontSize: '0.8125rem',
+                    fontWeight: isChecked ? 600 : 400,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => toggleCollab(opt.id)}
+                    style={{ width: '16px', height: '16px', accentColor: 'var(--color-burgundy-red, #721010)', cursor: 'pointer' }}
+                  />
+                  {opt.label}
+                </label>
+              );
+            })}
+          </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--color-pebble-grey, #BCBDB8)', paddingTop: '1.25rem' }}>
           <button
             type="submit"
             disabled={saving}
-            style={{
-              padding: '0.75rem 2rem',
-              background: '#38bdf8',
-              color: '#0f172a',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 700,
-              fontSize: '0.95rem',
-              cursor: saving ? 'not-allowed' : 'pointer',
-              opacity: saving ? 0.7 : 1,
-            }}
+            className="btn-primary"
+            style={{ padding: '0.65rem 1.75rem', fontSize: '0.875rem' }}
           >
-            {saving ? 'Saving...' : 'Save Academic Profile'}
+            {saving ? 'Saving...' : 'Save Academic Dossier'}
           </button>
         </div>
       </form>
@@ -441,3 +576,5 @@ export const FacultyProfileView = ({ onProfileUpdated }) => {
 };
 
 export default FacultyProfileView;
+
+

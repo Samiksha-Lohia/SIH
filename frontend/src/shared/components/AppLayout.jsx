@@ -17,7 +17,7 @@ export function AppLayout() {
   return (
     <div style={styles.shell}>
       <header style={styles.header}>
-        <div className="container" style={styles.headerContent}>
+        <div className="container app-header-content">
           <div style={styles.brandGroup}>
             <Link to={homeRoute} style={styles.brandLink}>
               <span style={styles.brandTitle}>SUTRA</span>
@@ -25,13 +25,13 @@ export function AppLayout() {
             </Link>
           </div>
 
-          <div style={styles.userGroup}>
+          <div className="app-user-group">
             {role && (
               <span className="badge badge-role">
                 {ROLE_LABELS[role] || role}
               </span>
             )}
-            {user && <span style={styles.userName}>{user.name}</span>}
+            {user && <span className="app-user-name">{user.name}</span>}
             <button onClick={handleLogout} className="btn btn-outline" style={styles.logoutBtn}>
               Sign Out
             </button>
@@ -39,7 +39,7 @@ export function AppLayout() {
         </div>
       </header>
 
-      <main style={styles.main}>
+      <main className="app-main">
         <div className="container">
           <Outlet />
         </div>

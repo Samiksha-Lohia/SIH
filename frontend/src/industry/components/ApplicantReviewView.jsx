@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { industryApi } from '../industry.api.js';
 
-const STATUS_CONFIG = {
-  applied: { label: 'Applied', bg: '#1e293b', text: '#38bdf8' },
-  under_review: { label: 'Under Review', bg: '#854d0e', text: '#fde047' },
-  shortlisted: { label: 'Shortlisted', bg: '#065f46', text: '#34d399' },
-  interview: { label: 'Interview Scheduled', bg: '#0284c7', text: '#bae6fd' },
-  selected: { label: 'Selected / Hired', bg: '#047857', text: '#6ee7b7' },
-  rejected: { label: 'Rejected', bg: '#7f1d1d', text: '#fca5a5' },
-  withdrawn: { label: 'Withdrawn by Student', bg: '#334155', text: '#94a3b8' },
-};
-
 export const ApplicantReviewView = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [selectedOppId, setSelectedOppId] = useState('');
@@ -132,34 +122,70 @@ export const ApplicantReviewView = () => {
     }
   };
 
+  const renderStatusPill = (status) => {
+    switch (status) {
+      case 'shortlisted':
+      case 'interview':
+      case 'selected':
+        return (
+          <span className="status-pill status-verified">
+            <span className="status-pill-dot" />
+            {status === 'interview' ? 'Interview Scheduled' : status === 'selected' ? 'Selected / Hired' : 'Shortlisted'}
+          </span>
+        );
+      case 'under_review':
+      case 'applied':
+        return (
+          <span className="status-pill status-pending">
+            <span className="status-pill-dot" />
+            {status === 'under_review' ? 'Under Review' : 'Applied'}
+          </span>
+        );
+      case 'rejected':
+        return (
+          <span className="status-pill status-rejected">
+            <span className="status-pill-dot" />
+            Rejected
+          </span>
+        );
+      case 'withdrawn':
+      default:
+        return (
+          <span className="status-pill" style={{ background: 'var(--color-border-subtle)', color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}>
+            <span className="status-pill-dot" style={{ background: 'var(--color-text-muted)' }} />
+            {status === 'withdrawn' ? 'Withdrawn' : status}
+          </span>
+        );
+    }
+  };
+
   if (loadingOpps) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-        <div style={{ margin: '0 auto 1rem', width: '32px', height: '32px', border: '3px solid #334155', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <p>Loading application review console...</p>
+      <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+        <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Loading application review console...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
       {/* Top Controls Bar */}
-      <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="card" style={{ padding: 'var(--space-6)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#f8fafc' }}>
-              👥 Candidate Applicant Review & Pipeline Funnel
+            <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>
+              Candidate Applicant Review & Pipeline Funnel
             </h3>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
               Review student applications, shortlists, recruiter notes, and hiring stage transitions.
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap', alignItems: 'center' }}>
             <select
               value={selectedOppId}
               onChange={(e) => { setSelectedOppId(e.target.value); setCurrentPage(1); }}
-              style={{ padding: '0.55rem 0.85rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '6px', fontSize: '0.85rem', maxWidth: '300px' }}
+              style={{ padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', color: 'var(--color-text)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-xs)', maxWidth: '300px' }}
             >
               {opportunities.map((opp) => {
                 const id = opp.id || opp._id;
@@ -174,7 +200,7 @@ export const ApplicantReviewView = () => {
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-              style={{ padding: '0.55rem 0.85rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '6px', fontSize: '0.85rem' }}
+              style={{ padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', color: 'var(--color-text)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-xs)' }}
             >
               <option value="">All Application Stages</option>
               <option value="applied">Applied</option>
@@ -191,38 +217,37 @@ export const ApplicantReviewView = () => {
 
       {/* Error state */}
       {error && (
-        <div style={{ padding: '1.25rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '8px', color: '#fca5a5' }}>
-          <h4 style={{ margin: '0 0 0.35rem', color: '#ef4444' }}>Error Loading Applicants</h4>
-          <p style={{ margin: 0, fontSize: '0.9rem' }}>{error}</p>
+        <div className="card" style={{ padding: 'var(--space-6)', borderLeft: '4px solid var(--color-burgundy-red)' }}>
+          <h4 style={{ margin: '0 0 var(--space-2)', color: 'var(--color-burgundy-red)', fontSize: 'var(--font-size-md)' }}>Error Loading Applicants</h4>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>{error}</p>
         </div>
       )}
 
       {/* Loading state */}
       {loadingApplicants && (
-        <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-          <div style={{ margin: '0 auto 1rem', width: '32px', height: '32px', border: '3px solid #334155', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-          <p>Fetching applicant records and match evaluations...</p>
+        <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Fetching applicant records and match evaluations...</p>
         </div>
       )}
 
       {/* Applicants Table */}
       {!loadingApplicants && !error && (
-        <div style={{ background: '#1e293b', borderRadius: '12px', border: '1px solid #334155', overflow: 'hidden' }}>
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           {applicants.length === 0 ? (
-            <div style={{ padding: '3.5rem', textAlign: 'center', color: '#64748b' }}>
-              <p style={{ margin: 0, fontSize: '1rem' }}>No student applications found for this opportunity and filter.</p>
+            <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+              <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>No student applications found for this opportunity and filter.</p>
             </div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+            <div className="data-table-container" style={{ border: 'none' }}>
+              <table className="data-table">
                 <thead>
-                  <tr style={{ background: '#0f172a', color: '#94a3b8', borderBottom: '1px solid #334155' }}>
-                    <th style={{ padding: '1rem' }}>Candidate</th>
-                    <th style={{ padding: '1rem' }}>Match Compatibility</th>
-                    <th style={{ padding: '1rem' }}>Applied On</th>
-                    <th style={{ padding: '1rem' }}>Current Stage</th>
-                    <th style={{ padding: '1rem' }}>Recruiter Notes</th>
-                    <th style={{ padding: '1rem', textAlign: 'right' }}>Stage Actions</th>
+                  <tr>
+                    <th>Candidate</th>
+                    <th>Match Compatibility</th>
+                    <th>Applied On</th>
+                    <th>Current Stage</th>
+                    <th>Recruiter Notes</th>
+                    <th style={{ textAlign: 'right' }}>Stage Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -230,68 +255,63 @@ export const ApplicantReviewView = () => {
                     const id = app.id || app._id;
                     const applicant = app.applicant || {};
                     const score = app.matchScore || 0;
-                    const cfg = STATUS_CONFIG[app.status] || { label: app.status, bg: '#334155', text: '#cbd5e1' };
                     const notesCount = (app.recruiterNotes || []).length;
                     const isWithdrawn = app.status === 'withdrawn';
 
                     return (
-                      <tr key={id} style={{ borderBottom: '1px solid #334155' }}>
-                        <td style={{ padding: '1rem' }}>
-                          <div style={{ fontWeight: 600, color: '#f8fafc', fontSize: '0.95rem' }}>
+                      <tr key={id}>
+                        <td>
+                          <div style={{ fontWeight: 600, color: 'var(--color-primary)' }}>
                             {applicant.name || 'Student Candidate'}
                           </div>
-                          <div style={{ color: '#38bdf8', fontSize: '0.8rem', marginTop: '0.2rem' }}>
-                            ✉️ {applicant.email || 'N/A'}
+                          <div style={{ color: 'var(--color-text-secondary)', fontSize: '11px', marginTop: '2px' }}>
+                            {applicant.email || 'N/A'}
                           </div>
                         </td>
 
-                        <td style={{ padding: '1rem' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ fontSize: '1.1rem', fontWeight: 800, color: score >= 75 ? '#34d399' : score >= 50 ? '#38bdf8' : '#facc15' }}>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                            <span style={{ fontWeight: 700, color: score >= 75 ? 'var(--color-emerald)' : score >= 50 ? 'var(--color-steel-blue)' : 'var(--color-amber)' }}>
                               {score}%
                             </span>
-                            <div style={{ width: '60px', height: '6px', background: '#0f172a', borderRadius: '3px', overflow: 'hidden' }}>
-                              <div style={{ height: '100%', width: `${score}%`, background: score >= 75 ? '#34d399' : '#38bdf8' }} />
+                            <div style={{ width: '60px', height: '5px', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: '3px', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', width: `${score}%`, background: score >= 75 ? 'var(--color-emerald)' : 'var(--color-steel-blue)' }} />
                             </div>
                           </div>
                         </td>
 
-                        <td style={{ padding: '1rem', color: '#94a3b8' }}>
+                        <td style={{ color: 'var(--color-text-secondary)', fontSize: '11px' }}>
                           {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'Recent'}
                         </td>
 
-                        <td style={{ padding: '1rem' }}>
-                          <span style={{ background: cfg.bg, color: cfg.text, padding: '0.25rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                            {cfg.label}
-                          </span>
+                        <td>
+                          {renderStatusPill(app.status)}
                         </td>
 
-                        <td style={{ padding: '1rem' }}>
+                        <td>
                           <button
                             onClick={() => setShowNotesApp(app)}
+                            className="btn btn-ghost"
                             style={{
-                              padding: '0.25rem 0.6rem',
-                              background: notesCount > 0 ? '#0284c7' : '#0f172a',
-                              color: notesCount > 0 ? '#fff' : '#94a3b8',
-                              border: '1px solid #334155',
-                              borderRadius: '4px',
-                              cursor: 'pointer',
-                              fontSize: '0.75rem',
+                              padding: '2px 8px',
+                              fontSize: '11px',
+                              color: notesCount > 0 ? 'var(--color-primary)' : 'var(--color-text-muted)',
                             }}
                           >
-                            📝 {notesCount} Note{notesCount === 1 ? '' : 's'}
+                            {notesCount} Note{notesCount === 1 ? '' : 's'}
                           </button>
                         </td>
 
-                        <td style={{ padding: '1rem', textAlign: 'right' }}>
+                        <td style={{ textAlign: 'right' }}>
                           {isWithdrawn ? (
-                            <span style={{ color: '#64748b', fontSize: '0.75rem', fontStyle: 'italic' }}>Withdrawn</span>
+                            <span style={{ color: 'var(--color-text-muted)', fontSize: '11px', fontStyle: 'italic' }}>Withdrawn</span>
                           ) : (
-                            <div style={{ display: 'inline-flex', gap: '0.35rem' }}>
+                            <div style={{ display: 'inline-flex', gap: 'var(--space-1)' }}>
                               {app.status !== 'shortlisted' && (
                                 <button
                                   onClick={() => handleOpenStatusModal(app, 'shortlisted')}
-                                  style={{ padding: '0.3rem 0.55rem', background: '#065f46', color: '#34d399', border: '1px solid #059669', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
+                                  className="btn btn-ghost"
+                                  style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-emerald)' }}
                                 >
                                   Shortlist
                                 </button>
@@ -299,7 +319,8 @@ export const ApplicantReviewView = () => {
                               {app.status !== 'interview' && (
                                 <button
                                   onClick={() => handleOpenStatusModal(app, 'interview')}
-                                  style={{ padding: '0.3rem 0.55rem', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                                  className="btn btn-ghost"
+                                  style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-steel-blue)' }}
                                 >
                                   Interview
                                 </button>
@@ -307,7 +328,8 @@ export const ApplicantReviewView = () => {
                               {app.status !== 'selected' && (
                                 <button
                                   onClick={() => handleOpenStatusModal(app, 'selected')}
-                                  style={{ padding: '0.3rem 0.55rem', background: '#047857', color: '#a7f3d0', border: '1px solid #10b981', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                                  className="btn btn-ghost"
+                                  style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-emerald)', fontWeight: 700 }}
                                 >
                                   Select
                                 </button>
@@ -315,7 +337,8 @@ export const ApplicantReviewView = () => {
                               {app.status !== 'rejected' && (
                                 <button
                                   onClick={() => handleOpenStatusModal(app, 'rejected')}
-                                  style={{ padding: '0.3rem 0.55rem', background: '#450a0a', color: '#fca5a5', border: '1px solid #dc2626', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                                  className="btn btn-ghost"
+                                  style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-burgundy-red)' }}
                                 >
                                   Reject
                                 </button>
@@ -333,20 +356,22 @@ export const ApplicantReviewView = () => {
 
           {/* Pagination */}
           {meta.totalPages > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderTop: '1px solid #334155', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-3) var(--space-4)', borderTop: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
               <span>Page {meta.page} of {meta.totalPages} ({meta.total} applicants)</span>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                 <button
                   disabled={meta.page <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                  style={{ padding: '0.35rem 0.75rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '4px', cursor: meta.page <= 1 ? 'not-allowed' : 'pointer' }}
+                  className="btn btn-ghost"
+                  style={{ fontSize: '11px', padding: '3px 8px' }}
                 >
                   Previous
                 </button>
                 <button
                   disabled={meta.page >= meta.totalPages}
                   onClick={() => setCurrentPage((p) => p + 1)}
-                  style={{ padding: '0.35rem 0.75rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '4px', cursor: meta.page >= meta.totalPages ? 'not-allowed' : 'pointer' }}
+                  className="btn btn-ghost"
+                  style={{ fontSize: '11px', padding: '3px 8px' }}
                 >
                   Next
                 </button>
@@ -358,45 +383,49 @@ export const ApplicantReviewView = () => {
 
       {/* Update Status Modal */}
       {selectedApp && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', width: '100%', maxWidth: '480px', padding: '1.5rem' }}>
-            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.15rem', color: '#f8fafc' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)' }}>
+          <div className="card" style={{ width: '100%', maxWidth: 'min(95vw, 480px)', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>
               Update Application Status
             </h3>
-            <p style={{ margin: '0 0 1rem', fontSize: '0.85rem', color: '#94a3b8' }}>
-              Candidate: <strong>{selectedApp.applicant?.name}</strong> • Move to stage: <span style={{ color: '#38bdf8', textTransform: 'uppercase', fontWeight: 600 }}>{targetStatus}</span>
+            <p style={{ margin: 0, fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+              Candidate: <strong style={{ color: 'var(--color-text)' }}>{selectedApp.applicant?.name}</strong> • Move to stage: <span style={{ color: 'var(--color-steel-blue)', textTransform: 'uppercase', fontWeight: 600 }}>{targetStatus}</span>
             </p>
 
             {actionError && (
-              <div style={{ padding: '0.5rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '4px', color: '#fca5a5', marginBottom: '1rem', fontSize: '0.8rem' }}>
+              <div style={{ padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-burgundy-red)', borderRadius: 'var(--radius-md)', color: 'var(--color-burgundy-red)', fontSize: 'var(--font-size-xs)' }}>
                 {actionError}
               </div>
             )}
 
-            <form onSubmit={handleSubmitStatus}>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
-                Recruiter Decision Note (Optional)
-              </label>
-              <textarea
-                rows={3}
-                placeholder="Add evaluation comments, interview feedback, or rationale..."
-                value={statusNote}
-                onChange={(e) => setStatusNote(e.target.value)}
-                style={{ width: '100%', padding: '0.5rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
-              />
+            <form onSubmit={handleSubmitStatus} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>
+                  Recruiter Decision Note (Optional)
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Add evaluation comments, interview feedback, or rationale..."
+                  value={statusNote}
+                  onChange={(e) => setStatusNote(e.target.value)}
+                  style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
+                />
+              </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
                 <button
                   type="button"
                   onClick={() => setSelectedApp(null)}
-                  style={{ padding: '0.5rem 1rem', background: '#334155', color: '#cbd5e1', border: 'none', borderRadius: '6px', fontSize: '0.85rem', cursor: 'pointer' }}
+                  className="btn btn-ghost"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  style={{ padding: '0.5rem 1.25rem', background: '#38bdf8', color: '#0f172a', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', cursor: actionLoading ? 'not-allowed' : 'pointer' }}
+                  className="btn btn-primary"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   {actionLoading ? 'Updating...' : 'Confirm Stage Change'}
                 </button>
@@ -408,31 +437,31 @@ export const ApplicantReviewView = () => {
 
       {/* Recruiter Notes Drawer / Modal */}
       {showNotesApp && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', width: '100%', maxWidth: '520px', maxHeight: '85vh', overflowY: 'auto', padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid #334155', paddingBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#f8fafc' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)' }}>
+          <div className="card" style={{ width: '100%', maxWidth: 'min(95vw, 520px)', maxHeight: '90vh', overflowY: 'auto', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>
                 Recruiter Notes: {showNotesApp.applicant?.name}
               </h3>
               <button
                 onClick={() => setShowNotesApp(null)}
-                style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '1.2rem', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-lg)', cursor: 'pointer' }}
               >
                 ✕
               </button>
             </div>
 
             {/* Notes History */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem', maxHeight: '240px', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', maxHeight: '240px', overflowY: 'auto' }}>
               {(showNotesApp.recruiterNotes || []).length === 0 ? (
-                <div style={{ color: '#64748b', fontSize: '0.85rem', fontStyle: 'italic', padding: '1rem 0' }}>
+                <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', fontStyle: 'italic', padding: 'var(--space-2) 0' }}>
                   No internal notes recorded yet for this candidate.
                 </div>
               ) : (
                 (showNotesApp.recruiterNotes || []).map((n, idx) => (
-                  <div key={idx} style={{ background: '#0f172a', padding: '0.75rem', borderRadius: '6px', border: '1px solid #334155' }}>
-                    <p style={{ margin: 0, color: '#f8fafc', fontSize: '0.85rem' }}>{n.note}</p>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', display: 'block' }}>
+                  <div key={idx} style={{ background: 'var(--color-bg-app)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                    <p style={{ margin: 0, color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}>{n.note}</p>
+                    <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)', display: 'block' }}>
                       {n.at ? new Date(n.at).toLocaleString() : 'Recorded'}
                     </span>
                   </div>
@@ -441,8 +470,8 @@ export const ApplicantReviewView = () => {
             </div>
 
             {/* Add New Note */}
-            <form onSubmit={handleAddNote} style={{ borderTop: '1px solid #334155', paddingTop: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.35rem' }}>
+            <form onSubmit={handleAddNote} style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
                 Add New Recruiter Note
               </label>
               <textarea
@@ -451,13 +480,14 @@ export const ApplicantReviewView = () => {
                 placeholder="Log candidate interview performance, team fit, or background check..."
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
-                style={{ width: '100%', padding: '0.5rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
               />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.75rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-1)' }}>
                 <button
                   type="submit"
                   disabled={actionLoading || !newNote.trim()}
-                  style={{ padding: '0.5rem 1.25rem', background: '#38bdf8', color: '#0f172a', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', cursor: actionLoading || !newNote.trim() ? 'not-allowed' : 'pointer', opacity: actionLoading || !newNote.trim() ? 0.6 : 1 }}
+                  className="btn btn-primary"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   {actionLoading ? 'Saving...' : 'Add Note'}
                 </button>

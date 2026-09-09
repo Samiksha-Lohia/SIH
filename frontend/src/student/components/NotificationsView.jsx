@@ -77,20 +77,20 @@ export function NotificationsView({ onUnreadCountChanged }) {
     }
   };
 
-  const getTypeIcon = (type) => {
+  const getTypeBadge = (type) => {
     switch (type) {
       case 'new_matching_opportunity':
-        return '⚡';
+        return <span className="badge badge-role" style={{ fontSize: '10px' }}>Opportunity</span>;
       case 'application_status_change':
-        return '📑';
+        return <span className="badge" style={{ fontSize: '10px', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' }}>Application</span>;
       case 'assessment_reminder':
-        return '📝';
+        return <span className="badge badge-burgundy" style={{ fontSize: '10px' }}>Assessment</span>;
       case 'training_recommendation':
-        return '🎓';
+        return <span className="badge" style={{ fontSize: '10px', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' }}>Training</span>;
       case 'mentorship_request':
-        return '🤝';
+        return <span className="badge badge-role" style={{ fontSize: '10px' }}>Mentorship</span>;
       default:
-        return '🔔';
+        return <span className="badge" style={{ fontSize: '10px', backgroundColor: 'var(--color-mist-light)', border: '1px solid var(--color-border)' }}>System</span>;
     }
   };
 
@@ -104,9 +104,9 @@ export function NotificationsView({ onUnreadCountChanged }) {
       <div style={styles.headerRow}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-            <h3 style={{ margin: 0 }}>Notification Feed & Alert Stream</h3>
+            <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', fontWeight: '600' }}>Notification Feed & Alerts</h3>
             {unreadCount > 0 && (
-              <span className="badge badge-burgundy" style={{ fontSize: '11px' }}>
+              <span className="badge badge-burgundy" style={{ fontSize: '11px', fontVariantNumeric: 'tabular-nums' }}>
                 {unreadCount} Unread
               </span>
             )}
@@ -120,15 +120,15 @@ export function NotificationsView({ onUnreadCountChanged }) {
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="btn btn-outline"
+              className="btn btn-ghost"
               style={{ fontSize: 'var(--font-size-xs)' }}
             >
-              ✓ Mark All Read
+              Mark All Read
             </button>
           )}
           <button
             onClick={fetchNotifications}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
             Refresh Feed
@@ -137,16 +137,16 @@ export function NotificationsView({ onUnreadCountChanged }) {
       </div>
 
       {/* Filter toolbar */}
-      <div style={styles.toolbar}>
+      <div className="b2b-tab-bar">
         <button
           onClick={() => setFilterUnreadOnly(false)}
-          style={{ ...styles.pillBtn, ...(!filterUnreadOnly ? styles.activePill : {}) }}
+          className={`b2b-tab ${!filterUnreadOnly ? 'active' : ''}`}
         >
           All Notifications ({notifications.length})
         </button>
         <button
           onClick={() => setFilterUnreadOnly(true)}
-          style={{ ...styles.pillBtn, ...(filterUnreadOnly ? styles.activePill : {}) }}
+          className={`b2b-tab ${filterUnreadOnly ? 'active' : ''}`}
         >
           Unread Only ({unreadCount})
         </button>
@@ -165,7 +165,7 @@ export function NotificationsView({ onUnreadCountChanged }) {
         </div>
       ) : displayedNotifications.length === 0 ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-text-muted)' }}>
+          <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>
             {filterUnreadOnly ? 'No unread notifications.' : 'No alerts in your feed right now. You are all caught up!'}
           </p>
         </div>
@@ -180,21 +180,22 @@ export function NotificationsView({ onUnreadCountChanged }) {
                 className="card"
                 style={{
                   ...styles.notifCard,
-                  backgroundColor: isUnread ? 'var(--color-sky-light)' : 'var(--color-bg-surface)',
-                  borderColor: isUnread ? 'rgba(141, 161, 185, 0.4)' : 'var(--color-border)',
+                  backgroundColor: isUnread ? 'var(--color-mist-light)' : 'var(--color-bg-surface)',
+                  borderColor: isUnread ? 'var(--color-steel-blue)' : 'var(--color-border)',
                 }}
               >
-                <div style={styles.iconCol}>{getTypeIcon(notif.type)}</div>
-
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h5 style={{ margin: 0, color: 'var(--color-primary)' }}>{notif.title}</h5>
-                    <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', whiteSpace: 'nowrap', marginLeft: 'var(--space-2)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px', flexWrap: 'wrap', gap: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                      {getTypeBadge(notif.type)}
+                      <h5 style={{ margin: 0, color: 'var(--color-text-main)', fontSize: 'var(--font-size-sm)', fontWeight: '600' }}>{notif.title}</h5>
+                    </div>
+                    <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
                       {formatDate(notif.createdAt)}
                     </span>
                   </div>
 
-                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: '4px', lineHeight: 1.4 }}>
+                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', margin: '4px 0 0 0', lineHeight: 1.4 }}>
                     {notif.message}
                   </p>
 
@@ -202,16 +203,16 @@ export function NotificationsView({ onUnreadCountChanged }) {
                     {isUnread && (
                       <button
                         onClick={() => handleMarkRead(notif.id)}
-                        className="btn btn-outline"
-                        style={{ fontSize: '10px', padding: '1px 6px' }}
+                        className="btn btn-ghost"
+                        style={{ fontSize: '10px', padding: '2px 6px' }}
                       >
                         Mark Read
                       </button>
                     )}
                     <button
                       onClick={() => handleDelete(notif.id)}
-                      className="btn btn-outline"
-                      style={{ fontSize: '10px', padding: '1px 6px', color: '#b91c1c', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                      className="btn btn-ghost"
+                      style={{ fontSize: '10px', padding: '2px 6px', color: 'var(--color-text-muted)' }}
                     >
                       Dismiss
                     </button>
@@ -229,21 +230,21 @@ export function NotificationsView({ onUnreadCountChanged }) {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={!meta.hasPrevPage || loading}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            Previous
+            ← Previous
           </button>
-          <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
             Page {meta.page} of {meta.totalPages}
           </span>
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={!meta.hasNextPage || loading}
-            className="btn btn-outline"
+            className="btn btn-ghost"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            Next
+            Next →
           </button>
         </div>
       )}
@@ -255,14 +256,10 @@ const styles = {
   container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
   headerRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' },
   description: { fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' },
-  toolbar: { display: 'flex', gap: 'var(--space-2)' },
-  pillBtn: { padding: 'var(--space-1) var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-surface)', fontSize: 'var(--font-size-xs)', fontWeight: '500', cursor: 'pointer', color: 'var(--color-text-secondary)', transition: 'all var(--transition-fast)' },
-  activePill: { backgroundColor: 'var(--color-mist-light)', color: 'var(--color-primary)', borderColor: 'var(--color-border)', fontWeight: '600' },
-  notifCard: { display: 'flex', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)', border: '1px solid', borderRadius: 'var(--radius-md)', transition: 'background-color var(--transition-fast)' },
-  iconCol: { fontSize: '20px', paddingTop: '2px' },
+  notifCard: { display: 'flex', gap: 'var(--space-3)', padding: 'var(--space-3)' },
   actionRow: { display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-2)' },
   paginationRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'var(--space-2)' },
-  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
+  stateBox: { padding: 'var(--space-12)', textAlign: 'center', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-3)' },
   spinner: { width: '32px', height: '32px', borderRadius: '50%', border: '3px solid var(--color-border)', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite' },
 };
 

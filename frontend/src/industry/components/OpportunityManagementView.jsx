@@ -231,66 +231,75 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
     }
   };
 
-  const getStatusBadge = (status) => {
+  const renderStatusBadge = (status) => {
     switch (status) {
       case 'published':
-        return { bg: '#065f46', text: '#34d399', label: 'Published' };
+        return (
+          <span className="status-pill status-verified">
+            <span className="status-pill-dot" />
+            Published
+          </span>
+        );
       case 'paused':
-        return { bg: '#854d0e', text: '#fde047', label: 'Paused' };
+        return (
+          <span className="status-pill status-pending">
+            <span className="status-pill-dot" />
+            Paused
+          </span>
+        );
       case 'closed':
-        return { bg: '#334155', text: '#94a3b8', label: 'Closed' };
+        return (
+          <span className="status-pill" style={{ background: 'var(--color-border-subtle)', color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}>
+            <span className="status-pill-dot" style={{ background: 'var(--color-text-muted)' }} />
+            Closed
+          </span>
+        );
       case 'draft':
       default:
-        return { bg: '#1e293b', text: '#38bdf8', label: 'Draft' };
+        return (
+          <span className="status-pill" style={{ background: 'var(--color-bg-app)', color: 'var(--color-steel-blue)', border: '1px solid var(--color-border)' }}>
+            <span className="status-pill-dot" style={{ background: 'var(--color-steel-blue)' }} />
+            Draft
+          </span>
+        );
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
       {/* Top Header Controls */}
-      <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+      <div className="card" style={{ padding: 'var(--space-6)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#f8fafc' }}>
-              💼 Opportunity Postings & Lifecycle Manager
+            <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>
+              Opportunity Postings & Lifecycle Manager
             </h3>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
               Publish, configure skills requirements, pause, and review applicants across your recruiting pipelines.
             </p>
           </div>
           <button
             onClick={handleOpenCreate}
-            style={{
-              padding: '0.65rem 1.25rem',
-              background: '#38bdf8',
-              color: '#0f172a',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 700,
-              fontSize: '0.9rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-            }}
+            className="btn btn-primary"
+            style={{ fontSize: 'var(--font-size-xs)' }}
           >
             + Create New Opportunity
           </button>
         </div>
 
         {/* Filter and Search Bar */}
-        <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <input
             type="text"
             placeholder="Search by title, role or keywords..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ flex: 1, minWidth: '220px', padding: '0.5rem 0.85rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+            style={{ flex: 1, minWidth: '220px', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
           />
           <select
             value={typeFilter}
             onChange={(e) => { setTypeFilter(e.target.value); setCurrentPage(1); }}
-            style={{ padding: '0.5rem 0.85rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+            style={{ padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
           >
             <option value="">All Opportunity Types</option>
             {OPPORTUNITY_TYPES.map((t) => (
@@ -300,7 +309,7 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
           <select
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-            style={{ padding: '0.5rem 0.85rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+            style={{ padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
           >
             <option value="">All Statuses</option>
             <option value="draft">Draft</option>
@@ -310,7 +319,8 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
           </select>
           <button
             type="submit"
-            style={{ padding: '0.5rem 1rem', background: '#334155', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.85rem', cursor: 'pointer' }}
+            className="btn btn-ghost"
+            style={{ fontSize: 'var(--font-size-xs)' }}
           >
             Search
           </button>
@@ -319,99 +329,90 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
 
       {/* Loading state */}
       {loading && (
-        <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-          <div style={{ margin: '0 auto 1rem', width: '32px', height: '32px', border: '3px solid #334155', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-          <p>Loading enterprise opportunities from backend registry...</p>
+        <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>Loading enterprise opportunities from backend registry...</p>
         </div>
       )}
 
       {/* Error state */}
       {error && !loading && (
-        <div style={{ padding: '1.25rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '8px', color: '#fca5a5' }}>
-          <h4 style={{ margin: '0 0 0.35rem', color: '#ef4444' }}>Failed to Load Opportunities</h4>
-          <p style={{ margin: '0 0 0.75rem', fontSize: '0.9rem' }}>{error}</p>
-          <button onClick={fetchOpportunities} style={{ padding: '0.4rem 0.8rem', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Retry</button>
+        <div className="card" style={{ padding: 'var(--space-6)', borderLeft: '4px solid var(--color-burgundy-red)' }}>
+          <h4 style={{ margin: '0 0 var(--space-2)', color: 'var(--color-burgundy-red)', fontSize: 'var(--font-size-md)' }}>Failed to Load Opportunities</h4>
+          <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>{error}</p>
+          <button onClick={fetchOpportunities} className="btn btn-primary" style={{ fontSize: 'var(--font-size-xs)' }}>Retry</button>
         </div>
       )}
 
       {/* Opportunities List Table */}
       {!loading && !error && (
-        <div style={{ background: '#1e293b', borderRadius: '12px', border: '1px solid #334155', overflow: 'hidden' }}>
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           {opportunities.length === 0 ? (
-            <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
-              <p style={{ margin: 0, fontSize: '1rem' }}>No opportunities found matching your filters.</p>
+            <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+              <p style={{ margin: 0, fontSize: 'var(--font-size-sm)' }}>No opportunities found matching your filters.</p>
               <button
                 onClick={handleOpenCreate}
-                style={{ marginTop: '1rem', padding: '0.5rem 1rem', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}
+                className="btn btn-primary"
+                style={{ marginTop: 'var(--space-4)', fontSize: 'var(--font-size-xs)' }}
               >
                 Create your first posting
               </button>
             </div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+            <div className="data-table-container" style={{ border: 'none' }}>
+              <table className="data-table">
                 <thead>
-                  <tr style={{ background: '#0f172a', color: '#94a3b8', borderBottom: '1px solid #334155' }}>
-                    <th style={{ padding: '1rem' }}>Title & Role</th>
-                    <th style={{ padding: '1rem' }}>Type & Mode</th>
-                    <th style={{ padding: '1rem' }}>Required Skills</th>
-                    <th style={{ padding: '1rem' }}>Openings</th>
-                    <th style={{ padding: '1rem' }}>Status</th>
-                    <th style={{ padding: '1rem', textAlign: 'right' }}>Actions</th>
+                  <tr>
+                    <th>Title & Role</th>
+                    <th>Type & Mode</th>
+                    <th>Required Skills</th>
+                    <th>Openings</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {opportunities.map((opp) => {
                     const id = opp.id || opp._id;
-                    const badge = getStatusBadge(opp.status);
-                    const skills = opp.requiredSkills || [];
 
                     return (
-                      <tr key={id} style={{ borderBottom: '1px solid #334155' }}>
-                        <td style={{ padding: '1rem' }}>
-                          <div style={{ fontWeight: 600, color: '#f8fafc', fontSize: '0.95rem' }}>{opp.title}</div>
-                          <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginTop: '0.2rem' }}>
-                            {opp.role ? `Role: ${opp.role}` : 'General Posting'} • Location: {opp.location || 'Flexible'}
-                          </div>
+                      <tr key={id}>
+                        <td>
+                          <strong style={{ color: 'var(--color-primary)', display: 'block' }}>{opp.title}</strong>
+                          <span style={{ color: 'var(--color-steel-blue)', fontSize: '11px' }}>{opp.role?.title || opp.targetRole || 'Engineering'}</span>
                         </td>
-
-                        <td style={{ padding: '1rem', color: '#cbd5e1' }}>
-                          <div style={{ textTransform: 'capitalize', fontWeight: 500 }}>{opp.type}</div>
-                          <div style={{ color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase' }}>{opp.workMode}</div>
+                        <td>
+                          <div style={{ textTransform: 'capitalize', color: 'var(--color-text)' }}>{opp.type}</div>
+                          <span style={{ fontSize: '11px', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>{opp.workMode || opp.workplaceType}</span>
                         </td>
-
-                        <td style={{ padding: '1rem' }}>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', maxWidth: '280px' }}>
-                            {skills.slice(0, 3).map((s, idx) => (
-                              <span key={idx} style={{ background: '#0f172a', border: '1px solid #334155', color: '#38bdf8', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.75rem' }}>
-                                {typeof s === 'string' ? s : `${s.name} (${s.level || 'req'})`}
+                        <td>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-1)', maxWidth: '300px' }}>
+                            {opp.requiredSkills?.slice(0, 3).map((s, idx) => (
+                              <span key={idx} className="badge badge-sky" style={{ fontSize: '11px' }}>
+                                {s.skill?.name || s.name || s.skill || 'Skill'}
                               </span>
                             ))}
-                            {skills.length > 3 && (
-                              <span style={{ color: '#64748b', fontSize: '0.75rem', alignSelf: 'center' }}>+{skills.length - 3}</span>
+                            {opp.requiredSkills?.length > 3 && (
+                              <span style={{ color: 'var(--color-text-muted)', fontSize: '11px', alignSelf: 'center' }}>
+                                +{opp.requiredSkills.length - 3} more
+                              </span>
                             )}
-                            {skills.length === 0 && <span style={{ color: '#64748b', fontStyle: 'italic' }}>Open</span>}
                           </div>
                         </td>
-
-                        <td style={{ padding: '1rem', color: '#f8fafc', fontWeight: 600 }}>
+                        <td style={{ color: 'var(--color-text)', fontWeight: 600 }}>
                           {opp.openings || 1}
                         </td>
-
-                        <td style={{ padding: '1rem' }}>
-                          <span style={{ background: badge.bg, color: badge.text, padding: '0.2rem 0.55rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>
-                            {badge.label}
-                          </span>
+                        <td>
+                          {renderStatusBadge(opp.status)}
                         </td>
-
-                        <td style={{ padding: '1rem', textAlign: 'right' }}>
-                          <div style={{ display: 'inline-flex', gap: '0.4rem', alignItems: 'center' }}>
+                        <td style={{ textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', gap: 'var(--space-1)', alignItems: 'center' }}>
                             {/* Publish / Pause / Close Quick Status Buttons */}
                             {opp.status === 'draft' && (
                               <button
                                 onClick={() => handleStatusChange(id, 'published')}
                                 disabled={actionLoading}
-                                style={{ padding: '0.3rem 0.6rem', background: '#065f46', color: '#34d399', border: '1px solid #059669', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
+                                className="btn btn-ghost"
+                                style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-emerald)' }}
                               >
                                 Publish
                               </button>
@@ -420,7 +421,8 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                               <button
                                 onClick={() => handleStatusChange(id, 'paused')}
                                 disabled={actionLoading}
-                                style={{ padding: '0.3rem 0.6rem', background: '#854d0e', color: '#fde047', border: '1px solid #b45309', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
+                                className="btn btn-ghost"
+                                style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-amber)' }}
                               >
                                 Pause
                               </button>
@@ -429,7 +431,8 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                               <button
                                 onClick={() => handleStatusChange(id, 'published')}
                                 disabled={actionLoading}
-                                style={{ padding: '0.3rem 0.6rem', background: '#065f46', color: '#34d399', border: '1px solid #059669', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
+                                className="btn btn-ghost"
+                                style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-emerald)' }}
                               >
                                 Resume
                               </button>
@@ -438,7 +441,8 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                               <button
                                 onClick={() => handleStatusChange(id, 'closed')}
                                 disabled={actionLoading}
-                                style={{ padding: '0.3rem 0.6rem', background: '#334155', color: '#94a3b8', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                                className="btn btn-ghost"
+                                style={{ padding: '2px 8px', fontSize: '11px' }}
                               >
                                 Close
                               </button>
@@ -447,7 +451,8 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                             {/* Edit Button */}
                             <button
                               onClick={() => handleOpenEdit(opp)}
-                              style={{ padding: '0.3rem 0.6rem', background: '#1e293b', color: '#38bdf8', border: '1px solid #334155', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                              className="btn btn-ghost"
+                              style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-steel-blue)' }}
                             >
                               Edit
                             </button>
@@ -455,7 +460,8 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                             {/* Delete Button */}
                             <button
                               onClick={() => handleDelete(id, opp.title)}
-                              style={{ padding: '0.3rem 0.6rem', background: '#450a0a', color: '#fca5a5', border: '1px solid #dc2626', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                              className="btn btn-ghost"
+                              style={{ padding: '2px 8px', fontSize: '11px', color: 'var(--color-burgundy-red)' }}
                             >
                               Delete
                             </button>
@@ -471,20 +477,22 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
 
           {/* Pagination Controls */}
           {meta.totalPages > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderTop: '1px solid #334155', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-3) var(--space-4)', borderTop: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
               <span>Page {meta.page} of {meta.totalPages} ({meta.total} total postings)</span>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                 <button
                   disabled={meta.page <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                  style={{ padding: '0.35rem 0.75rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '4px', cursor: meta.page <= 1 ? 'not-allowed' : 'pointer' }}
+                  className="btn btn-ghost"
+                  style={{ fontSize: '11px', padding: '3px 8px' }}
                 >
                   Previous
                 </button>
                 <button
                   disabled={meta.page >= meta.totalPages}
                   onClick={() => setCurrentPage((p) => p + 1)}
-                  style={{ padding: '0.35rem 0.75rem', background: '#0f172a', border: '1px solid #334155', color: '#fff', borderRadius: '4px', cursor: meta.page >= meta.totalPages ? 'not-allowed' : 'pointer' }}
+                  className="btn btn-ghost"
+                  style={{ fontSize: '11px', padding: '3px 8px' }}
                 >
                   Next
                 </button>
@@ -496,46 +504,46 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
 
       {/* Create / Edit Modal */}
       {showCreateModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', width: '100%', maxWidth: '720px', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid #334155', paddingBottom: '0.75rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#f8fafc' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)' }}>
+          <div className="card" style={{ maxWidth: '720px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: 'var(--font-size-md)', color: 'var(--color-primary)', fontWeight: 700 }}>
                 {editingOpp ? 'Edit Opportunity Posting' : 'Create New Opportunity Posting'}
               </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '1.2rem', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-lg)', cursor: 'pointer' }}
               >
                 ✕
               </button>
             </div>
 
             {actionError && (
-              <div style={{ padding: '0.75rem', background: '#450a0a', border: '1px solid #dc2626', borderRadius: '6px', color: '#fca5a5', marginBottom: '1rem', fontSize: '0.85rem' }}>
+              <div style={{ padding: 'var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-burgundy-red)', borderRadius: 'var(--radius-md)', color: 'var(--color-burgundy-red)', fontSize: 'var(--font-size-xs)' }}>
                 {actionError}
               </div>
             )}
 
-            <form onSubmit={handleSubmitOpportunity} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+            <form onSubmit={handleSubmitOpportunity} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-3)' }}>
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Posting Title *</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Posting Title *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Associate Full Stack Engineer Intern"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Opportunity Type *</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Opportunity Type *</label>
                   <select
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   >
                     {OPPORTUNITY_TYPES.map((t) => (
                       <option key={t.value} value={t.value}>{t.label}</option>
@@ -544,22 +552,22 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Target Role</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Target Role</label>
                   <input
                     type="text"
                     placeholder="e.g. Frontend Developer"
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Workplace Mode</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Workplace Mode</label>
                   <select
                     value={formData.workMode}
                     onChange={(e) => setFormData({ ...formData, workMode: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   >
                     {WORK_MODES.map((m) => (
                       <option key={m.value} value={m.value}>{m.label}</option>
@@ -568,90 +576,91 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Location</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Location</label>
                   <input
                     type="text"
                     placeholder="e.g. Bangalore or Remote"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Openings Count</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Openings Count</label>
                   <input
                     type="number"
                     min="1"
                     value={formData.openings}
                     onChange={(e) => setFormData({ ...formData, openings: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Monthly Stipend (INR)</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Monthly Stipend (INR)</label>
                   <input
                     type="number"
                     min="0"
                     placeholder="e.g. 25000"
                     value={formData.stipend}
                     onChange={(e) => setFormData({ ...formData, stipend: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Application Deadline</label>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Application Deadline</label>
                   <input
                     type="date"
                     value={formData.deadline}
                     onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                    style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.3rem' }}>Role Description</label>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)', fontWeight: 600 }}>Role Description</label>
                 <textarea
                   rows={3}
                   placeholder="Key responsibilities, team expectations, project scope..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', background: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                  style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', background: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)', boxSizing: 'border-box' }}
                 />
               </div>
 
               {/* Required Skills Builder */}
-              <div style={{ background: '#0f172a', padding: '1rem', borderRadius: '8px', border: '1px solid #334155' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <label style={{ fontSize: '0.85rem', color: '#f8fafc', fontWeight: 600 }}>
-                    ⭐ Mandatory Required Skills & Proficiency
+              <div style={{ background: 'var(--color-bg-app)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+                  <label style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-primary)', fontWeight: 600 }}>
+                    Mandatory Required Skills & Proficiency
                   </label>
                   <button
                     type="button"
                     onClick={() => addSkillRow('requiredSkills')}
-                    style={{ padding: '0.25rem 0.6rem', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.75rem', cursor: 'pointer' }}
+                    className="btn btn-ghost"
+                    style={{ fontSize: '11px', padding: '2px 8px' }}
                   >
                     + Add Skill
                   </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                   {formData.requiredSkills.map((sk, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <div key={idx} style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
                       <input
                         type="text"
                         placeholder="Skill name (e.g. React, Python)"
                         value={sk.name}
                         onChange={(e) => handleSkillChange('requiredSkills', idx, 'name', e.target.value)}
-                        style={{ flex: 2, padding: '0.45rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '4px', color: '#fff', fontSize: '0.8rem' }}
+                        style={{ flex: 2, padding: 'var(--space-1) var(--space-2)', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
                       />
                       <select
                         value={sk.level}
                         onChange={(e) => handleSkillChange('requiredSkills', idx, 'level', e.target.value)}
-                        style={{ flex: 1, padding: '0.45rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '4px', color: '#fff', fontSize: '0.8rem' }}
+                        style={{ flex: 1, padding: 'var(--space-1) var(--space-2)', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
                       >
                         {PROFICIENCY_LEVELS.map((pl) => (
                           <option key={pl.value} value={pl.value}>{pl.label}</option>
@@ -664,13 +673,13 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                         title="Weight (1-10)"
                         value={sk.weight}
                         onChange={(e) => handleSkillChange('requiredSkills', idx, 'weight', e.target.value)}
-                        style={{ width: '60px', padding: '0.45rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '4px', color: '#fff', fontSize: '0.8rem' }}
+                        style={{ width: '60px', padding: 'var(--space-1) var(--space-2)', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
                       />
                       {formData.requiredSkills.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeSkillRow('requiredSkills', idx)}
-                          style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1rem' }}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--color-burgundy-red)', cursor: 'pointer', fontSize: 'var(--font-size-md)' }}
                         >
                           ✕
                         </button>
@@ -681,34 +690,35 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
               </div>
 
               {/* Preferred Skills Builder */}
-              <div style={{ background: '#0f172a', padding: '1rem', borderRadius: '8px', border: '1px solid #334155' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <label style={{ fontSize: '0.85rem', color: '#cbd5e1', fontWeight: 600 }}>
-                    💡 Preferred / Bonus Skills
+              <div style={{ background: 'var(--color-bg-app)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+                  <label style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
+                    Preferred / Bonus Skills
                   </label>
                   <button
                     type="button"
                     onClick={() => addSkillRow('preferredSkills')}
-                    style={{ padding: '0.25rem 0.6rem', background: '#334155', color: '#cbd5e1', border: 'none', borderRadius: '4px', fontSize: '0.75rem', cursor: 'pointer' }}
+                    className="btn btn-ghost"
+                    style={{ fontSize: '11px', padding: '2px 8px' }}
                   >
                     + Add Preferred
                   </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                   {formData.preferredSkills.map((sk, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <div key={idx} style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
                       <input
                         type="text"
                         placeholder="Preferred skill (e.g. Docker, GraphQL)"
                         value={sk.name}
                         onChange={(e) => handleSkillChange('preferredSkills', idx, 'name', e.target.value)}
-                        style={{ flex: 2, padding: '0.45rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '4px', color: '#fff', fontSize: '0.8rem' }}
+                        style={{ flex: 2, padding: 'var(--space-1) var(--space-2)', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
                       />
                       <select
                         value={sk.level}
                         onChange={(e) => handleSkillChange('preferredSkills', idx, 'level', e.target.value)}
-                        style={{ flex: 1, padding: '0.45rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '4px', color: '#fff', fontSize: '0.8rem' }}
+                        style={{ flex: 1, padding: 'var(--space-1) var(--space-2)', background: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', color: 'var(--color-text)', fontSize: 'var(--font-size-xs)' }}
                       >
                         {PROFICIENCY_LEVELS.map((pl) => (
                           <option key={pl.value} value={pl.value}>{pl.label}</option>
@@ -718,7 +728,7 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                         <button
                           type="button"
                           onClick={() => removeSkillRow('preferredSkills', idx)}
-                          style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1rem' }}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--color-burgundy-red)', cursor: 'pointer', fontSize: 'var(--font-size-md)' }}
                         >
                           ✕
                         </button>
@@ -728,18 +738,20 @@ export const OpportunityManagementView = ({ isCompanyVerified }) => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  style={{ padding: '0.6rem 1.25rem', background: '#334155', color: '#cbd5e1', border: 'none', borderRadius: '6px', fontSize: '0.85rem', cursor: 'pointer' }}
+                  className="btn btn-ghost"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={actionLoading}
-                  style={{ padding: '0.6rem 1.5rem', background: '#38bdf8', color: '#0f172a', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', cursor: actionLoading ? 'not-allowed' : 'pointer', opacity: actionLoading ? 0.7 : 1 }}
+                  className="btn btn-primary"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
                   {actionLoading ? 'Saving...' : editingOpp ? 'Update Posting' : 'Create Posting (Draft)'}
                 </button>

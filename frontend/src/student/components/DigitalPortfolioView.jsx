@@ -343,9 +343,9 @@ export function DigitalPortfolioView() {
             <h1 class="name">${data.name || 'Candidate'}</h1>
             ${data.targetRole ? `<div class="role">${data.targetRole}</div>` : ''}
             <div class="contacts">
-              ${data.email ? `<span>✉️ ${data.email}</span>` : ''}
-              ${data.phone ? `<span>📞 ${data.phone}</span>` : ''}
-              ${data.location ? `<span>📍 ${data.location}</span>` : ''}
+              ${data.email ? `<span>Email: ${data.email}</span>` : ''}
+              ${data.phone ? `<span>Phone: ${data.phone}</span>` : ''}
+              ${data.location ? `<span>Location: ${data.location}</span>` : ''}
               ${data.links?.github ? `<span>GitHub: ${data.links.github}</span>` : ''}
               ${data.links?.linkedin ? `<span>LinkedIn: ${data.links.linkedin}</span>` : ''}
             </div>
@@ -391,7 +391,7 @@ export function DigitalPortfolioView() {
       {/* Header */}
       <div style={styles.headerRow}>
         <div>
-          <h3 style={{ margin: 0 }}>Verified Digital Portfolio & Artifact Vault</h3>
+          <h3 style={{ margin: 0, color: 'var(--color-text-primary)' }}>Verified Digital Portfolio & Artifact Vault</h3>
           <p style={styles.description}>
             Curate your accomplishments, certifications, and live code repositories. Verified items carry trust badges for recruiter discovery.
           </p>
@@ -401,19 +401,19 @@ export function DigitalPortfolioView() {
           <button
             onClick={handleGenerateResume}
             disabled={generatingResume}
-            className="btn btn-outline"
-            style={{ fontSize: 'var(--font-size-xs)', display: 'flex', alignItems: 'center', gap: '6px' }}
+            className="btn btn-ghost"
+            style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            {generatingResume ? 'Compiling AI Resume...' : '📄 Generate AI Resume'}
+            {generatingResume ? 'Compiling AI Resume...' : 'Generate AI Resume'}
           </button>
 
           <button
             onClick={handleOpenShareView}
             disabled={loadingShare}
-            className="btn btn-outline"
-            style={{ fontSize: 'var(--font-size-xs)', display: 'flex', alignItems: 'center', gap: '6px' }}
+            className="btn btn-ghost"
+            style={{ fontSize: 'var(--font-size-xs)' }}
           >
-            {loadingShare ? 'Loading Share Card...' : '🔗 Public Share Card'}
+            {loadingShare ? 'Loading Share Card...' : 'Public Share Card'}
           </button>
 
           <button
@@ -440,25 +440,31 @@ export function DigitalPortfolioView() {
         </div>
       )}
 
-      {/* Stats Bar */}
-      <div style={styles.statsBar}>
-        <div style={styles.statCell}>
-          <span style={styles.statLabel}>Total Artifacts</span>
-          <strong style={styles.statVal}>{items.length}</strong>
+      {/* KPI Stats Grid */}
+      <div className="b2b-kpi-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))' }}>
+        <div className="b2b-kpi-tile">
+          <span className="b2b-kpi-label">Total Artifacts</span>
+          <div className="b2b-kpi-value">{items.length}</div>
+          <span className="b2b-kpi-trend">Repository items</span>
         </div>
-        <div style={styles.statCell}>
-          <span style={styles.statLabel}>Verified Credentials</span>
-          <strong style={{ ...styles.statVal, color: '#15803d' }}>{verifiedCount}</strong>
+        <div className="b2b-kpi-tile">
+          <span className="b2b-kpi-label">Verified Credentials</span>
+          <div className="b2b-kpi-value" style={{ color: 'var(--color-success)' }}>{verifiedCount}</div>
+          <span className="b2b-kpi-trend">Institution / Issuer confirmed</span>
         </div>
-        <div style={styles.statCell}>
-          <span style={styles.statLabel}>Public Showcase</span>
-          <strong style={styles.statVal}>{items.filter((i) => i.visibility === 'public').length}</strong>
+        <div className="b2b-kpi-tile">
+          <span className="b2b-kpi-label">Public Showcase</span>
+          <div className="b2b-kpi-value">{items.filter((i) => i.visibility === 'public').length}</div>
+          <span className="b2b-kpi-trend">Visible to recruiters</span>
         </div>
-        <div style={styles.statCell}>
-          <span style={styles.statLabel}>Trust Level</span>
-          <span className="badge" style={{ backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #86efac', width: 'fit-content', marginTop: '4px' }}>
-            {verifiedCount > 0 ? 'Verified Tier' : 'Self-Reported'}
-          </span>
+        <div className="b2b-kpi-tile">
+          <span className="b2b-kpi-label">Trust Verification Tier</span>
+          <div style={{ marginTop: 'var(--space-2)' }}>
+            <span className={`status-pill ${verifiedCount > 0 ? 'status-verified' : 'status-pending'}`}>
+              <span className="status-pill-dot" />
+              {verifiedCount > 0 ? 'Verified Tier' : 'Self-Reported'}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -479,19 +485,19 @@ export function DigitalPortfolioView() {
       {loading ? (
         <div style={styles.stateBox}>
           <div style={styles.spinner}></div>
-          <p>Loading digital portfolio artifacts...</p>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>Loading digital portfolio artifacts...</p>
         </div>
       ) : error ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-danger)', marginBottom: 'var(--space-2)' }}>{error}</p>
-          <button onClick={fetchItems} className="btn btn-primary">Try Again</button>
+          <p style={{ color: 'var(--color-danger)', marginBottom: 'var(--space-2)', fontSize: 'var(--font-size-sm)' }}>{error}</p>
+          <button onClick={fetchItems} className="btn btn-outline">Try Again</button>
         </div>
       ) : items.length === 0 ? (
         <div style={styles.stateBox}>
-          <p style={{ color: 'var(--color-text-muted)' }}>
-            No portfolio items in your artifact vault yet. Add projects, research, or certifications to start building your verified showcase!
+          <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)', maxWidth: '440px' }}>
+            No portfolio items in your artifact vault yet. Add projects, research, or certifications to start building your verified showcase.
           </p>
-          <button onClick={() => setShowAddModal(true)} className="btn btn-primary" style={{ marginTop: 'var(--space-2)' }}>
+          <button onClick={() => setShowAddModal(true)} className="btn btn-primary" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-xs)' }}>
             + Add First Portfolio Item
           </button>
         </div>
@@ -505,23 +511,23 @@ export function DigitalPortfolioView() {
                     {item.type}
                   </span>
                   <span
-                    className="badge"
-                    style={{
-                      fontSize: '11px',
-                      textTransform: 'capitalize',
-                      backgroundColor: item.verificationStatus === 'verified' ? '#dcfce7' : item.verificationStatus === 'rejected' ? '#fee2e2' : '#fef9c3',
-                      color: item.verificationStatus === 'verified' ? '#15803d' : item.verificationStatus === 'rejected' ? '#b91c1c' : '#a16207',
-                      border: '1px solid currentColor',
-                    }}
+                    className={`status-pill ${
+                      item.verificationStatus === 'verified'
+                        ? 'status-verified'
+                        : item.verificationStatus === 'rejected'
+                        ? 'status-rejected'
+                        : 'status-pending'
+                    }`}
                   >
-                    {item.verificationStatus === 'verified' ? '✓ Verified' : item.verificationStatus}
+                    <span className="status-pill-dot" />
+                    {item.verificationStatus === 'verified' ? 'Verified' : item.verificationStatus || 'Pending'}
                   </span>
                 </div>
 
-                <h4 style={{ color: 'var(--color-primary)', marginBottom: '4px' }}>{item.title}</h4>
+                <h4 style={{ color: 'var(--color-text-primary)', marginBottom: '4px', fontSize: 'var(--font-size-sm)' }}>{item.title}</h4>
                 {item.issuer && (
                   <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-1)' }}>
-                    🏛️ {item.issuer}
+                    {item.issuer}
                   </div>
                 )}
 
@@ -544,7 +550,7 @@ export function DigitalPortfolioView() {
                 <div>
                   {item.link ? (
                     <a href={item.link} target="_blank" rel="noopener noreferrer" style={styles.link}>
-                      🔗 View Resource ↗
+                      View Resource ↗
                     </a>
                   ) : (
                     <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>No external link</span>
@@ -552,13 +558,13 @@ export function DigitalPortfolioView() {
                 </div>
 
                 <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
-                  <span style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>
-                    {item.visibility === 'public' ? '🌐 Public' : '🔒 Private'}
+                  <span style={{ fontSize: '10px', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    {item.visibility === 'public' ? 'Public' : 'Private'}
                   </span>
                   <button
                     onClick={() => handleDeleteItem(item.id, item.title)}
-                    className="btn btn-outline"
-                    style={{ fontSize: '11px', padding: '2px 8px', color: 'var(--color-danger)', borderColor: 'var(--color-danger)' }}
+                    className="btn btn-ghost"
+                    style={{ fontSize: '11px', padding: '2px 8px', color: 'var(--color-danger)' }}
                     title="Remove item"
                   >
                     Delete
@@ -637,8 +643,8 @@ export function DigitalPortfolioView() {
                     onChange={(e) => setNewItem({ ...newItem, visibility: e.target.value })}
                     style={styles.input}
                   >
-                    <option value="public">🌐 Public (Recruiters)</option>
-                    <option value="private">🔒 Private (Personal)</option>
+                    <option value="public">Public (Recruiters)</option>
+                    <option value="private">Private (Personal)</option>
                   </select>
                 </div>
               </div>
@@ -688,7 +694,7 @@ export function DigitalPortfolioView() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-4)' }}>
-              <button onClick={() => setShowAddModal(false)} className="btn btn-outline">
+              <button onClick={() => setShowAddModal(false)} className="btn btn-ghost">
                 Cancel
               </button>
               <button onClick={handleCreateItem} disabled={savingItem} className="btn btn-primary">
@@ -706,31 +712,32 @@ export function DigitalPortfolioView() {
             {/* Modal Top Bar */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)', borderBottom: '1px solid var(--color-border)', paddingBottom: 'var(--space-2)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <h4 style={{ margin: 0 }}>Structured AI Resume</h4>
+                <h4 style={{ margin: 0, color: 'var(--color-text-primary)' }}>Structured AI Resume</h4>
                 <span className="badge badge-sky" style={{ fontSize: '10px' }}>
-                  ⚡ {resumeData._meta?.source || resumeData.source || 'SUTRA AI'}
+                  {resumeData._meta?.source || resumeData.source || 'SUTRA AI'}
                 </span>
-                <span className="badge" style={{ backgroundColor: '#dcfce7', color: '#15803d', fontSize: '10px', fontWeight: 600 }}>
-                  ✓ Stored Facts Preserved
+                <span className="status-pill status-verified" style={{ fontSize: '11px' }}>
+                  <span className="status-pill-dot" />
+                  Stored Facts Preserved
                 </span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <button
                   onClick={() => setIsEditMode(!isEditMode)}
-                  className="btn btn-outline"
+                  className="btn btn-ghost"
                   style={{ fontSize: 'var(--font-size-xs)', padding: '4px 10px' }}
                 >
-                  {isEditMode ? '👁️ View Formatted' : '✏️ Edit Text'}
+                  {isEditMode ? 'View Formatted' : 'Edit Text'}
                 </button>
 
                 <button
                   onClick={handleDownloadPdf}
                   disabled={downloadingPdf}
                   className="btn btn-primary"
-                  style={{ fontSize: 'var(--font-size-xs)', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  style={{ fontSize: 'var(--font-size-xs)', padding: '4px 12px' }}
                 >
-                  {downloadingPdf ? 'Preparing PDF...' : '📥 Download PDF'}
+                  {downloadingPdf ? 'Preparing PDF...' : 'Download PDF'}
                 </button>
 
                 <button onClick={() => setResumeData(null)} style={styles.closeIcon}>×</button>
@@ -743,37 +750,38 @@ export function DigitalPortfolioView() {
               <div style={{
                 backgroundColor: '#ffffff',
                 color: '#0f172a',
-                padding: '36px 40px',
+                padding: 'clamp(16px, 4vw, 40px)',
                 borderRadius: 'var(--radius-md)',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)',
-                border: '1px solid #cbd5e1',
+                boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)',
+                border: '1px solid var(--color-border)',
                 margin: '0 auto',
                 maxWidth: '740px',
                 width: '100%',
+                boxSizing: 'border-box',
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               }}>
                 {/* Header: Name, Target Role, Contact Row */}
-                <div style={{ borderBottom: '2px solid #0284c7', paddingBottom: '12px', marginBottom: '16px' }}>
-                  <h2 style={{ margin: '0 0 4px 0', fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                <div style={{ borderBottom: '2px solid var(--color-steel-blue)', paddingBottom: '12px', marginBottom: '16px' }}>
+                  <h2 style={{ margin: '0 0 4px 0', fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.02em' }}>
                     {editableResume?.name || user?.name || 'Student Candidate'}
                   </h2>
                   {editableResume?.targetRole && (
-                    <div style={{ fontSize: '0.95rem', color: '#0284c7', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--color-primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
                       {editableResume.targetRole}
                     </div>
                   )}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', fontSize: '0.85rem', color: '#475569' }}>
-                    {editableResume?.email && <span>✉️ {editableResume.email}</span>}
-                    {editableResume?.phone && <span>📞 {editableResume.phone}</span>}
-                    {editableResume?.location && <span>📍 {editableResume.location}</span>}
-                    {editableResume?.links?.github && <span>🐙 {editableResume.links.github}</span>}
-                    {editableResume?.links?.linkedin && <span>💼 {editableResume.links.linkedin}</span>}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', fontSize: '0.8rem', color: '#475569' }}>
+                    {editableResume?.email && <span>Email: {editableResume.email}</span>}
+                    {editableResume?.phone && <span>Phone: {editableResume.phone}</span>}
+                    {editableResume?.location && <span>Location: {editableResume.location}</span>}
+                    {editableResume?.links?.github && <span>GitHub: {editableResume.links.github}</span>}
+                    {editableResume?.links?.linkedin && <span>LinkedIn: {editableResume.links.linkedin}</span>}
                   </div>
                 </div>
 
                 {/* Section 1: Professional Summary */}
                 <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
                     Professional Summary
                   </div>
                   {isEditMode ? (
@@ -785,11 +793,11 @@ export function DigitalPortfolioView() {
                         rows={3}
                         value={editableResume?.summary || ''}
                         onChange={(e) => setEditableResume({ ...editableResume, summary: e.target.value })}
-                        style={{ width: '100%', padding: '8px', fontSize: '0.85rem', border: '1px solid #0284c7', borderRadius: '4px', color: '#0f172a', backgroundColor: '#f8fafc', boxSizing: 'border-box' }}
+                        style={{ width: '100%', padding: '8px', fontSize: '0.85rem', border: '1px solid var(--color-border)', borderRadius: '4px', color: '#0f172a', backgroundColor: '#f8fafc', boxSizing: 'border-box' }}
                       />
                     </div>
                   ) : (
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#334155', lineHeight: 1.55 }}>
+                    <p style={{ margin: 0, fontSize: '0.88rem', color: '#334155', lineHeight: 1.55 }}>
                       {editableResume?.summary || 'Candidate is building verified technical competencies.'}
                     </p>
                   )}
@@ -797,28 +805,23 @@ export function DigitalPortfolioView() {
 
                 {/* Section 2: Technical & Soft Competencies */}
                 <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
                     Technical & Professional Competencies
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     {(editableResume?.skills?.technical || []).map((s, i) => (
                       <span
                         key={i}
+                        className={`status-pill ${s.verified ? 'status-verified' : ''}`}
                         style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          padding: '3px 8px',
-                          borderRadius: '4px',
-                          fontSize: '0.8rem',
-                          backgroundColor: s.verified ? '#ecfdf5' : '#f1f5f9',
-                          border: s.verified ? '1px solid #86efac' : '1px solid #cbd5e1',
-                          color: s.verified ? '#166534' : '#0f172a',
-                          fontWeight: s.verified ? 600 : 500,
+                          fontSize: '0.78rem',
+                          backgroundColor: s.verified ? 'var(--color-mist-light)' : '#f1f5f9',
+                          border: '1px solid var(--color-border)',
+                          color: '#0f172a',
                         }}
                       >
+                        {s.verified && <span className="status-pill-dot" />}
                         {s.name}
-                        {s.verified && <span style={{ color: '#15803d' }}>✓</span>}
                       </span>
                     ))}
                     {(editableResume?.skills?.soft || []).map((s, i) => (
@@ -827,7 +830,7 @@ export function DigitalPortfolioView() {
                         style={{
                           padding: '3px 8px',
                           borderRadius: '4px',
-                          fontSize: '0.8rem',
+                          fontSize: '0.78rem',
                           backgroundColor: '#f8fafc',
                           border: '1px solid #e2e8f0',
                           color: '#475569',
@@ -842,20 +845,20 @@ export function DigitalPortfolioView() {
                 {/* Section 3: Featured Projects */}
                 {editableResume?.projects && editableResume.projects.length > 0 && (
                   <div style={{ marginBottom: '16px' }}>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
                       Featured Projects & Applied Engineering
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {editableResume.projects.map((p, idx) => (
                         <div key={idx}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap' }}>
-                            <strong style={{ fontSize: '0.95rem', color: '#0f172a' }}>{p.title}</strong>
+                            <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>{p.title}</strong>
                             {p.link && (
-                              <span style={{ fontSize: '0.8rem', color: '#0284c7' }}>{p.link}</span>
+                              <span style={{ fontSize: '0.78rem', color: 'var(--color-primary)' }}>{p.link}</span>
                             )}
                           </div>
                           {p.techStack && p.techStack.length > 0 && (
-                            <div style={{ fontSize: '0.8rem', color: '#0284c7', fontWeight: 600, margin: '2px 0 4px 0' }}>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', fontWeight: 600, margin: '2px 0 4px 0' }}>
                               Technologies: {p.techStack.join(', ')}
                             </div>
                           )}
@@ -868,10 +871,10 @@ export function DigitalPortfolioView() {
                                 updated[idx] = { ...updated[idx], description: e.target.value };
                                 setEditableResume({ ...editableResume, projects: updated });
                               }}
-                              style={{ width: '100%', padding: '6px', fontSize: '0.85rem', border: '1px solid #0284c7', borderRadius: '4px', color: '#0f172a', backgroundColor: '#f8fafc', boxSizing: 'border-box' }}
+                              style={{ width: '100%', padding: '6px', fontSize: '0.85rem', border: '1px solid var(--color-border)', borderRadius: '4px', color: '#0f172a', backgroundColor: '#f8fafc', boxSizing: 'border-box' }}
                             />
                           ) : (
-                            <p style={{ margin: 0, fontSize: '0.88rem', color: '#334155', lineHeight: 1.5 }}>
+                            <p style={{ margin: 0, fontSize: '0.85rem', color: '#334155', lineHeight: 1.5 }}>
                               {p.description}
                             </p>
                           )}
@@ -884,22 +887,22 @@ export function DigitalPortfolioView() {
                 {/* Section 4: Education */}
                 {editableResume?.education && editableResume.education.length > 0 && (
                   <div style={{ marginBottom: '16px' }}>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
                       Education
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {editableResume.education.map((e, idx) => (
                         <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap' }}>
                           <div>
-                            <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>
+                            <strong style={{ fontSize: '0.88rem', color: '#0f172a' }}>
                               {e.degree}{e.branch ? ` in ${e.branch}` : ''}
                             </strong>
-                            <div style={{ fontSize: '0.85rem', color: '#475569' }}>
+                            <div style={{ fontSize: '0.82rem', color: '#475569' }}>
                               {e.institution} {e.score ? `• Score: ${e.score}` : ''}
                             </div>
                           </div>
                           {e.graduationYear && (
-                            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                            <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
                               Graduation: {e.graduationYear}
                             </span>
                           )}
@@ -912,12 +915,12 @@ export function DigitalPortfolioView() {
                 {/* Section 5: Certifications & Honors */}
                 {editableResume?.certifications && editableResume.certifications.length > 0 && (
                   <div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #e2e8f0', paddingBottom: '3px', marginBottom: '8px' }}>
                       Certifications & Credentials
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       {editableResume.certifications.map((c, idx) => (
-                        <div key={idx} style={{ fontSize: '0.88rem', color: '#334155' }}>
+                        <div key={idx} style={{ fontSize: '0.85rem', color: '#334155' }}>
                           <strong style={{ color: '#0f172a' }}>{c.name}</strong>
                           {c.issuer ? <span style={{ color: '#64748b' }}> — {c.issuer}</span> : ''}
                         </div>
@@ -932,10 +935,10 @@ export function DigitalPortfolioView() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-3)' }}>
               <button
                 onClick={handleCopyResumeText}
-                className="btn btn-outline"
-                style={{ fontSize: 'var(--font-size-xs)', display: 'flex', alignItems: 'center', gap: '6px' }}
+                className="btn btn-ghost"
+                style={{ fontSize: 'var(--font-size-xs)' }}
               >
-                {copiedResume ? '✓ Copied to Clipboard!' : '📋 Copy Resume Text'}
+                {copiedResume ? 'Copied to Clipboard' : 'Copy Resume Text'}
               </button>
 
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -943,12 +946,12 @@ export function DigitalPortfolioView() {
                   onClick={handleDownloadPdf}
                   disabled={downloadingPdf}
                   className="btn btn-primary"
-                  style={{ fontSize: 'var(--font-size-xs)', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  style={{ fontSize: 'var(--font-size-xs)' }}
                 >
-                  {downloadingPdf ? 'Preparing PDF...' : '📥 Download Formatted PDF'}
+                  {downloadingPdf ? 'Preparing PDF...' : 'Download Formatted PDF'}
                 </button>
 
-                <button onClick={() => setResumeData(null)} className="btn btn-outline" style={{ fontSize: 'var(--font-size-xs)' }}>
+                <button onClick={() => setResumeData(null)} className="btn btn-ghost" style={{ fontSize: 'var(--font-size-xs)' }}>
                   Close
                 </button>
               </div>
@@ -963,9 +966,10 @@ export function DigitalPortfolioView() {
           <div className="card" style={styles.largeModalCard}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h4 style={{ margin: 0 }}>Public Verified Share Card</h4>
-                <span className="badge" style={{ backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #86efac', fontSize: '11px' }}>
-                  ✓ Live & Public
+                <h4 style={{ margin: 0, color: 'var(--color-text-primary)' }}>Public Verified Share Card</h4>
+                <span className="status-pill status-verified" style={{ fontSize: '11px' }}>
+                  <span className="status-pill-dot" />
+                  Live & Public
                 </span>
               </div>
               <button onClick={() => setShareData(null)} style={styles.closeIcon}>×</button>
@@ -985,10 +989,10 @@ export function DigitalPortfolioView() {
               />
               <button
                 onClick={handleCopyShareLink}
-                className="btn btn-outline"
+                className="btn btn-ghost"
                 style={{ fontSize: 'var(--font-size-xs)', whiteSpace: 'nowrap' }}
               >
-                {copiedShareLink ? '✓ Copied!' : '📋 Copy Link'}
+                {copiedShareLink ? 'Copied' : 'Copy Link'}
               </button>
             </div>
 
@@ -997,14 +1001,14 @@ export function DigitalPortfolioView() {
               <div style={{ padding: 'var(--space-4)', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: 'var(--space-3)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <h3 style={{ margin: 0, color: 'var(--color-primary)' }}>{shareData.user?.name}</h3>
+                    <h3 style={{ margin: 0, color: 'var(--color-text-primary)' }}>{shareData.user?.name}</h3>
                     <span className="badge badge-sky" style={{ fontSize: '11px', textTransform: 'capitalize', marginTop: '4px' }}>
                       {shareData.user?.role || 'Student Candidate'}
                     </span>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>Profile Completeness</div>
-                    <strong style={{ fontSize: '1.2rem', color: '#0284c7' }}>{shareData.summary?.completeness || 0}%</strong>
+                    <strong style={{ fontSize: '1.2rem', color: 'var(--color-primary)' }}>{shareData.summary?.completeness || 0}%</strong>
                   </div>
                 </div>
 
@@ -1024,8 +1028,9 @@ export function DigitalPortfolioView() {
                     <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Verified Skills & Competencies</div>
                     <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                       {shareData.summary.topSkills.map((s, i) => (
-                        <span key={i} className="badge" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#15803d', fontSize: '11px' }}>
-                          ✓ {typeof s === 'string' ? s : s.name}
+                        <span key={i} className="status-pill status-verified" style={{ fontSize: '11px' }}>
+                          <span className="status-pill-dot" />
+                          {typeof s === 'string' ? s : s.name}
                         </span>
                       ))}
                     </div>
@@ -1034,7 +1039,7 @@ export function DigitalPortfolioView() {
               </div>
 
               {/* Public Items List */}
-              <h5 style={{ textTransform: 'uppercase', fontSize: 'var(--font-size-xs)', color: 'var(--color-primary)', letterSpacing: '0.05em', marginBottom: 'var(--space-2)' }}>
+              <h5 style={{ textTransform: 'uppercase', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', letterSpacing: '0.05em', marginBottom: 'var(--space-2)' }}>
                 Public Portfolio Items ({shareData.items?.length || 0})
               </h5>
 
@@ -1048,10 +1053,13 @@ export function DigitalPortfolioView() {
                     <div key={idx} style={{ padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <strong>{item.title}</strong>
+                          <strong style={{ fontSize: 'var(--font-size-sm)' }}>{item.title}</strong>
                           <span className="badge badge-sky" style={{ fontSize: '10px', textTransform: 'capitalize' }}>{item.type}</span>
                           {item.verificationStatus === 'verified' && (
-                            <span className="badge" style={{ backgroundColor: '#dcfce7', color: '#15803d', fontSize: '10px' }}>✓ Verified</span>
+                            <span className="status-pill status-verified" style={{ fontSize: '10px' }}>
+                              <span className="status-pill-dot" />
+                              Verified
+                            </span>
                           )}
                         </div>
                         {item.description && (
@@ -1085,13 +1093,13 @@ const styles = {
   container: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' },
   headerRow: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' },
   description: { fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' },
-  statsBar: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 'var(--space-3)', padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' },
+  statsBar: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap: 'var(--space-3)', padding: 'var(--space-3)', backgroundColor: 'var(--color-bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' },
   statCell: { display: 'flex', flexDirection: 'column', gap: '2px' },
   statLabel: { fontSize: '10px', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontWeight: '600' },
   statVal: { fontSize: 'var(--font-size-lg)', fontFamily: 'var(--font-family-display)' },
-  toolbar: { display: 'flex', gap: 'var(--space-2)' },
-  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)', minWidth: '180px' },
-  cardGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-3)' },
+  toolbar: { display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' },
+  select: { padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-xs)', backgroundColor: 'var(--color-bg-surface)', minWidth: '140px', flex: '1 1 auto' },
+  cardGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 'var(--space-3)' },
   itemCard: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: 'var(--color-bg-surface)', border: '1px solid var(--color-border)' },
   descText: { fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', lineHeight: 1.4, maxHeight: '42px', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom: 'var(--space-2)' },
   chipRow: { display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: 'var(--space-2)' },
@@ -1100,11 +1108,11 @@ const styles = {
   feedbackBox: { padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)' },
   closeFeedback: { fontSize: '18px', cursor: 'pointer', color: 'inherit' },
   closeIcon: { background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: 'var(--color-text-muted)' },
-  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'var(--space-4)' },
-  modalCard: { maxWidth: '460px', width: '100%' },
-  largeModalCard: { maxWidth: '840px', width: '100%', maxHeight: '88vh', display: 'flex', flexDirection: 'column' },
+  modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 'clamp(8px, 2vw, 16px)' },
+  modalCard: { maxWidth: '460px', width: '100%', maxHeight: '90vh', overflowY: 'auto' },
+  largeModalCard: { maxWidth: '840px', width: '100%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' },
   resumeScrollArea: { overflowY: 'auto', flex: 1, paddingRight: '6px' },
-  grid2: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-2)' },
+  grid2: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: 'var(--space-2)' },
   label: { display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--color-text-secondary)', marginBottom: '4px' },
   input: { width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 'var(--font-size-sm)', backgroundColor: 'var(--color-bg-app)' },
   paginationRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'var(--space-2)' },
