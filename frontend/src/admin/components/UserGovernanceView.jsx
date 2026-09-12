@@ -19,6 +19,19 @@ export function UserGovernanceView() {
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState(null);
 
+  // New user provision modal state
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    role: 'student',
+  });
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState(null);
+  const [createSuccess, setCreateSuccess] = useState(null);
+
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -84,6 +97,43 @@ export function UserGovernanceView() {
     }
   };
 
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim() || !formData.password) {
+      setCreateError('Full name, email address, and initial password are required.');
+      return;
+    }
+    setCreating(true);
+    setCreateError(null);
+    setCreateSuccess(null);
+    try {
+      const newUser = await adminApi.createUser({
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        phone: formData.phone.trim() || undefined,
+        role: formData.role,
+      });
+      setCreateSuccess(`Account for ${newUser.name} (${ROLE_LABELS[newUser.role] || newUser.role}) created successfully.`);
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        phone: '',
+        role: 'student',
+      });
+      fetchUsers();
+      setTimeout(() => {
+        setShowAddModal(false);
+        setCreateSuccess(null);
+      }, 1200);
+    } catch (err) {
+      setCreateError(err.message || 'Failed to create user account');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return (
     <div style={styles.container}>
       {/* Header */}
@@ -94,9 +144,22 @@ export function UserGovernanceView() {
             Manage, search, and audit user accounts across all platform roles (Students, Faculty, Institutions, Industry recruiters, and Admins).
           </p>
         </div>
-        <button onClick={fetchUsers} className="btn btn-outline" style={styles.refreshBtn}>
-          Refresh Users
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <button
+            onClick={() => {
+              setCreateError(null);
+              setCreateSuccess(null);
+              setShowAddModal(true);
+            }}
+            className="btn btn-primary"
+            style={{ fontSize: 'var(--font-size-xs)' }}
+          >
+            + Add New User / Student
+          </button>
+          <button onClick={fetchUsers} className="btn btn-outline" style={styles.refreshBtn}>
+            Refresh Users
+          </button>
+        </div>
       </div>
 
       {/* Toolbar / Filters */}
@@ -266,6 +329,222 @@ export function UserGovernanceView() {
           >
             Next
           </button>
+        </div>
+      )}
+
+      {/* Provision New User / Student Modal */}
+      {showAddModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(2px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '1rem',
+          }}
+        >
+          <div
+            className="card"
+            style={{
+              maxWidth: '480px',
+              width: '100%',
+              backgroundColor: 'var(--color-bg-surface)',
+              padding: '1.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.25rem',
+              boxShadow: 'var(--shadow-lg)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 600 }}>Provision New User Account</h3>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                  Create and register an active user across SUTRA roles.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="btn-ghost"
+                style={{ padding: '0.25rem 0.5rem', fontSize: '1rem' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {createError && (
+              <div
+                style={{
+                  padding: '0.65rem 0.85rem',
+                  backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                  border: '1px solid rgba(220, 38, 38, 0.25)',
+                  borderRadius: '6px',
+                  color: '#dc2626',
+                  fontSize: '0.8125rem',
+                }}
+              >
+                {createError}
+              </div>
+            )}
+
+            {createSuccess && (
+              <div
+                style={{
+                  padding: '0.65rem 0.85rem',
+                  backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  borderRadius: '6px',
+                  color: '#065f46',
+                  fontSize: '0.8125rem',
+                }}
+              >
+                ✓ {createSuccess}
+              </div>
+            )}
+
+            <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)', marginBottom: '0.35rem' }}>
+                  Account Role *
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem 0.75rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--color-border)',
+                    backgroundColor: 'var(--color-bg-surface)',
+                    color: 'var(--color-text-primary)',
+                    fontSize: '0.875rem',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <option value="student">Student (Academic Learner)</option>
+                  <option value="faculty">Faculty (Academician / Mentor)</option>
+                  <option value="institution">Institution (College / University Admin)</option>
+                  <option value="industry">Industry (Corporate Recruiter)</option>
+                  <option value="admin">Administrator (System Governance)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)', marginBottom: '0.35rem' }}>
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Aarav Sharma"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem 0.75rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--color-border)',
+                    backgroundColor: 'var(--color-bg-surface)',
+                    color: 'var(--color-text-primary)',
+                    fontSize: '0.875rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)', marginBottom: '0.35rem' }}>
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. aarav@sutra.dev"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem 0.75rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--color-border)',
+                    backgroundColor: 'var(--color-bg-surface)',
+                    color: 'var(--color-text-primary)',
+                    fontSize: '0.875rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)', marginBottom: '0.35rem' }}>
+                  Initial Password * (min. 8 characters)
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem 0.75rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--color-border)',
+                    backgroundColor: 'var(--color-bg-surface)',
+                    color: 'var(--color-text-primary)',
+                    fontSize: '0.875rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-text-secondary)', marginBottom: '0.35rem' }}>
+                  Phone Number (Optional)
+                </label>
+                <input
+                  type="tel"
+                  placeholder="e.g. +91 9876543210"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem 0.75rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--color-border)',
+                    backgroundColor: 'var(--color-bg-surface)',
+                    color: 'var(--color-text-primary)',
+                    fontSize: '0.875rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  disabled={creating}
+                  className="btn btn-outline"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creating}
+                  className="btn btn-primary"
+                >
+                  {creating ? 'Provisioning...' : 'Provision Account'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

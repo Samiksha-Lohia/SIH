@@ -11,8 +11,8 @@ import { parsePagination } from '../../utils/query.js';
 import { safeAudit, AUDIT_ACTION } from '../audit/audit.service.js';
 import { aiService } from '../../services/ai/ai.service.js';
 import { logger } from '../../utils/logger.js';
-import { env } from '../../config/env.js';
-import { ROLES } from '../../config/constants.js';
+import { PortfolioItem } from '../portfolio/portfolioItem.model.js';
+import { ROLES, VERIFICATION_STATUS } from '../../config/constants.js';
 import {
   computeStudentCompleteness,
   computeFacultyCompleteness,
@@ -97,6 +97,52 @@ export async function upsertProfile(userId, role, data) {
     await User.updateOne({ _id: user._id }, { $set: updates });
   }
 
+  // When updating a StudentProfile, auto-sync new projects and certifications to PortfolioItem
+  if (role === ROLES.STUDENT) {
+    try {
+      if (Array.isArray(profile.projects) && profile.projects.length) {
+        const existingPortfolioProjects = await PortfolioItem.find({ user: userId, type: 'project' }).select('title');
+        const existingTitles = new Set(existingPortfolioProjects.map((p) => p.title?.trim().toLowerCase()));
+        for (const proj of profile.projects) {
+          if (proj.title && !existingTitles.has(proj.title.trim().toLowerCase())) {
+            await PortfolioItem.create({
+              user: userId,
+              type: 'project',
+              title: proj.title.trim(),
+              description: proj.description || '',
+              skills: Array.isArray(proj.techStack) ? proj.techStack : [],
+              link: proj.link || '',
+              visibility: 'public',
+              verificationStatus: VERIFICATION_STATUS.UNVERIFIED,
+            });
+            existingTitles.add(proj.title.trim().toLowerCase());
+          }
+        }
+      }
+
+      if (Array.isArray(profile.certifications) && profile.certifications.length) {
+        const existingPortfolioCerts = await PortfolioItem.find({ user: userId, type: 'certification' }).select('title');
+        const existingCertTitles = new Set(existingPortfolioCerts.map((c) => c.title?.trim().toLowerCase()));
+        for (const cert of profile.certifications) {
+          if (cert.name && !existingCertTitles.has(cert.name.trim().toLowerCase())) {
+            await PortfolioItem.create({
+              user: userId,
+              type: 'certification',
+              title: cert.name.trim(),
+              issuer: cert.issuer || '',
+              link: cert.url || '',
+              visibility: 'public',
+              verificationStatus: VERIFICATION_STATUS.UNVERIFIED,
+            });
+            existingCertTitles.add(cert.name.trim().toLowerCase());
+          }
+        }
+      }
+    } catch (syncErr) {
+      logger.warn(`Auto-sync StudentProfile to PortfolioItem warning: ${syncErr.message}`);
+    }
+  }
+
   return profile;
 }
 
@@ -156,10 +202,18 @@ export async function voiceProfile(userId, role, transcript, autoMerge = false) 
     );
     const mergedProjects = [...existingProjects, ...newProjects];
 
+    // 5. Merge certifications (append new ones not already present)
+    const existingCerts = existingObj.certifications || [];
+    const newCerts = (extracted.certifications || []).filter(
+      (nc) => nc.name && !existingCerts.some((ec) => ec.name?.toLowerCase() === nc.name.toLowerCase())
+    );
+    const mergedCerts = [...existingCerts, ...newCerts];
+
     const patch = {
       skills: mergedSkills,
       softSkills: mergedSoftSkills,
       projects: mergedProjects,
+      certifications: mergedCerts,
       careerGoals: {
         ...(existingObj.careerGoals || {}),
         targetRoles: mergedTargetRoles,
@@ -167,9 +221,6 @@ export async function voiceProfile(userId, role, transcript, autoMerge = false) 
       },
     };
 
-    if (extracted.certifications?.length) {
-      patch.certifications = [...(existingObj.certifications || []), ...extracted.certifications];
-    }
     if (extracted.education?.length) {
       patch.education = [...(existingObj.education || []), ...extracted.education];
     }

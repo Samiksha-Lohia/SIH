@@ -4,8 +4,27 @@
  */
 
 export function profileExtractionPrompt(transcript, role = 'student') {
-  return `You are an assistant that extracts a structured ${role} profile from free text.
-Return ONLY valid minified JSON (no markdown, no commentary) with this shape:
+  return `You are an elite technical recruiter and skill extraction engine profiling a ${role} from spoken voice or narrative text.
+Your job is to thoroughly and accurately identify all technical skills, soft skills, projects, certifications, and career aspirations.
+
+Rules:
+1. "skills": Extract every technical competency mentioned (programming languages, libraries, frameworks, databases, cloud, DevOps, developer tools, architectures, system concepts). Use standard industry casing (e.g., "React", "Node.js", "Python", "TypeScript", "Docker", "PostgreSQL", "MongoDB", "Express.js", "Git", "REST APIs", "Tailwind CSS", "C++", "Java", "AWS", etc.). Set "level" to "beginner", "intermediate", "advanced", or "expert" based on context (default "intermediate").
+2. "softSkills": Extract interpersonal, leadership, and operational strengths (e.g. "Problem Solving", "Team Leadership", "Communication", "Agile Collaboration", "Critical Thinking", "Time Management").
+3. "projects": If any projects, apps, systems, websites, or research work are mentioned, extract:
+   - "title": Clean, concise title
+   - "description": Summary of what was built, features, or architecture
+   - "techStack": Array of technologies and tools used
+4. "certifications": If courses, certificates, licenses, or accreditations are mentioned (e.g. AWS Certified, Coursera, HackerRank, Google Cloud, Meta), extract:
+   - "name": Certification title
+   - "issuer": Issuing organization or platform
+5. "careerGoals":
+   - "targetRoles": Array of target career titles (e.g. ["Full Stack Developer", "Software Engineer"])
+   - "preferredIndustries": Array of industries (e.g. ["FinTech", "SaaS", "Healthcare"])
+   - "summary": A concise, professional summary of aspirations
+6. "education": Any degree, major, or institution mentioned.
+
+Return ONLY valid minified JSON without any markdown formatting, backticks, or explanatory text.
+Schema:
 {
   "skills": [{"name": string, "level": "beginner|intermediate|advanced|expert"}],
   "softSkills": [{"name": string, "level": "beginner|intermediate|advanced|expert"}],
@@ -14,7 +33,6 @@ Return ONLY valid minified JSON (no markdown, no commentary) with this shape:
   "careerGoals": {"targetRoles": [string], "preferredIndustries": [string], "summary": string},
   "education": [{"institution": string, "degree": string, "branch": string}]
 }
-If a field is unknown, use an empty array or empty string. Do not invent data that is not implied by the text.
 
 TEXT:
 """${transcript}"""`;

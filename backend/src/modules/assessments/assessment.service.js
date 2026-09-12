@@ -185,7 +185,7 @@ export async function submitAttempt(assessmentId, userId, { answers, startedAt, 
 
 export async function getAttempt(attemptId, requester) {
   ensureDB();
-  const attempt = await AssessmentAttempt.findById(attemptId).populate('assessment', 'title type role');
+  const attempt = await AssessmentAttempt.findById(attemptId).populate('assessment', 'title type role passingScore durationMinutes');
   if (!attempt) throw ApiError.notFound('Attempt not found');
   // Only the owner or privileged roles may view an attempt result.
   const isOwner = String(attempt.user) === String(requester._id);
@@ -202,7 +202,7 @@ export async function listMyAttempts(userId, query) {
   const filter = { user: userId };
   if (query.assessmentId) filter.assessment = query.assessmentId;
   const [items, total] = await Promise.all([
-    AssessmentAttempt.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('assessment', 'title type role'),
+    AssessmentAttempt.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('assessment', 'title type role passingScore durationMinutes'),
     AssessmentAttempt.countDocuments(filter),
   ]);
   return { items, page, limit, total };

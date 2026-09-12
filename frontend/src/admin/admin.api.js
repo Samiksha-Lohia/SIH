@@ -161,6 +161,11 @@ export const adminApi = {
     return { users: res.data?.users || [], meta: res.meta };
   },
 
+  async createUser(payload) {
+    const res = await api.post('/users', payload);
+    return res.data?.user;
+  },
+
   // ---------------- Institution Governance ----------------
   async listInstitutions(params = {}) {
     const query = new URLSearchParams();

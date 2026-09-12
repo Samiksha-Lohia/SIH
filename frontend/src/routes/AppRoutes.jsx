@@ -7,6 +7,7 @@ import { RoleGuard } from '../shared/components/RoleGuard.jsx';
 import { AppLayout } from '../shared/components/AppLayout.jsx';
 import { UnauthorizedPage } from '../shared/components/UnauthorizedPage.jsx';
 import { LoginPage } from '../auth/LoginPage.jsx';
+import { LandingPage } from '../landing/LandingPage.jsx';
 
 import { StudentHome } from '../student/StudentHome.jsx';
 import { FacultyHome } from '../faculty/FacultyHome.jsx';
@@ -62,10 +63,10 @@ export function AppRoutes() {
           </PublicOnlyRoute>
         }
       />
+      {/* Public Landing & Auth routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-
-      {/* Root redirector */}
-      <Route path="/" element={<RootRedirect />} />
 
       {/* Protected role-specific routes wrapped in AppLayout */}
       <Route element={<RoleGuard />}>

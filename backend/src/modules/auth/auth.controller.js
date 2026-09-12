@@ -37,3 +37,11 @@ export const listUsers = asyncHandler(async (req, res) => {
   const { items, page, limit, total } = await authService.listUsers(req.query);
   sendSuccess(res, { users: items }, { meta: paginationMeta({ page, limit, total }) });
 });
+
+/**
+ * POST /api/users — create a new user (admin only).
+ */
+export const createUser = asyncHandler(async (req, res) => {
+  const result = await authService.registerUser(req.body);
+  sendSuccess(res, { user: result.user }, { status: 201 });
+});

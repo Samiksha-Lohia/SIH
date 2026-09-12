@@ -1,4 +1,5 @@
 import { User } from './user.model.js';
+import { StudentProfile } from '../profiles/studentProfile.model.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { signAccessToken, signRefreshToken, verifyToken } from '../../utils/token.js';
 import { isDBConnected } from '../../config/db.js';
@@ -20,7 +21,7 @@ function issueTokens(user) {
   };
 }
 
-export async function registerUser({ name, email, password, phone, role }) {
+export async function registerUser({ name, email, password, phone, role = 'student' }) {
   ensureDB();
   const existing = await User.findOne({ email });
   if (existing) throw ApiError.conflict('Email is already registered', { code: 'EMAIL_TAKEN' });
@@ -28,6 +29,17 @@ export async function registerUser({ name, email, password, phone, role }) {
   const user = new User({ name, email, phone, role });
   await user.setPassword(password);
   await user.save();
+
+  if (user.role === 'student') {
+    try {
+      const existingProf = await StudentProfile.findOne({ user: user._id });
+      if (!existingProf) {
+        await StudentProfile.create({ user: user._id, skills: [], softSkills: [] });
+      }
+    } catch {
+      // Non-blocking if profile exists
+    }
+  }
 
   return { user: user.toJSON(), tokens: issueTokens(user) };
 }

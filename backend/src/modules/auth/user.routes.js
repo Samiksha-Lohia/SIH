@@ -4,7 +4,7 @@ import { requireRole } from '../../middleware/rbac.js';
 import { validate } from '../../middleware/validate.js';
 import { ROLES } from '../../config/constants.js';
 import * as authController from './auth.controller.js';
-import { listUsersQuery } from './auth.validation.js';
+import { listUsersQuery, registerSchema } from './auth.validation.js';
 
 const router = Router();
 
@@ -17,6 +17,17 @@ router.get(
   requireRole(ROLES.ADMIN),
   validate({ query: listUsersQuery }),
   authController.listUsers
+);
+
+/**
+ * POST /api/users — provision a new user (admin only).
+ */
+router.post(
+  '/',
+  authenticate,
+  requireRole(ROLES.ADMIN),
+  validate({ body: registerSchema }),
+  authController.createUser
 );
 
 export default router;

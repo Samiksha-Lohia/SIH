@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { PROFICIENCY } from '../../config/constants.js';
+import { scoreToLevel } from './scoring.js';
 
 const { Schema } = mongoose;
 
@@ -47,6 +48,21 @@ const attemptSchema = new Schema(
 
 attemptSchema.index({ user: 1, assessment: 1, createdAt: -1 });
 
+attemptSchema.virtual('percentage').get(function () {
+  return typeof this.score === 'number' ? this.score : 0;
+});
+
+attemptSchema.virtual('level').get(function () {
+  return scoreToLevel(typeof this.score === 'number' ? this.score : 0);
+});
+
+attemptSchema.virtual('assessmentTitle').get(function () {
+  if (this.assessment && typeof this.assessment === 'object' && this.assessment.title) {
+    return this.assessment.title;
+  }
+  return undefined;
+});
+
 attemptSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
@@ -54,6 +70,10 @@ attemptSchema.set('toJSON', {
     delete ret._id;
     return ret;
   },
+});
+
+attemptSchema.set('toObject', {
+  virtuals: true,
 });
 
 export const AssessmentAttempt = mongoose.model('AssessmentAttempt', attemptSchema);

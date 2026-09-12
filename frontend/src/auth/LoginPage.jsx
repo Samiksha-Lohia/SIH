@@ -19,6 +19,33 @@ export function LoginPage() {
 
   const from = location.state?.from?.pathname;
 
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const roleParam = params.get('role');
+    const emailParam = params.get('email');
+    if (emailParam) {
+      setEmail(emailParam);
+      setPassword('Password123');
+    } else if (roleParam) {
+      const roleMap = {
+        student: 'student@sutra.dev',
+        candidate: 'student@sutra.dev',
+        faculty: 'faculty@sutra.dev',
+        academician: 'faculty@sutra.dev',
+        industry: 'industry@sutra.dev',
+        recruiter: 'industry@sutra.dev',
+        institution: 'institution@sutra.dev',
+        college: 'institution@sutra.dev',
+        admin: 'admin@sutra.dev',
+      };
+      const mapped = roleMap[roleParam.toLowerCase()];
+      if (mapped) {
+        setEmail(mapped);
+        setPassword('Password123');
+      }
+    }
+  }, [location.search]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -76,6 +103,7 @@ export function LoginPage() {
         {/* SUTRA Brand Top */}
         <div>
           <span
+            onClick={() => navigate('/')}
             style={{
               fontFamily: 'var(--font-family-display)',
               fontSize: '1.25rem',
@@ -83,10 +111,14 @@ export function LoginPage() {
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
               color: isDark ? '#10232a' : '#ffffff',
-              display: 'inline-block',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
             }}
+            title="Return to SUTRA Landing Page"
           >
-            SUTRA
+            ← SUTRA
           </span>
         </div>
 

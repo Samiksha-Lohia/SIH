@@ -36,7 +36,7 @@ export const env = {
 
   ai: {
     geminiApiKey: process.env.GEMINI_API_KEY || '',
-    geminiModel: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    geminiModel: process.env.GEMINI_MODEL || 'gemini-3.6-flash',
     groqApiKey: process.env.GROQ_API_KEY || '',
     groqModel: process.env.GROQ_MODEL || 'whisper-large-v3-turbo',
     get enabled() {

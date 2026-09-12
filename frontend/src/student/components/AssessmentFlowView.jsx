@@ -356,38 +356,54 @@ export function AssessmentFlowView({ onNavigateTab }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {myAttempts.map((att) => (
-                    <tr key={att.id}>
-                      <td>
-                        <strong style={{ color: 'var(--color-text-main)' }}>{att.assessmentTitle || 'Skill Assessment'}</strong>
-                      </td>
-                      <td style={{ fontVariantNumeric: 'tabular-nums' }}>{att.score} / {att.maxScore}</td>
-                      <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: '600' }}>{Math.round(att.percentage || 0)}%</td>
-                      <td>
-                        <span className={`status-pill ${att.passed ? 'status-verified' : 'status-rejected'}`} style={{ fontSize: '10px' }}>
-                          <span className="status-pill-dot" />
-                          {att.passed ? 'Passed' : 'Needs Review'}
-                        </span>
-                      </td>
-                      <td>
-                        <span className="badge badge-role" style={{ fontSize: '10px', textTransform: 'capitalize' }}>
-                          {att.level || 'intermediate'}
-                        </span>
-                      </td>
-                      <td style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
-                        {formatDate(att.createdAt)}
-                      </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <button
-                          onClick={() => viewAttemptResult(att.id)}
-                          className="btn btn-ghost"
-                          style={{ fontSize: '11px', padding: '2px 8px' }}
-                        >
-                          Breakdown
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {myAttempts.map((att) => {
+                    const maxScore = att.maxScore || 10;
+                    const rawScore = att.rawScore !== undefined && att.rawScore !== null
+                      ? att.rawScore
+                      : Math.round(((att.percentage ?? att.score ?? 0) / 100) * maxScore);
+                    const pct = Math.round(
+                      att.percentage ?? att.score ?? (maxScore > 0 ? (rawScore / maxScore) * 100 : 0)
+                    );
+                    const profLevel = att.level || (pct >= 85 ? 'expert' : pct >= 65 ? 'advanced' : pct >= 40 ? 'intermediate' : 'beginner');
+                    const title = att.assessmentTitle || att.assessment?.title || 'Skill Assessment';
+
+                    return (
+                      <tr key={att.id}>
+                        <td>
+                          <strong style={{ color: 'var(--color-text-main)' }}>{title}</strong>
+                        </td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums' }}>
+                          {rawScore} / {maxScore} <span style={{ color: 'var(--color-text-muted)', fontSize: '11px' }}>pts</span>
+                        </td>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', fontWeight: '600' }}>
+                          {pct}%
+                        </td>
+                        <td>
+                          <span className={`status-pill ${att.passed ? 'status-verified' : 'status-rejected'}`} style={{ fontSize: '10px' }}>
+                            <span className="status-pill-dot" />
+                            {att.passed ? 'Passed' : 'Needs Review'}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="badge badge-role" style={{ fontSize: '10px', textTransform: 'capitalize' }}>
+                            {profLevel}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+                          {formatDate(att.createdAt)}
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <button
+                            onClick={() => viewAttemptResult(att.id)}
+                            className="btn btn-ghost"
+                            style={{ fontSize: '11px', padding: '2px 8px' }}
+                          >
+                            Breakdown
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -594,7 +610,35 @@ export function AssessmentFlowView({ onNavigateTab }) {
   // =========================================================================
   if (viewMode === 'result' && latestResult) {
     const isPassed = latestResult.passed;
-    const percentage = Math.round(latestResult.percentage || 0);
+    const maxScore = latestResult.maxScore || 10;
+    const rawScore = latestResult.rawScore !== undefined && latestResult.rawScore !== null
+      ? latestResult.rawScore
+      : Math.round(((latestResult.percentage ?? latestResult.score ?? 0) / 100) * maxScore);
+    const percentage = Math.round(
+      latestResult.percentage ?? latestResult.score ?? (maxScore > 0 ? (rawScore / maxScore) * 100 : 0)
+    );
+    const profLevel = latestResult.level || (percentage >= 85 ? 'expert' : percentage >= 65 ? 'advanced' : percentage >= 40 ? 'intermediate' : 'beginner');
+    const title = latestResult.assessmentTitle || latestResult.assessment?.title || 'Technical Competency Evaluation';
+    const passingThreshold = latestResult.passingScore || latestResult.assessment?.passingScore || 60;
+
+    // Normalize skill breakdown from either skillScores array or legacy perSkillScore object
+    const skillBreakdown = Array.isArray(latestResult.skillScores) && latestResult.skillScores.length > 0
+      ? latestResult.skillScores.map((s) => ({
+          skill: s.skill,
+          pct: typeof s.score === 'number' ? s.score : (s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0),
+          ptsEarned: s.correct ?? 0,
+          ptsMax: s.total ?? 0,
+          level: s.level,
+        }))
+      : latestResult.perSkillScore && typeof latestResult.perSkillScore === 'object'
+      ? Object.entries(latestResult.perSkillScore).map(([skill, stat]) => ({
+          skill,
+          pct: stat.max > 0 ? Math.round((stat.score / stat.max) * 100) : 0,
+          ptsEarned: stat.score ?? 0,
+          ptsMax: stat.max ?? 0,
+          level: null,
+        }))
+      : [];
 
     return (
       <div style={styles.container}>
@@ -606,12 +650,12 @@ export function AssessmentFlowView({ onNavigateTab }) {
                 {isPassed ? 'Passed Successfully' : 'Evaluation Completed'}
               </span>
               <span className="badge badge-role" style={{ fontSize: '11px', textTransform: 'capitalize' }}>
-                Proficiency: {latestResult.level || 'intermediate'}
+                Proficiency: {profLevel}
               </span>
             </div>
 
             <h3 style={{ margin: '0 0 2px 0', fontSize: 'var(--font-size-xl)', fontWeight: '600', color: 'var(--color-text-main)' }}>
-              {latestResult.assessmentTitle || 'Technical Competency Evaluation'}
+              {title}
             </h3>
             <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', margin: 0 }}>
               Deterministic scoring completed against benchmark criteria.
@@ -624,7 +668,7 @@ export function AssessmentFlowView({ onNavigateTab }) {
               <span className="b2b-kpi-value" style={{ color: isPassed ? 'var(--color-text-main)' : 'var(--color-primary)' }}>
                 {percentage}%
               </span>
-              <span className="b2b-kpi-subtext">{latestResult.score} / {latestResult.maxScore} points</span>
+              <span className="b2b-kpi-subtext">{rawScore} / {maxScore} points earned</span>
             </div>
 
             <div className="b2b-kpi-tile">
@@ -632,7 +676,7 @@ export function AssessmentFlowView({ onNavigateTab }) {
               <span className="b2b-kpi-value" style={{ fontSize: 'var(--font-size-lg)' }}>
                 {isPassed ? 'PASSED' : 'NEEDS IMPROVEMENT'}
               </span>
-              <span className="b2b-kpi-subtext">Passing threshold: 60%</span>
+              <span className="b2b-kpi-subtext">Passing threshold: {passingThreshold}%</span>
             </div>
           </div>
 
@@ -645,24 +689,23 @@ export function AssessmentFlowView({ onNavigateTab }) {
           </div>
 
           {/* Per skill breakdown */}
-          {latestResult.perSkillScore && Object.keys(latestResult.perSkillScore).length > 0 && (
+          {skillBreakdown.length > 0 && (
             <div>
               <h5 style={{ margin: '0 0 var(--space-2) 0', fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.04em' }}>Competency Area Performance</h5>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                {Object.entries(latestResult.perSkillScore).map(([skill, stat]) => {
-                  const skillPct = stat.max > 0 ? Math.round((stat.score / stat.max) * 100) : 0;
-                  return (
-                    <div key={skill} style={styles.skillStatRow}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
-                        <strong style={{ color: 'var(--color-text-main)' }}>{skill}</strong>
-                        <span style={{ color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>{skillPct}% ({stat.score}/{stat.max} pts)</span>
-                      </div>
-                      <div style={styles.statBar}>
-                        <div style={{ height: '100%', width: `${skillPct}%`, backgroundColor: skillPct >= 60 ? 'var(--color-steel-blue)' : 'var(--color-primary)', borderRadius: '2px', transition: 'width 0.4s ease' }} />
-                      </div>
+                {skillBreakdown.map((item) => (
+                  <div key={item.skill} style={styles.skillStatRow}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                      <strong style={{ color: 'var(--color-text-main)' }}>{item.skill}</strong>
+                      <span style={{ color: 'var(--color-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+                        {item.pct}% ({item.ptsEarned}/{item.ptsMax} pts){item.level ? ` • ${item.level}` : ''}
+                      </span>
                     </div>
-                  );
-                })}
+                    <div style={styles.statBar}>
+                      <div style={{ height: '100%', width: `${Math.min(100, Math.max(0, item.pct))}%`, backgroundColor: item.pct >= 60 ? 'var(--color-steel-blue)' : 'var(--color-primary)', borderRadius: '2px', transition: 'width 0.4s ease' }} />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
