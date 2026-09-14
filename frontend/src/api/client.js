@@ -1,6 +1,7 @@
 import { storage } from '../lib/storage.js';
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api').replace(/\/$/, '');
+const rawBase = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:5000/api').trim().replace(/\/$/, '');
+const BASE_URL = (!rawBase.endsWith('/api') && !rawBase.includes('/api/')) ? `${rawBase}/api` : rawBase;
 
 export class ApiError extends Error {
   constructor(message, { status = 500, code = 'API_ERROR', details = null } = {}) {
